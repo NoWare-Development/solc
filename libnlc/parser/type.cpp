@@ -22,7 +22,6 @@ Parser::parse_type ()
         {
           auto expr = parse_expression ();
           buf.append (expr);
-          // skip_until (TokenType::TOKEN_RBRACK); // TODO: parse expression
           VERIFY_POS (_pos);
           next = peek (_pos);
         }

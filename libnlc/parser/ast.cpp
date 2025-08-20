@@ -102,6 +102,7 @@ asttype_to_string (ASTType type)
         "FROM_MODULE",
         "INITLIST",
         "GENERIC_TYPE_LIST",
+        "PREFIX_EXPR",
     },
     {
         // STMT
