@@ -680,6 +680,96 @@ ErrorHandler::get_semantic_analyzer_error_reason (
       }
       break;
 
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_SIZE_IS_NOT_KNOWN_AT_COMPTIME:
+      {
+        out = "Size of variable \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+        out += "\" is not known at compile time";
+      }
+      break;
+
+    case SemanticAnalyzer::SAError::ErrType::SA_ERR_TYPE_ARRAY_NOT_RAW_INT:
+      {
+        out = "Array size is not an integer value: ";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+      }
+      break;
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_ARRAY_PREFIXOP_IS_NOT_COMPTIME:
+      {
+        out = "Prefix operator \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+        out += "\" cannot be used in array size expression because the result "
+               "is not known at compile time";
+      }
+      break;
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_ARRAY_EXPR_IS_NOT_COMPTIME:
+      {
+        out = "Expression result is not known at compile time: ";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+      }
+      break;
+
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_EXPR_CANNOT_DEREFERENCE_INTLIT:
+      {
+        out = "Cannot dereference integer value";
+      }
+      break;
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_EXPR_CANNOT_DEREFERENCE_FLOATLIT:
+      {
+        out = "Cannot dereference floating-point value";
+      }
+      break;
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_EXPR_CANNOT_DEREFERENCE_BOOLLIT:
+      {
+        out = "Cannot dereference boolean value";
+      }
+      break;
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_EXPR_CANNOT_DEREFERENCE_ENUMLIT:
+      {
+        out = "Cannot dereference enum member value";
+      }
+      break;
+
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_EXPR_CANNOT_TAKE_ADDRESS_OF_INTLIT:
+      {
+        out = "Cannot take address of integer value";
+      }
+      break;
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_EXPR_CANNOT_TAKE_ADDRESS_OF_FLOATLIT:
+      {
+        out = "Cannot take address of floating-point value";
+      }
+      break;
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_EXPR_CANNOT_TAKE_ADDRESS_OF_BOOLLIT:
+      {
+        out = "Cannot take address of boolean value";
+      }
+      break;
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_EXPR_CANNOT_TAKE_ADDRESS_OF_ENUMLIT:
+      {
+        out = "Cannot take address of enum member value";
+      }
+      break;
+
     default:
       out = "<Unknown error>";
       break;

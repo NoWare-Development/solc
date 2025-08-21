@@ -1,5 +1,6 @@
 #include "libnlc/parser/macros.hpp"
 #include "parser/parser.hpp"
+#include "semantic-analyzer/sa.hpp"
 
 namespace nlc
 {

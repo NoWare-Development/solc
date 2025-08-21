@@ -98,6 +98,11 @@ SemanticAnalyzer::get_type_from_expr_ast (const AST &expr_ast)
 
     case ASTType::AST_EXPR_OPERAND_IDENTIFIER:
       {
+        if (is_value_boollit (expr_ast.value))
+          {
+            return Type{ .type = BuiltinType::BUILTIN_TYPE_BOOL };
+          }
+
         bool found;
         auto out = search_for_variable_type (expr_ast.value, found);
         if (!found)
@@ -160,7 +165,9 @@ SemanticAnalyzer::get_type_from_expr_ast (const AST &expr_ast)
         // TODO: check for different operations on types that don't support for
         // those.
 
-        out_type = lhs_type;
+        out_type.pointer_count = lhs_type.pointer_count;
+        out_type.type_name = lhs_type.type_name;
+        out_type.type = get_converted_type (rhs_type.type, lhs_type.type);
 
         return out_type;
       }
@@ -168,6 +175,7 @@ SemanticAnalyzer::get_type_from_expr_ast (const AST &expr_ast)
     case ASTType::AST_PREFIX_EXPR:
       {
         auto out_type = get_type_from_expr_ast (expr_ast.children.at (0));
+        auto operand_type = expr_ast.children.at (0).type;
         for (size_t i = 1; i < expr_ast.children.size (); i++)
           {
             const auto &op = expr_ast.children.at (i);
@@ -175,6 +183,39 @@ SemanticAnalyzer::get_type_from_expr_ast (const AST &expr_ast)
             switch (op.type)
               {
               case ASTType::AST_EXPR_PREFIX_OPERATOR_ADDRESS:
+                switch (operand_type)
+                  {
+                  case ASTType::AST_EXPR_OPERAND_NUM:
+                    add_error (
+                        op.token_position,
+                        SAError::ErrType::
+                            SA_ERR_TYPE_EXPR_CANNOT_TAKE_ADDRESS_OF_INTLIT);
+                    return {};
+                  case ASTType::AST_EXPR_OPERAND_NUMFLOAT:
+                    add_error (
+                        op.token_position,
+                        SAError::ErrType::
+                            SA_ERR_TYPE_EXPR_CANNOT_TAKE_ADDRESS_OF_FLOATLIT);
+                    return {};
+                  case ASTType::AST_EXPR_OPERAND_IDENTIFIER:
+                    {
+                      if (is_value_boollit (expr_ast.children.at (0).value))
+                        {
+                          add_error (
+                              op.token_position,
+                              SAError::ErrType::
+                                  SA_ERR_TYPE_EXPR_CANNOT_TAKE_ADDRESS_OF_BOOLLIT);
+                          return {};
+                        }
+
+                      // TODO: Check for enum literals
+                    }
+                    break;
+
+                  default:
+                    break;
+                  }
+
                 out_type.pointer_count += 1;
                 break;
 
@@ -201,6 +242,39 @@ SemanticAnalyzer::get_type_from_expr_ast (const AST &expr_ast)
                           SAError::ErrType::
                               SA_ERR_TYPE_DEREFERENCING_NONPOINTER_VALUE);
                       return {};
+                    }
+
+                  switch (operand_type)
+                    {
+                    case ASTType::AST_EXPR_OPERAND_NUM:
+                      add_error (
+                          op.token_position,
+                          SAError::ErrType::
+                              SA_ERR_TYPE_EXPR_CANNOT_DEREFERENCE_INTLIT);
+                      return {};
+                    case ASTType::AST_EXPR_OPERAND_NUMFLOAT:
+                      add_error (
+                          op.token_position,
+                          SAError::ErrType::
+                              SA_ERR_TYPE_EXPR_CANNOT_DEREFERENCE_FLOATLIT);
+                      return {};
+                    case ASTType::AST_EXPR_OPERAND_IDENTIFIER:
+                      {
+                        if (is_value_boollit (expr_ast.children.at (0).value))
+                          {
+                            add_error (
+                                op.token_position,
+                                SAError::ErrType::
+                                    SA_ERR_TYPE_EXPR_CANNOT_DEREFERENCE_BOOLLIT);
+                            return {};
+                          }
+
+                        // TODO: Check for enum literals
+                      }
+                      break;
+
+                    default:
+                      break;
                     }
 
                   out_type.pointer_count -= 1;
@@ -279,10 +353,81 @@ SemanticAnalyzer::get_type_from_expr_ast (const AST &expr_ast)
       }
 
     default:
+      TODO ("Unsupported expression operand");
       break;
     }
 
   return {};
+}
+
+bool
+SemanticAnalyzer::verify_expr_comptime (const AST &expr_ast)
+{
+  auto exprtype = expr_ast.type;
+  switch (exprtype)
+    {
+    case ASTType::AST_EXPR:
+      {
+        bool lhs_comptime = verify_expr_comptime (expr_ast.children.at (0));
+        bool rhs_comptime = verify_expr_comptime (expr_ast.children.at (2));
+        if (!lhs_comptime & rhs_comptime)
+          {
+            if (!lhs_comptime)
+              {
+                add_error (
+                    expr_ast.children.at (0).token_position,
+                    SAError::ErrType::SA_ERR_TYPE_ARRAY_EXPR_IS_NOT_COMPTIME);
+              }
+            else if (!rhs_comptime)
+              {
+                add_error (
+                    expr_ast.children.at (2).token_position,
+                    SAError::ErrType::SA_ERR_TYPE_ARRAY_EXPR_IS_NOT_COMPTIME);
+              }
+            return false;
+          }
+        return true;
+      }
+      break;
+    case ASTType::AST_PREFIX_EXPR:
+      {
+        bool operand_comptime
+            = verify_expr_comptime (expr_ast.children.at (0));
+
+        for (size_t i = 1; i < expr_ast.children.size (); i++)
+          {
+            const auto &child = expr_ast.children.at (i);
+            switch (child.type)
+              {
+              case ASTType::AST_EXPR_PREFIX_OPERATOR_DEREF:
+              case ASTType::AST_EXPR_PREFIX_OPERATOR_ADDRESS:
+                {
+                  add_error (child.token_position,
+                             SAError::ErrType::
+                                 SA_ERR_TYPE_ARRAY_PREFIXOP_IS_NOT_COMPTIME);
+                  operand_comptime = false;
+                }
+
+              default:
+                continue;
+              }
+
+            break;
+          }
+
+        return operand_comptime;
+      }
+      break;
+
+    case ASTType::AST_EXPR_OPERAND_NUM:
+    case ASTType::AST_EXPR_OPERAND_NUMFLOAT:
+      return true;
+
+    default:
+      break;
+    }
+
+  return false;
 }
 
 }

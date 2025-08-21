@@ -75,6 +75,24 @@ public:
       SA_ERR_TYPE_STRUCTURE_ALREADY_DEFINED,
       SA_ERR_TYPE_UNION_ALREADY_DEFINED,
       SA_ERR_TYPE_ENUM_ALREADY_DEFINED,
+
+      // 1
+      SA_ERR_TYPE_SIZE_IS_NOT_KNOWN_AT_COMPTIME,
+
+      // 1
+      SA_ERR_TYPE_ARRAY_NOT_RAW_INT,
+      SA_ERR_TYPE_ARRAY_PREFIXOP_IS_NOT_COMPTIME,
+      SA_ERR_TYPE_ARRAY_EXPR_IS_NOT_COMPTIME,
+
+      // 1
+      SA_ERR_TYPE_EXPR_CANNOT_DEREFERENCE_INTLIT,
+      SA_ERR_TYPE_EXPR_CANNOT_DEREFERENCE_FLOATLIT,
+      SA_ERR_TYPE_EXPR_CANNOT_DEREFERENCE_BOOLLIT,
+      SA_ERR_TYPE_EXPR_CANNOT_DEREFERENCE_ENUMLIT,
+      SA_ERR_TYPE_EXPR_CANNOT_TAKE_ADDRESS_OF_INTLIT,
+      SA_ERR_TYPE_EXPR_CANNOT_TAKE_ADDRESS_OF_FLOATLIT,
+      SA_ERR_TYPE_EXPR_CANNOT_TAKE_ADDRESS_OF_BOOLLIT,
+      SA_ERR_TYPE_EXPR_CANNOT_TAKE_ADDRESS_OF_ENUMLIT,
     };
 
     std::vector<size_t> positions;
@@ -109,6 +127,12 @@ private:
   Type search_for_variable_type (const std::string &name, bool &found);
 
   size_t get_size_of_builtin_type (BuiltinType type);
+  bool verify_comptime_array (const AST &type_ast);
+  bool verify_expr_comptime (const AST &expr_ast);
+
+  bool is_raw_integer (const Type &type);
+
+  bool is_value_boollit (const std::string &str) const;
 
   const std::unordered_map<std::string, BuiltinType> typestr_to_builtin_type
       = {

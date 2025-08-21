@@ -20,6 +20,9 @@ SemanticAnalyzer::analyze_vardef (const AST &vardef)
   if (type_of_variable.type == BuiltinType::BUILTIN_TYPE_UNK)
     return;
 
+  if (!verify_comptime_array (vardef.children.at (0)))
+    return;
+
   Type type_of_expr = get_type_from_expr_ast (vardef.children.at (1));
   if (type_of_expr.type == BuiltinType::BUILTIN_TYPE_UNK)
     return;

@@ -118,6 +118,33 @@ SemanticAnalyzer::get_size_of_builtin_type (BuiltinType type)
 }
 
 bool
+SemanticAnalyzer::is_raw_integer (const Type &type)
+{
+  if (type.pointer_count > 0)
+    return false;
+
+  switch (type.type)
+    {
+    case BuiltinType::BUILTIN_TYPE_UCHAR:
+    case BuiltinType::BUILTIN_TYPE_USHORT:
+    case BuiltinType::BUILTIN_TYPE_UINT:
+    case BuiltinType::BUILTIN_TYPE_ULONG:
+    case BuiltinType::BUILTIN_TYPE_CHAR:
+    case BuiltinType::BUILTIN_TYPE_SHORT:
+    case BuiltinType::BUILTIN_TYPE_INT:
+    case BuiltinType::BUILTIN_TYPE_LONG:
+    case BuiltinType::BUILTIN_TYPE_BOOL:
+    case BuiltinType::BUILTIN_TYPE_ENUM:
+      return true;
+
+    default:
+      break;
+    }
+
+  return false;
+}
+
+bool
 SemanticAnalyzer::is_string_a_builtin_type (const std::string &str) const
 {
   return IS_IN_MAP (typestr_to_builtin_type, str);
@@ -264,6 +291,17 @@ SemanticAnalyzer::is_type_is_float (const Type &t) const
       break;
     }
 
+  return false;
+}
+
+bool
+SemanticAnalyzer::is_value_boollit (const std::string &str) const
+{
+  std::string lower = util::string_lowercase (str);
+  if (lower == "true" || lower == "false")
+    {
+      return true;
+    }
   return false;
 }
 

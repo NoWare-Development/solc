@@ -23,8 +23,21 @@ SemanticAnalyzer::get_type_from_type_ast (const AST &type_ast)
               children_type_pos = 0;
               break;
             case 2:
-              children_type_pos = 1;
+              {
+                children_type_pos = 1;
+                auto type_of_expr
+                    = get_type_from_expr_ast (current->children.at (0));
+
+                if (!is_raw_integer (type_of_expr))
+                  {
+                    add_error (
+                        current->children.at (0).token_position,
+                        SAError::ErrType::SA_ERR_TYPE_ARRAY_NOT_RAW_INT);
+                    return {};
+                  }
+              }
               break;
+
             default:
               add_error (current->token_position,
                          SAError::ErrType::
@@ -90,6 +103,40 @@ SemanticAnalyzer::resolve_plain_type (const std::string &type,
   add_error (plain_type_pos,
              SAError::ErrType::SA_ERR_TYPE_TYPE_IS_NOT_DEFINED);
   return {};
+}
+
+bool
+SemanticAnalyzer::verify_comptime_array (const AST &type_ast)
+{
+  bool comptime = true;
+
+  auto current = &type_ast;
+  while (current != nullptr)
+    {
+      if (current->type == ASTType::AST_TYPE_ARRAY)
+        {
+          size_t next_type_pos;
+          if (current->children.size () == 2)
+            {
+              if (!verify_expr_comptime (current->children.at (0)))
+                {
+                  comptime = false;
+                  break;
+                }
+              next_type_pos = 1;
+            }
+          else
+            {
+              next_type_pos = 0;
+            }
+
+          current = &current->children.at (next_type_pos);
+          continue;
+        }
+      break;
+    }
+
+  return comptime;
 }
 
 }
