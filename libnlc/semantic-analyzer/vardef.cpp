@@ -37,7 +37,7 @@ SemanticAnalyzer::analyze_vardef (const AST &vardef)
       return;
     }
 
-  if (variable_is_defined (name))
+  if (variable_is_defined (name) || function_is_defined (name))
     {
       add_error (vardef.token_position,
                  SAError::SA_ERR_TYPE_VARIABLE_ALREADY_DECLARED);

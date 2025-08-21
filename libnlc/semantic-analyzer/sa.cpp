@@ -76,6 +76,19 @@ SemanticAnalyzer::variable_is_defined (const std::string &name)
   return false;
 }
 
+bool
+SemanticAnalyzer::function_is_defined (const std::string &name)
+{
+  for (const auto &scope : _scope_stack)
+    {
+      if (IS_IN_MAP (scope.func_table, name))
+        {
+          return true;
+        }
+    }
+  return false;
+}
+
 Type
 SemanticAnalyzer::search_for_variable_type (const std::string &name,
                                             bool &found)

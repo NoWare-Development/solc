@@ -128,6 +128,7 @@ private:
   Type resolve_plain_type (const std::string &type, size_t plain_type_pos);
 
   bool variable_is_defined (const std::string &name);
+  bool function_is_defined (const std::string &name);
   Type search_for_variable_type (const std::string &name, bool &found);
 
   size_t get_size_of_builtin_type (BuiltinType type);

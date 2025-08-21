@@ -21,7 +21,7 @@ SemanticAnalyzer::analyze_vardecl (const AST &vardecl)
   if (!verify_comptime_array (vardecl.children.at (0)))
     return;
 
-  if (variable_is_defined (name))
+  if (variable_is_defined (name) || function_is_defined (name))
     {
       add_error (vardecl.token_position,
                  SAError::SA_ERR_TYPE_VARIABLE_ALREADY_DECLARED);
