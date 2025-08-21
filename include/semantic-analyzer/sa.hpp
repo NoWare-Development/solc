@@ -68,6 +68,13 @@ public:
       SA_ERR_TYPE_NEGATIVE_OF_POINTER,
       SA_ERR_TYPE_NEGATIVE_OF_STRUCT,
       SA_ERR_TYPE_NEGATIVE_OF_UNION,
+
+      // 1
+      SA_ERR_TYPE_VARIABLE_ALREADY_DECLARED,
+      SA_ERR_TYPE_FUNCTION_ALREADY_DECLARED,
+      SA_ERR_TYPE_STRUCTURE_ALREADY_DEFINED,
+      SA_ERR_TYPE_UNION_ALREADY_DEFINED,
+      SA_ERR_TYPE_ENUM_ALREADY_DEFINED,
     };
 
     std::vector<size_t> positions;
@@ -98,6 +105,7 @@ private:
   Type get_type_from_expr_ast (const AST &expr_ast);
   Type resolve_plain_type (const std::string &type, size_t plain_type_pos);
 
+  bool variable_is_defined (const std::string &name);
   Type search_for_variable_type (const std::string &name, bool &found);
 
   size_t get_size_of_builtin_type (BuiltinType type);

@@ -51,6 +51,19 @@ SemanticAnalyzer::analyze_program (const AST &prog)
 #define IS_IN_MAP(map, val) ((map).find ((val)) != (map).end ())
 #endif
 
+bool
+SemanticAnalyzer::variable_is_defined (const std::string &name)
+{
+  for (const auto &scope : _scope_stack)
+    {
+      if (IS_IN_MAP (scope.variable_table, name))
+        {
+          return true;
+        }
+    }
+  return false;
+}
+
 Type
 SemanticAnalyzer::search_for_variable_type (const std::string &name,
                                             bool &found)

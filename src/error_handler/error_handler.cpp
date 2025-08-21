@@ -560,7 +560,7 @@ ErrorHandler::get_semantic_analyzer_error_reason (
     case SemanticAnalyzer::SAError::ErrType::
         SA_ERR_TYPE_CANNOT_CONVERT_FLOAT_TO_INTTYPE_TYPESPEC:
       {
-        out = "Cannot convert floating-point value to an integer type of type "
+        out = "Cannot convert floating-point value to an integer with type "
               "specifier \"";
         out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
         out += _tokens.at (err.positions.at (0)).value;
@@ -628,6 +628,55 @@ ErrorHandler::get_semantic_analyzer_error_reason (
     case SemanticAnalyzer::SAError::ErrType::SA_ERR_TYPE_NEGATIVE_OF_UNION:
       {
         out = "Taking negative of a union";
+      }
+      break;
+
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_VARIABLE_ALREADY_DECLARED:
+      {
+        out = "Variable \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+        out += "\" is already declared";
+      }
+      break;
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_FUNCTION_ALREADY_DECLARED:
+      {
+        out = "Function \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+        out += "\" is already declared";
+      }
+      break;
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_STRUCTURE_ALREADY_DEFINED:
+      {
+        out = "Structure \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+        out += "\" is already defined";
+      }
+      break;
+    case SemanticAnalyzer::SAError::ErrType::SA_ERR_TYPE_UNION_ALREADY_DEFINED:
+      {
+        out = "Union \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+        out += "\" is already defined";
+      }
+      break;
+    case SemanticAnalyzer::SAError::ErrType::SA_ERR_TYPE_ENUM_ALREADY_DEFINED:
+      {
+        out = "Enum \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+        out += "\" is already defined";
       }
       break;
 
