@@ -45,7 +45,6 @@ Parser::parse_variable_decldef ()
     }
 
   AST variable_decl (start_pos, ASTType::AST_VAR_DECL, identifier);
-  _pos++;
   variable_decl.append (type_);
   return variable_decl;
 }
