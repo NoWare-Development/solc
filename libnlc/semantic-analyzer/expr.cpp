@@ -121,6 +121,14 @@ SemanticAnalyzer::get_type_from_expr_ast (const AST &expr_ast)
 
     case ASTType::AST_EXPR_OPERAND_CAST_TO:
       {
+        if (expr_ast.children.at (0).type == ASTType::AST_TYPE_ARRAY)
+          {
+            add_error (
+                expr_ast.children.at (0).token_position,
+                SAError::ErrType::SA_ERR_TYPE_CANNOT_CAST_VALUE_TO_AN_ARRAY);
+            return {};
+          }
+
         auto type_to_cast = get_type_from_type_ast (expr_ast.children.at (0));
         auto type_of_operand
             = get_type_from_expr_ast (expr_ast.children.at (1));

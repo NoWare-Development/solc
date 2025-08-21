@@ -770,6 +770,13 @@ ErrorHandler::get_semantic_analyzer_error_reason (
       }
       break;
 
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_CANNOT_CAST_VALUE_TO_AN_ARRAY:
+      {
+        out = "Cannot cast value to an array";
+      }
+      break;
+
     default:
       out = "<Unknown error>";
       break;
