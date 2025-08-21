@@ -366,7 +366,7 @@ Parser::pratt_parse_expression (const std::vector<AST> &in, size_t *pos,
         }
 
       // Put everything to `lhs`
-      lhs = AST (start_ast_pos, ASTType::AST_PREFIX_EXPR);
+      lhs = AST (cur.token_position, ASTType::AST_PREFIX_EXPR);
       for (const auto &e : prefixlist)
         {
           lhs.append (e);

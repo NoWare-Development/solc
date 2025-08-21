@@ -4,6 +4,8 @@
 namespace info
 {
 
+// TODO: move me into something like `nlcinfo.hpp.in` and preprocess it with
+// meson.
 #define NLC_VERSION "1.0.0"
 #define COPYRIGHT_YEAR "2025"
 

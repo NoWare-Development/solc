@@ -7,6 +7,8 @@ namespace nlc
 AST
 Parser::parse_variable_decldef ()
 {
+  auto start_pos = _pos;
+
   auto cur = _tokens.at (_pos);
   const std::string identifier = cur.value;
   _pos++;
@@ -22,7 +24,8 @@ Parser::parse_variable_decldef ()
 
   if (cur.type == TokenType::TOKEN_EQ)
     {
-      AST variable_def (_pos++, ASTType::AST_VAR_DEF, identifier);
+      AST variable_def (start_pos, ASTType::AST_VAR_DEF, identifier);
+      _pos++;
       variable_def.append (type_);
 
       VERIFY_POS (_pos);
@@ -41,7 +44,8 @@ Parser::parse_variable_decldef ()
       return variable_def;
     }
 
-  AST variable_decl (_pos, ASTType::AST_VAR_DECL, identifier);
+  AST variable_decl (start_pos, ASTType::AST_VAR_DECL, identifier);
+  _pos++;
   variable_decl.append (type_);
   return variable_decl;
 }

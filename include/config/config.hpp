@@ -58,6 +58,12 @@ public:
 private:
   Config () = default;
 
+  struct Arch
+  {
+    size_t bits;
+    std::string name;
+  } _arch{ .bits = 64, .name = "amd64" }; // TODO: make configurable
+
   std::vector<std::string> _include_paths{};
 
   std::vector<std::string> _link_lib_search_paths{};

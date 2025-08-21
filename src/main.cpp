@@ -2,6 +2,7 @@
 #include "config/config.hpp"
 #include "error_handler/error_handler.hpp"
 #include "info/info.hpp"
+#include "semantic-analyzer/sa.hpp"
 #include "util/util.hpp"
 #include <fstream>
 #include <iostream>
@@ -107,6 +108,13 @@ main (int argc, char **argv)
       if (!handler.handle_invalid_expressions (root))
         {
           return -5;
+        }
+
+      nlc::sa::SemanticAnalyzer sa (root);
+      if (!sa.analyze ())
+        {
+          handler.handle_sa_errors (sa.get_errors ());
+          return -6;
         }
     }
 

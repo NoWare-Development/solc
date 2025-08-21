@@ -2,6 +2,7 @@
 #include "../util/util.hpp"
 #include "lexer/token.hpp"
 #include "parser/parser.hpp"
+#include "semantic-analyzer/sa.hpp"
 #include <iostream>
 #include <string>
 
@@ -91,6 +92,29 @@ ErrorHandler::handle_invalid_expressions (const nlc::AST &root) const
     }
 
   return true;
+}
+
+void
+ErrorHandler::handle_sa_errors (
+    const std::vector<nlc::sa::SemanticAnalyzer::SAError> &errors) const
+{
+  for (const auto &e : errors)
+    {
+      std::string err_reason = get_semantic_analyzer_error_reason (e);
+      const nlc::Token &tok = _tokens.at (e.positions.at (0));
+
+      std::string message = get_message_start (
+          tok.line + 1, tok.end - tok.len + 1, "error", ESCColor::ESCCOLOR_RED,
+          ESCGraphics::ESCGRAPHICS_BOLD);
+
+      message += err_reason;
+      message += '\n';
+
+      message += get_highlighted_token (tok, ESCColor::ESCCOLOR_RED,
+                                        ESCGraphics::ESCGRAPHICS_BOLD);
+
+      std::cout << message << '\n';
+    }
 }
 
 void
@@ -387,9 +411,230 @@ ErrorHandler::get_number_length (long long num) const
   return len;
 }
 
-bool
-ErrorHandler::is_parser_error_displayable (
-    nlc::Parser::ParserError::ErrType type) const
+std::string
+ErrorHandler::get_semantic_analyzer_error_reason (
+    const nlc::sa::SemanticAnalyzer::SAError &err) const
 {
-  return false;
+  using namespace nlc::sa;
+
+  std::string out{};
+  switch (err.type)
+    {
+    case SemanticAnalyzer::SAError::ErrType::SA_ERR_TYPE_WRONG_AST_TYPE:
+      {
+        out = "Wrong AST type (compiler bug): \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+        out += "\"";
+      }
+      break;
+
+    case SemanticAnalyzer::SAError::ErrType::SA_ERR_TYPE_NO_NAME_FOR_VARIABLE:
+      {
+        out = "No name for variable (compiler bug): \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+        out += "\"";
+      }
+      break;
+
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_WRONG_NUMBER_OF_ARRAYS_CHILDREN:
+      {
+        out = "Wrong number of array's children (compiler bug): \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+        out += "\"";
+      }
+      break;
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_WRONG_NUMBER_OF_POINTERS_CHILDREN:
+      {
+        out = "Wrong number of pointer's children (compiler bug): \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+        out += "\"";
+      }
+      break;
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_WRONG_NUMBER_OF_INTLIT_CHILDREN:
+      {
+        out = "Wrong number of integer literal's children (compiler bug): \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+        out += "\"";
+      }
+      break;
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_WRONG_NUMBER_OF_FLOATLIT_CHILDREN:
+      {
+        out = "Wrong number of float literal's children (compiler bug): \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+        out += "\"";
+      }
+      break;
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_WRONG_NUMBER_OF_EXPR_CHILDREN:
+      {
+        out = "Wrong number of expression's children (compiler bug): \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+        out += "\"";
+      }
+      break;
+
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_TYPE_HAS_NO_PLAIN_TYPE:
+      {
+        out = "Type has no plain type (compiler bug): \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+        out += "\"";
+      }
+      break;
+    case SemanticAnalyzer::SAError::ErrType::SA_ERR_TYPE_TYPE_IS_NOT_DEFINED:
+      {
+        out = "Type \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+        out += "\" is not defined";
+      }
+      break;
+
+    case SemanticAnalyzer::SAError::ErrType::SA_ERR_TYPE_INVALID_TYPESPEC:
+      {
+        out = "Type specifier \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+        out += "\" is not valid";
+      }
+      break;
+
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_CANNOT_CONVERT_TYPES_IN_EXPR:
+      {
+        out = "Cannot convert type of \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+        out += "\" to type of \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (1)).value;
+        out += escape_reset ();
+        out += "\"";
+      }
+      break;
+
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_CANNOT_CONVERT_TYPES_IN_VARDEF:
+      {
+        out = "Cannot convert expression to type of \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (1)).value;
+        out += escape_reset ();
+        out += "\"";
+      }
+      break;
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_CANNOT_CONVERT_TYPES_IN_CAST:
+      {
+        out = "Cannot cast type of \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+        out += "\"";
+      }
+      break;
+
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_CANNOT_CONVERT_FLOAT_TO_INTTYPE_TYPESPEC:
+      {
+        out = "Cannot convert floating-point value to an integer type of type "
+              "specifier \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+        out += "\"";
+      }
+      break;
+
+    case SemanticAnalyzer::SAError::ErrType::SA_ERR_TYPE_UNDECLARED_VARIABLE:
+      {
+        out = "Variable \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+        out += "\" is not declared";
+      }
+      break;
+
+    case SemanticAnalyzer::SAError::ErrType::SA_ERR_TYPE_UNDECLARED_FUNCTION:
+      {
+        out = "Function \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+        out += "\" is not declared";
+      }
+      break;
+
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_DEREFERENCING_NONPOINTER_VALUE:
+      {
+        out = "Attempt to dereference a non-pointer value";
+      }
+      break;
+
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_BINARY_NOT_ON_NON_INTEGER:
+      {
+        out = "Binary not on a non-integer value";
+      }
+      break;
+
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_BINARY_NOT_ON_A_POINTER:
+      {
+        out = "Binary not on a pointer value";
+      }
+      break;
+
+    case SemanticAnalyzer::SAError::ErrType::SA_ERR_TYPE_NEGATIVE_OF_VOID:
+      {
+        out = "Taking negative of a value of type \"void\"";
+      }
+      break;
+    case SemanticAnalyzer::SAError::ErrType::SA_ERR_TYPE_NEGATIVE_OF_POINTER:
+      {
+        out = "Taking negative of a pointer";
+      }
+      break;
+    case SemanticAnalyzer::SAError::ErrType::SA_ERR_TYPE_NEGATIVE_OF_STRUCT:
+      {
+        out = "Taking negative of a structure";
+      }
+      break;
+    case SemanticAnalyzer::SAError::ErrType::SA_ERR_TYPE_NEGATIVE_OF_UNION:
+      {
+        out = "Taking negative of a union";
+      }
+      break;
+
+    default:
+      out = "<Unknown error>";
+      break;
+    }
+
+  return out;
 }
