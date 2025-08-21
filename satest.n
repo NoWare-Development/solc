@@ -2,3 +2,6 @@ var1: *int = cast(*int)4;
 vararray: float[1] = cast(*float)4;
 
 boolvar: *bool = &true;
+
+testvar: int;
+testvar: float;

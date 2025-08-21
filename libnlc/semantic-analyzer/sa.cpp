@@ -37,10 +37,22 @@ SemanticAnalyzer::analyze_program (const AST &prog)
   const auto &children = prog.children;
   for (const auto &child : children)
     {
-      if (child.type == ASTType::AST_VAR_DEF)
+      switch (child.type)
         {
-          analyze_vardef (child);
-          continue;
+        case ASTType::AST_VAR_DECL:
+          {
+            analyze_vardecl (child);
+            continue;
+          }
+
+        case ASTType::AST_VAR_DEF:
+          {
+            analyze_vardef (child);
+            continue;
+          }
+
+        default:
+          break;
         }
 
       TODO ("More AST types");

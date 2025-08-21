@@ -117,6 +117,7 @@ private:
   ScopeStack _scope_stack{};
 
   void analyze_program (const AST &prog);
+  void analyze_vardecl (const AST &vardecl);
   void analyze_vardef (const AST &vardef);
 
   Type get_type_from_type_ast (const AST &type_ast);
