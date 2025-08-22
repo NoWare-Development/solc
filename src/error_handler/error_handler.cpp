@@ -3,6 +3,7 @@
 #include "lexer/token.hpp"
 #include "parser/parser.hpp"
 #include "semantic-analyzer/sa.hpp"
+#include "semantic-analyzer/types.hpp"
 #include <iostream>
 #include <string>
 
@@ -569,6 +570,29 @@ ErrorHandler::get_semantic_analyzer_error_reason (
       }
       break;
 
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_CANNOT_CONVERT_FUNCTION_ARGUMENT:
+      {
+        out = "Cannot convert argument for function \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+        out += "\" ";
+
+        out += "from \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += get_type_name_from_sa_type (err.types.at (0));
+        out += escape_reset ();
+        out += "\" ";
+
+        out += "to \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += get_type_name_from_sa_type (err.types.at (1));
+        out += escape_reset ();
+        out += "\"";
+      }
+      break;
+
     case SemanticAnalyzer::SAError::ErrType::SA_ERR_TYPE_UNDECLARED_VARIABLE:
       {
         out = "Variable \"";
@@ -792,10 +816,113 @@ ErrorHandler::get_semantic_analyzer_error_reason (
       }
       break;
 
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_INVALID_NUMBER_OF_ARGUMENTS_IN_FUNCTION:
+      {
+        out = "Invalid number of arguments for function \"";
+        out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+        out += _tokens.at (err.positions.at (0)).value;
+        out += escape_reset ();
+
+        out += "\", expected: ";
+        out += err.expected;
+
+        out += " , got: ";
+        out += err.got;
+      }
+      break;
+
     default:
       out = "<Unknown error>";
       break;
     }
 
   return out;
+}
+
+std::string
+ErrorHandler::get_type_name_from_sa_type (const nlc::sa::Type &type) const
+{
+  std::string base_type{};
+  std::string pointer_str{};
+
+  for (size_t i = 0; i < type.pointer_count; i++)
+    {
+      pointer_str += '*';
+    }
+
+  switch (type.type)
+    {
+    case nlc::sa::BuiltinType::BUILTIN_TYPE_UNK:
+      base_type = "<UNKNOWN TYPE>";
+      break;
+
+    case nlc::sa::BuiltinType::BUILTIN_TYPE_VOID:
+      base_type = "void";
+      break;
+
+    case nlc::sa::BuiltinType::BUILTIN_TYPE_UCHAR:
+      base_type = "uchar";
+      break;
+    case nlc::sa::BuiltinType::BUILTIN_TYPE_USHORT:
+      base_type = "ushort";
+      break;
+    case nlc::sa::BuiltinType::BUILTIN_TYPE_UINT:
+      base_type = "uint";
+      break;
+    case nlc::sa::BuiltinType::BUILTIN_TYPE_ULONG:
+      base_type = "ulong";
+      break;
+
+    case nlc::sa::BuiltinType::BUILTIN_TYPE_CHAR:
+      base_type = "char";
+      break;
+    case nlc::sa::BuiltinType::BUILTIN_TYPE_SHORT:
+      base_type = "short";
+      break;
+    case nlc::sa::BuiltinType::BUILTIN_TYPE_INT:
+      base_type = "int";
+      break;
+    case nlc::sa::BuiltinType::BUILTIN_TYPE_LONG:
+      base_type = "long";
+      break;
+
+    case nlc::sa::BuiltinType::BUILTIN_TYPE_FLOAT:
+      base_type = "float";
+      break;
+    case nlc::sa::BuiltinType::BUILTIN_TYPE_DOUBLE:
+      base_type = "double";
+      break;
+
+    case nlc::sa::BuiltinType::BUILTIN_TYPE_BOOL:
+      base_type = "bool";
+      break;
+
+    case nlc::sa::BuiltinType::BUILTIN_TYPE_STRUCT:
+    case nlc::sa::BuiltinType::BUILTIN_TYPE_UNION:
+    case nlc::sa::BuiltinType::BUILTIN_TYPE_ENUM:
+      base_type = type.type_name;
+      break;
+
+    case nlc::sa::BuiltinType::BUILTIN_TYPE_FUNC:
+      {
+        base_type = "(";
+        for (size_t i = 0; i < type.argument_types.size (); i++)
+          {
+            if (i > 0)
+              {
+                base_type += ", ";
+              }
+            const auto &argtype = type.argument_types.at (i);
+            base_type += get_type_name_from_sa_type (argtype);
+          }
+        base_type += ") -> ";
+
+        const auto &return_type = *type.return_type;
+        base_type += get_type_name_from_sa_type (return_type);
+      }
+      break;
+    }
+
+  return pointer_str + base_type;
 }

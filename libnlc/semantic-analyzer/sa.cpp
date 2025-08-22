@@ -76,6 +76,23 @@ SemanticAnalyzer::variable_is_defined (const std::string &name)
   return false;
 }
 
+Type
+SemanticAnalyzer::search_for_variable_type (const std::string &name)
+{
+  Type out{};
+
+  for (const auto &scope : _scope_stack)
+    {
+      if (IS_IN_MAP (scope.variable_table, name))
+        {
+          out = scope.variable_table.at (name).type;
+          break;
+        }
+    }
+
+  return out;
+}
+
 bool
 SemanticAnalyzer::function_is_defined (const std::string &name)
 {
@@ -89,19 +106,16 @@ SemanticAnalyzer::function_is_defined (const std::string &name)
   return false;
 }
 
-Type
-SemanticAnalyzer::search_for_variable_type (const std::string &name,
-                                            bool &found)
+Func
+SemanticAnalyzer::search_for_function (const std::string &name)
 {
-  Type out{};
+  Func out{};
 
-  found = false;
   for (const auto &scope : _scope_stack)
     {
-      if (IS_IN_MAP (scope.variable_table, name))
+      if (IS_IN_MAP (scope.func_table, name))
         {
-          out = scope.variable_table.at (name).type;
-          found = true;
+          out = scope.func_table.at (name);
           break;
         }
     }

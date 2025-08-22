@@ -52,6 +52,9 @@ public:
       // 1
       SA_ERR_TYPE_CANNOT_CONVERT_FLOAT_TO_INTTYPE_TYPESPEC,
 
+      // 1 (has types)
+      SA_ERR_TYPE_CANNOT_CONVERT_FUNCTION_ARGUMENT,
+
       // 1
       SA_ERR_TYPE_UNDECLARED_VARIABLE,
       SA_ERR_TYPE_UNDECLARED_FUNCTION,
@@ -102,9 +105,17 @@ public:
 
       // 1
       SA_ERR_TYPE_CANNOT_ASSIGN_NONPOINTER_VALUE_TO_A_POINTER,
+
+      // 1 (has expected and got)
+      SA_ERR_TYPE_INVALID_NUMBER_OF_ARGUMENTS_IN_FUNCTION,
     };
 
     std::vector<size_t> positions;
+    std::vector<Type> types;
+
+    size_t expected;
+    size_t got;
+
     ErrType type;
 
     SAError (size_t token_position, ErrType type) : type (type)
@@ -137,8 +148,10 @@ private:
   get_types_of_args_from_funcptr_arglist (const AST &arglist);
 
   bool variable_is_defined (const std::string &name);
+  Type search_for_variable_type (const std::string &name);
+
   bool function_is_defined (const std::string &name);
-  Type search_for_variable_type (const std::string &name, bool &found);
+  Func search_for_function (const std::string &name);
 
   size_t get_size_of_builtin_type (BuiltinType type);
   bool verify_comptime_array (const AST &type_ast);

@@ -3,6 +3,7 @@
 #include "semantic-analyzer/sa.hpp"
 #include "semantic-analyzer/types.hpp"
 #include <cstddef>
+#include <iostream>
 
 namespace nlc::sa
 {
@@ -108,9 +109,8 @@ SemanticAnalyzer::get_type_from_expr_ast (const AST &expr_ast)
                          .type = BuiltinType::BUILTIN_TYPE_VOID };
           }
 
-        bool found;
-        auto out = search_for_variable_type (expr_ast.value, found);
-        if (!found)
+        auto out = search_for_variable_type (expr_ast.value);
+        if (out.type == BuiltinType::BUILTIN_TYPE_UNK)
           {
             add_error (expr_ast.token_position,
                        SAError::ErrType::SA_ERR_TYPE_UNDECLARED_VARIABLE);
@@ -121,7 +121,79 @@ SemanticAnalyzer::get_type_from_expr_ast (const AST &expr_ast)
       }
 
     case ASTType::AST_EXPR_OPERAND_CALL:
-      TODO ("Calls");
+      {
+        if (!function_is_defined (expr_ast.value))
+          {
+            add_error (expr_ast.token_position,
+                       SAError::ErrType::SA_ERR_TYPE_UNDECLARED_VARIABLE);
+            return {};
+          }
+        auto func = search_for_function (expr_ast.value);
+
+        std::vector<Type> argtypes{};
+        std::vector<const AST *> argrefs{};
+        for (const auto &arg : expr_ast.children)
+          {
+            auto argtype = get_type_from_expr_ast (arg);
+            if (argtype.type == BuiltinType::BUILTIN_TYPE_UNK)
+              return {};
+
+            argtypes.emplace_back (std::move (argtype));
+            argrefs.push_back (&arg);
+          }
+
+        if (argtypes.size () != func.arguments.size ()
+            && argtypes.size ()
+                   != func.arguments.size ()
+                          - func.predefined_argument_positions.size ())
+          {
+            SAError _err (
+                expr_ast.token_position,
+                SAError::ErrType::
+                    SA_ERR_TYPE_INVALID_NUMBER_OF_ARGUMENTS_IN_FUNCTION);
+            if (argtypes.size () > func.arguments.size ()
+                || argtypes.size ()
+                       > func.arguments.size ()
+                             - func.predefined_argument_positions.size ())
+              {
+                _err.expected = func.arguments.size ();
+                _err.got = argtypes.size ();
+              }
+            else if (argtypes.size ()
+                     < func.arguments.size ()
+                           - func.predefined_argument_positions.size ())
+              {
+                _err.expected = func.arguments.size ()
+                                - func.predefined_argument_positions.size ();
+                _err.got = argtypes.size ();
+              }
+            add_error (std::move (_err));
+            return {};
+          }
+
+        for (size_t i = 0; i < argtypes.size (); i++)
+          {
+            const auto &argtype = argtypes.at (i);
+            const auto &func_argtype = func.arguments.at (i);
+
+            if ((func_argtype.pointer_count > 0 && argtype.pointer_count == 0)
+                || (func_argtype.pointer_count == 0
+                    && argtype.pointer_count > 0)
+                || !can_convert_type (argtype, func_argtype))
+              {
+                SAError _err (
+                    argrefs.at (i)->token_position,
+                    SAError::ErrType::
+                        SA_ERR_TYPE_CANNOT_CONVERT_FUNCTION_ARGUMENT);
+                _err.types.push_back (argtype);
+                _err.types.push_back (func_argtype);
+                add_error (std::move (_err));
+                return {};
+              }
+          }
+
+        return func.return_type;
+      }
       break;
 
     case ASTType::AST_EXPR_OPERAND_CAST_TO:
@@ -175,8 +247,8 @@ SemanticAnalyzer::get_type_from_expr_ast (const AST &expr_ast)
             return {};
           }
 
-        // TODO: check for different operations on types that don't support for
-        // those.
+        // TODO: check for different operations on types that don't support
+        // for those.
 
         out_type.pointer_count = lhs_type.pointer_count;
         out_type.type_name = lhs_type.type_name;
@@ -442,5 +514,4 @@ SemanticAnalyzer::verify_expr_comptime (const AST &expr_ast)
 
   return false;
 }
-
 }

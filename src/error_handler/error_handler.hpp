@@ -2,6 +2,7 @@
 
 #include "parser/parser.hpp"
 #include "semantic-analyzer/sa.hpp"
+#include "semantic-analyzer/types.hpp"
 #include "util/util.hpp"
 #include <lexer/token.hpp>
 #include <vector>
@@ -61,6 +62,5 @@ private:
 
   size_t get_number_length (long long num) const;
 
-  bool
-  is_parser_error_displayable (nlc::Parser::ParserError::ErrType type) const;
+  std::string get_type_name_from_sa_type (const nlc::sa::Type &type) const;
 };

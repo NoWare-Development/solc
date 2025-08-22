@@ -76,6 +76,7 @@ struct Func
 {
   Type return_type{};
   std::vector<Type> arguments{};
+  std::vector<size_t> predefined_argument_positions{};
   ModifierFlags flags{};
 };
 
