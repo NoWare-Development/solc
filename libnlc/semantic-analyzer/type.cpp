@@ -1,5 +1,8 @@
 #include "libnlc/util.hpp"
 #include "semantic-analyzer/sa.hpp"
+#include "semantic-analyzer/types.hpp"
+#include <iostream>
+#include <memory>
 
 namespace nlc::sa
 {
@@ -71,7 +74,27 @@ SemanticAnalyzer::get_type_from_type_ast (const AST &type_ast)
         }
       else if (current->type == ASTType::AST_TYPE_FUNCPTR)
         {
-          TODO ("Function pointers");
+          out_type.pointer_count = 1;
+          auto arg_types = get_types_of_args_from_funcptr_arglist (
+              current->children.at (0));
+          Type return_type{};
+          if (current->children.size () > 1)
+            {
+              return_type = get_type_from_type_ast (current->children.at (1));
+              if (return_type.type == BuiltinType::BUILTIN_TYPE_UNK)
+                return {};
+            }
+          else
+            {
+              return_type.type = BuiltinType::BUILTIN_TYPE_VOID;
+            }
+
+          out_type.type = BuiltinType::BUILTIN_TYPE_FUNC;
+          out_type.argument_types = std::move (arg_types);
+          out_type.return_type
+              = std::make_shared<Type> (std::move (return_type));
+
+          break;
         }
       else
         {
@@ -137,6 +160,42 @@ SemanticAnalyzer::verify_comptime_array (const AST &type_ast)
     }
 
   return comptime;
+}
+
+std::vector<Type>
+SemanticAnalyzer::get_types_of_args_from_funcptr_arglist (const AST &arglist)
+{
+  std::vector<Type> out{};
+
+  for (const auto &arg : arglist.children)
+    {
+      switch (arg.type)
+        {
+        case ASTType::AST_VAR_DECL:
+          {
+            auto type_of_arg = get_type_from_type_ast (arg.children.at (0));
+            if (type_of_arg.type == BuiltinType::BUILTIN_TYPE_UNK)
+              return {};
+
+            out.emplace_back (std::move (type_of_arg));
+          }
+          break;
+
+        case ASTType::AST_VAR_DEF:
+          {
+            add_error (
+                arg.token_position,
+                SAError::ErrType::
+                    SA_ERR_TYPE_VARDEFS_IN_FUNCPTR_ARGS_ARE_NOT_ALLOWED);
+            return {};
+          }
+
+        default:
+          NEVERREACH ();
+        }
+    }
+
+  return out;
 }
 
 }

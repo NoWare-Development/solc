@@ -102,6 +102,11 @@ SemanticAnalyzer::get_type_from_expr_ast (const AST &expr_ast)
           {
             return Type{ .type = BuiltinType::BUILTIN_TYPE_BOOL };
           }
+        else if (expr_ast.value == "nullptr")
+          {
+            return Type{ .pointer_count = 1,
+                         .type = BuiltinType::BUILTIN_TYPE_VOID };
+          }
 
         bool found;
         auto out = search_for_variable_type (expr_ast.value, found);

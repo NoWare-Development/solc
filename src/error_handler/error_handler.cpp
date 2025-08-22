@@ -777,6 +777,21 @@ ErrorHandler::get_semantic_analyzer_error_reason (
       }
       break;
 
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_VARDEFS_IN_FUNCPTR_ARGS_ARE_NOT_ALLOWED:
+      {
+        out = "Variable definitions in function pointer declarations are not "
+              "allowed";
+      }
+      break;
+
+    case SemanticAnalyzer::SAError::ErrType::
+        SA_ERR_TYPE_CANNOT_ASSIGN_NONPOINTER_VALUE_TO_A_POINTER:
+      {
+        out = "Cannot assign non-pointer value to a variable of pointer type";
+      }
+      break;
+
     default:
       out = "<Unknown error>";
       break;

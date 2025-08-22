@@ -1,7 +1,6 @@
-var1: *int = cast(*int)4;
-vararray: float[1] = cast(*float[])4;
+// var1: *int = cast(*int)4;
+// boolvar: bool = true;
+// boolvarptr: *bool = nullptr;
+// testvar: int;
 
-boolvar: *bool = &true;
-
-testvar: int;
-testvar: float;
+funcptr: (a: int) -> int = nullptr;

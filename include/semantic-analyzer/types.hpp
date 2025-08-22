@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -53,6 +54,10 @@ struct Type
 {
   // Used for structs, unions and enums
   std::string type_name{};
+
+  // Used for function pointers.
+  std::vector<Type> argument_types{};
+  std::shared_ptr<Type> return_type{};
 
   // NOTE: for `type = BUILTIN_TYPE_FUNC` `pointer_count` should always be
   // greater than zero.

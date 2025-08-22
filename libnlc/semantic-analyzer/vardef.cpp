@@ -27,6 +27,14 @@ SemanticAnalyzer::analyze_vardef (const AST &vardef)
   if (type_of_expr.type == BuiltinType::BUILTIN_TYPE_UNK)
     return;
 
+  if (type_of_variable.pointer_count > 0 && type_of_expr.pointer_count == 0)
+    {
+      add_error (vardef.children.at (1).token_position,
+                 SAError::ErrType::
+                     SA_ERR_TYPE_CANNOT_ASSIGN_NONPOINTER_VALUE_TO_A_POINTER);
+      return;
+    }
+
   if (!can_convert_type (type_of_expr, type_of_variable))
     {
       std::vector<size_t> poses = {
@@ -48,6 +56,15 @@ SemanticAnalyzer::analyze_vardef (const AST &vardef)
     .type = type_of_variable,
   };
   _scope_stack.top ().variable_table[name] = out;
+
+  if (type_of_variable.type == BuiltinType::BUILTIN_TYPE_FUNC)
+    {
+      Func funcptr_as_func{
+        .return_type = *type_of_variable.return_type,
+        .arguments = type_of_variable.argument_types,
+      };
+      _scope_stack.top ().func_table[name] = funcptr_as_func;
+    }
 }
 
 }

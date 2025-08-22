@@ -96,6 +96,12 @@ public:
 
       // 1
       SA_ERR_TYPE_CANNOT_CAST_VALUE_TO_AN_ARRAY,
+
+      // 1
+      SA_ERR_TYPE_VARDEFS_IN_FUNCPTR_ARGS_ARE_NOT_ALLOWED,
+
+      // 1
+      SA_ERR_TYPE_CANNOT_ASSIGN_NONPOINTER_VALUE_TO_A_POINTER,
     };
 
     std::vector<size_t> positions;
@@ -126,6 +132,9 @@ private:
   Type get_type_from_type_ast (const AST &type_ast);
   Type get_type_from_expr_ast (const AST &expr_ast);
   Type resolve_plain_type (const std::string &type, size_t plain_type_pos);
+
+  std::vector<Type>
+  get_types_of_args_from_funcptr_arglist (const AST &arglist);
 
   bool variable_is_defined (const std::string &name);
   bool function_is_defined (const std::string &name);
