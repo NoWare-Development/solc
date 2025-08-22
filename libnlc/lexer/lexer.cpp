@@ -16,8 +16,6 @@ Lexer::tokenize (const std::string &src)
 
   while (_pos < _src.length ())
     {
-      skip_comments ();
-
       char c = _src.at (_pos);
 
       if (isspace (c))
@@ -209,7 +207,12 @@ Lexer::tokenize (const std::string &src)
         case '/':
           {
             char n1 = peek (_pos + 1);
-            if (n1 == '=')
+            if (n1 == '/' || n1 == '*')
+              {
+                skip_comments ();
+                continue;
+              }
+            else if (n1 == '=')
               {
                 out.push_back (
                     gen_token (2, _pos + 1, TokenType::TOKEN_DIVEQ, "/="));
