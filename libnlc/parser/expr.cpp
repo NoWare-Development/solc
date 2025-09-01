@@ -197,8 +197,13 @@ Parser::parse_expression_operand ()
 
     case TokenType::TOKEN_NUMFLOAT:
       {
-        out_operand
-            = AST (_pos++, ASTType::AST_EXPR_OPERAND_NUMFLOAT, cur.value);
+        auto value = cur.value;
+        if (value.at (0) == '.')
+          {
+            value = '0' + value;
+          }
+
+        out_operand = AST (_pos++, ASTType::AST_EXPR_OPERAND_NUMFLOAT, value);
         if (_pos < _tokens.size ())
           {
             cur = _tokens.at (_pos);

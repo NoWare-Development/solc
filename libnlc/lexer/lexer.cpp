@@ -1,5 +1,6 @@
 #include "lexer/lexer.hpp"
 #include <cctype>
+#include <iostream>
 #include <vector>
 
 namespace nlc
@@ -357,6 +358,11 @@ Lexer::tokenize (const std::string &src)
 
         case '.':
           {
+            if (isdigit (peek (_pos + 1)))
+              {
+                out.push_back (process_num ());
+                continue;
+              }
             out.push_back (gen_token (1, _pos, TokenType::TOKEN_PERIOD, "."));
             break;
           }
@@ -415,16 +421,16 @@ Lexer::process_num ()
         case 'b':
           return process_numoct ();
         default:
+          if (isdigit (c2))
+            {
+              return process_numoct ();
+            }
+          else if (c2 != '.')
+            {
+              _pos++;
+              return gen_token (1, _pos - 1, TokenType::TOKEN_NUM, "0");
+            }
           break;
-        }
-      if (isdigit (c2))
-        {
-          return process_numoct ();
-        }
-      else if (c2 != '.')
-        {
-          _pos++;
-          return gen_token (1, _pos - 1, TokenType::TOKEN_NUM, "0");
         }
     }
 
@@ -454,6 +460,8 @@ Lexer::process_num ()
       buf += c;
       _pos++;
     }
+
+  std::cout << buf << '\n';
 
   return gen_token (buf.length (), _pos - 1,
                     has_dot ? TokenType::TOKEN_NUMFLOAT : TokenType::TOKEN_NUM,
