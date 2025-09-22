@@ -85,14 +85,6 @@ main (int argc, char **argv)
         {
           return -5;
         }
-
-      // nlc::SemanticAnalyzer sa (srcfile);
-      // auto symboltable = sa.analyze (root);
-      // if (sa.has_errors ())
-      //   {
-      //     handler.handle_sa_errors (sa.get_errors ());
-      //     return -6;
-      //   }
     }
 
   return 0;
