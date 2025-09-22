@@ -14,7 +14,7 @@ Parser::parse_variable_decldef ()
   _pos++;
   VERIFY_POS (_pos);
   cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_COLON);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::COLON);
   _pos++;
   VERIFY_POS (_pos);
 
@@ -22,7 +22,7 @@ Parser::parse_variable_decldef ()
   VERIFY_POS (_pos);
   cur = _tokens.at (_pos);
 
-  if (cur.type == TokenType::TOKEN_EQ)
+  if (cur.type == TokenType::EQ)
     {
       AST variable_def (start_pos, ASTType::VAR_DEF, identifier);
       _pos++;
@@ -30,7 +30,7 @@ Parser::parse_variable_decldef ()
 
       VERIFY_POS (_pos);
       cur = _tokens.at (_pos);
-      if (cur.type == TokenType::TOKEN_LBRACE)
+      if (cur.type == TokenType::LBRACE)
         {
           auto initlist = parse_initialization_list ();
           variable_def.append (initlist);

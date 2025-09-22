@@ -8,7 +8,7 @@ AST
 Parser::parse_case_statement ()
 {
   auto cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_ID);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::ID);
 
   AST out;
 
@@ -19,7 +19,7 @@ Parser::parse_case_statement ()
 
       VERIFY_POS (_pos);
       cur = _tokens.at (_pos);
-      VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_COLON);
+      VERIFY_TOKEN (_pos, cur.type, TokenType::COLON);
       _pos++;
       out = AST (start_pos, ASTType::STMT_DEFAULT);
     }
@@ -34,7 +34,7 @@ Parser::parse_case_statement ()
 
       VERIFY_POS (_pos);
       cur = _tokens.at (_pos);
-      VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_COLON);
+      VERIFY_TOKEN (_pos, cur.type, TokenType::COLON);
       _pos++;
     }
   else

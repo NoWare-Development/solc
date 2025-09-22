@@ -11,7 +11,7 @@ Parser::parse_if_statement ()
 
   VERIFY_POS (_pos);
   auto cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_LPAREN);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::LPAREN);
   _pos++;
 
   VERIFY_POS (_pos);
@@ -20,14 +20,14 @@ Parser::parse_if_statement ()
 
   VERIFY_POS (_pos);
   cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_RPAREN);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::RPAREN);
   _pos++;
 
   auto stmt = parse_statement ();
   ifstmt.append (stmt);
 
   auto next = peek (_pos);
-  if (next == TokenType::TOKEN_ID)
+  if (next == TokenType::ID)
     {
       cur = _tokens.at (_pos);
       if (cur.value == "else")

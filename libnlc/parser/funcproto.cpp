@@ -12,19 +12,19 @@ Parser::parse_function_prototype ()
   _pos += 2;
   VERIFY_POS (_pos);
   auto cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_LPAREN);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::LPAREN);
   auto arguments = parse_argument_list ();
   funcproto.append (arguments);
 
   auto next = peek (_pos);
-  if (next != TokenType::TOKEN_RARROW)
+  if (next != TokenType::RARROW)
     {
       return funcproto;
     }
 
   VERIFY_POS (_pos);
   cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_RARROW);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::RARROW);
 
   _pos++;
   VERIFY_POS (_pos);

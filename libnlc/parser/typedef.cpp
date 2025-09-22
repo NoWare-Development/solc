@@ -16,13 +16,13 @@ Parser::parse_typedef ()
 
   VERIFY_POS (_pos);
   auto cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_ID);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::ID);
   typedef_.value = cur.value;
 
   _pos++;
   VERIFY_POS (_pos);
   cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_SEMI);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::SEMI);
   _pos++;
 
   return typedef_;

@@ -9,7 +9,7 @@ AST
 Parser::parse_decldef ()
 {
   auto cur = _tokens.at (_pos);
-  if (cur.type == TokenType::TOKEN_ID && is_modifier (cur.value))
+  if (cur.type == TokenType::ID && is_modifier (cur.value))
     {
       AST modifier_decldef (_pos++, ASTType::MODIFIER, cur.value);
       auto underlying_decldef = parse_decldef ();
@@ -20,21 +20,21 @@ Parser::parse_decldef ()
   auto next = peek (_pos + 1);
   switch (next)
     {
-    case TokenType::TOKEN_COLON:
+    case TokenType::COLON:
       {
         auto var_decldef = parse_variable_decldef ();
         VERIFY_POS (_pos);
-        VERIFY_TOKEN (_pos, _tokens.at (_pos).type, TokenType::TOKEN_SEMI);
+        VERIFY_TOKEN (_pos, _tokens.at (_pos).type, TokenType::_SEMI);
         _pos++;
         return var_decldef;
       }
 
-    case TokenType::TOKEN_DCOLON:
+    case TokenType::DCOLON:
       {
         return parse_function_decldef ();
       }
 
-    case TokenType::TOKEN_ERR:
+    case TokenType::ERR:
       {
         add_error (ParserError::ErrType::PARSER_ERROR_EXPECTED, _pos);
         return {};

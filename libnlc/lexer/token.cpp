@@ -15,14 +15,14 @@ Token::to_string () const
   bool print_value = !value.empty ();
   switch (type)
     {
-    case TokenType::TOKEN_ID:
-    case TokenType::TOKEN_NUM:
-    case TokenType::TOKEN_NUMHEX:
-    case TokenType::TOKEN_NUMBIN:
-    case TokenType::TOKEN_NUMOCT:
-    case TokenType::TOKEN_NUMFLOAT:
-    case TokenType::TOKEN_STRING:
-    case TokenType::TOKEN_SYMBOL:
+    case TokenType::ID:
+    case TokenType::NUM:
+    case TokenType::NUMHEX:
+    case TokenType::NUMBIN:
+    case TokenType::NUMOCT:
+    case TokenType::NUMFLOAT:
+    case TokenType::STRING:
+    case TokenType::SYMBOL:
       print_value = true;
       break;
     default:
@@ -44,133 +44,133 @@ tokentype_to_string (TokenType type)
 {
   switch (type)
     {
-    case TokenType::TOKEN_ERR:
+    case TokenType::ERR:
       return "ERR";
 
-    case TokenType::TOKEN_ID:
+    case TokenType::ID:
       return "ID";
 
-    case TokenType::TOKEN_NUM:
+    case TokenType::NUM:
       return "NUM";
-    case TokenType::TOKEN_NUMHEX:
+    case TokenType::NUMHEX:
       return "NUMHEX";
-    case TokenType::TOKEN_NUMBIN:
+    case TokenType::NUMBIN:
       return "NUMBIN";
-    case TokenType::TOKEN_NUMOCT:
+    case TokenType::NUMOCT:
       return "NUMOCT";
-    case TokenType::TOKEN_NUMFLOAT:
+    case TokenType::NUMFLOAT:
       return "NUMFLOAT";
 
-    case TokenType::TOKEN_STRING:
+    case TokenType::STRING:
       return "STRING";
-    case TokenType::TOKEN_SYMBOL:
+    case TokenType::SYMBOL:
       return "SYMBOL";
 
-    case TokenType::TOKEN_LPAREN:
+    case TokenType::LPAREN:
       return "LPAREN";
-    case TokenType::TOKEN_RPAREN:
+    case TokenType::RPAREN:
       return "RPAREN";
-    case TokenType::TOKEN_LBRACK:
+    case TokenType::LBRACK:
       return "LBRACK";
-    case TokenType::TOKEN_RBRACK:
+    case TokenType::RBRACK:
       return "RBRACK";
-    case TokenType::TOKEN_LBRACE:
+    case TokenType::LBRACE:
       return "LBRACE";
-    case TokenType::TOKEN_RBRACE:
+    case TokenType::RBRACE:
       return "RBRACE";
 
-    case TokenType::TOKEN_LARROW:
+    case TokenType::LARROW:
       return "LARROW";
-    case TokenType::TOKEN_RARROW:
+    case TokenType::RARROW:
       return "RARROW";
 
-    case TokenType::TOKEN_LTHAN:
+    case TokenType::LTHAN:
       return "LTHAN";
-    case TokenType::TOKEN_GTHAN:
+    case TokenType::GTHAN:
       return "GTHAN";
 
-    case TokenType::TOKEN_COLON:
+    case TokenType::COLON:
       return "COLON";
-    case TokenType::TOKEN_DCOLON:
+    case TokenType::DCOLON:
       return "DCOLON";
 
-    case TokenType::TOKEN_SEMI:
+    case TokenType::SEMI:
       return "SEMI";
 
-    case TokenType::TOKEN_COMMA:
+    case TokenType::COMMA:
       return "COMMA";
-    case TokenType::TOKEN_PERIOD:
+    case TokenType::PERIOD:
       return "PERIOD";
 
-    case TokenType::TOKEN_BAND:
+    case TokenType::BAND:
       return "BAND";
-    case TokenType::TOKEN_BOR:
+    case TokenType::BOR:
       return "BOR";
-    case TokenType::TOKEN_BXOR:
+    case TokenType::BXOR:
       return "BXOR";
-    case TokenType::TOKEN_BNOT:
+    case TokenType::BNOT:
       return "BNOT";
 
-    case TokenType::TOKEN_AND:
+    case TokenType::AND:
       return "AND";
-    case TokenType::TOKEN_OR:
+    case TokenType::OR:
       return "OR";
-    case TokenType::TOKEN_NOT:
+    case TokenType::NOT:
       return "NOT";
-    case TokenType::TOKEN_QUE:
+    case TokenType::QUE:
       return "QUE";
 
-    case TokenType::TOKEN_LTHANEQ:
+    case TokenType::LTHANEQ:
       return "LTHANEQ";
-    case TokenType::TOKEN_GTHANEQ:
+    case TokenType::GTHANEQ:
       return "GTHANEQ";
-    case TokenType::TOKEN_NOTEQ:
+    case TokenType::NOTEQ:
       return "NOTEQ";
 
-    case TokenType::TOKEN_ADD:
+    case TokenType::ADD:
       return "ADD";
-    case TokenType::TOKEN_SUB:
+    case TokenType::SUB:
       return "SUB";
-    case TokenType::TOKEN_MUL:
+    case TokenType::MUL:
       return "MUL";
-    case TokenType::TOKEN_DIV:
+    case TokenType::DIV:
       return "DIV";
-    case TokenType::TOKEN_MOD:
+    case TokenType::MOD:
       return "MOD";
-    case TokenType::TOKEN_SHL:
+    case TokenType::SHL:
       return "SHL";
-    case TokenType::TOKEN_SHR:
+    case TokenType::SHR:
       return "SHR";
 
-    case TokenType::TOKEN_EQ:
+    case TokenType::EQ:
       return "EQ";
-    case TokenType::TOKEN_ADDEQ:
+    case TokenType::ADDEQ:
       return "ADDEQ";
-    case TokenType::TOKEN_SUBEQ:
+    case TokenType::SUBEQ:
       return "SUBEQ";
-    case TokenType::TOKEN_MULEQ:
+    case TokenType::MULEQ:
       return "MULEQ";
-    case TokenType::TOKEN_DIVEQ:
+    case TokenType::DIVEQ:
       return "DIVEQ";
-    case TokenType::TOKEN_MODEQ:
+    case TokenType::MODEQ:
       return "MODEQ";
-    case TokenType::TOKEN_BANDEQ:
+    case TokenType::BANDEQ:
       return "BANDEQ";
-    case TokenType::TOKEN_BOREQ:
+    case TokenType::BOREQ:
       return "BOREQ";
-    case TokenType::TOKEN_BXOREQ:
+    case TokenType::BXOREQ:
       return "BXOREQ";
-    case TokenType::TOKEN_SHLEQ:
+    case TokenType::SHLEQ:
       return "SHLEQ";
-    case TokenType::TOKEN_SHREQ:
+    case TokenType::SHREQ:
       return "SHREQ";
 
-    case TokenType::TOKEN_EQEQ:
+    case TokenType::EQEQ:
       return "EQEQ";
 
-    case TokenType::TOKEN_AT:
+    case TokenType::AT:
       return "AT";
-    case TokenType::TOKEN_HASH:
+    case TokenType::HASH:
       return "HASH";
 
     default:

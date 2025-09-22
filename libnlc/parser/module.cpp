@@ -8,12 +8,12 @@ AST
 Parser::parse_module ()
 {
   auto cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_ID);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::ID);
 
   AST module (_pos++, ASTType::MODULE, cur.value);
 
   auto next = peek (_pos);
-  if (next == TokenType::TOKEN_DCOLON)
+  if (next == TokenType::DCOLON)
     {
       _pos++;
       VERIFY_POS (_pos);

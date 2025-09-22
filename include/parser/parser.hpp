@@ -348,58 +348,57 @@ private:
   }
 
   const std::map<TokenType, ASTType> _binary_operators = {
-    { TokenType::TOKEN_ADD, ASTType::EXPR_BINARY_OPERATOR_ADD },
-    { TokenType::TOKEN_SUB, ASTType::EXPR_BINARY_OPERATOR_SUB },
-    { TokenType::TOKEN_MUL, ASTType::EXPR_BINARY_OPERATOR_MUL },
-    { TokenType::TOKEN_DIV, ASTType::EXPR_BINARY_OPERATOR_DIV },
-    { TokenType::TOKEN_MOD, ASTType::EXPR_BINARY_OPERATOR_MOD },
-    { TokenType::TOKEN_SHL, ASTType::EXPR_BINARY_OPERATOR_SHL },
-    { TokenType::TOKEN_SHR, ASTType::EXPR_BINARY_OPERATOR_SHR },
-    { TokenType::TOKEN_BAND, ASTType::EXPR_BINARY_OPERATOR_AND },
-    { TokenType::TOKEN_BOR, ASTType::EXPR_BINARY_OPERATOR_OR },
-    { TokenType::TOKEN_BXOR, ASTType::EXPR_BINARY_OPERATOR_XOR },
+    { TokenType::ADD, ASTType::EXPR_BINARY_OPERATOR_ADD },
+    { TokenType::SUB, ASTType::EXPR_BINARY_OPERATOR_SUB },
+    { TokenType::MUL, ASTType::EXPR_BINARY_OPERATOR_MUL },
+    { TokenType::DIV, ASTType::EXPR_BINARY_OPERATOR_DIV },
+    { TokenType::MOD, ASTType::EXPR_BINARY_OPERATOR_MOD },
+    { TokenType::SHL, ASTType::EXPR_BINARY_OPERATOR_SHL },
+    { TokenType::SHR, ASTType::EXPR_BINARY_OPERATOR_SHR },
+    { TokenType::BAND, ASTType::EXPR_BINARY_OPERATOR_AND },
+    { TokenType::BOR, ASTType::EXPR_BINARY_OPERATOR_OR },
+    { TokenType::BXOR, ASTType::EXPR_BINARY_OPERATOR_XOR },
   };
 
   const std::map<TokenType, ASTType> _compare_operators = {
-    { TokenType::TOKEN_EQEQ, ASTType::EXPR_COMPARE_OPERATOR_EQ },
-    { TokenType::TOKEN_NOTEQ, ASTType::EXPR_COMPARE_OPERATOR_NOTEQ },
-    { TokenType::TOKEN_LTHAN, ASTType::EXPR_COMPARE_OPERATOR_LTHAN },
-    { TokenType::TOKEN_GTHAN, ASTType::EXPR_COMPARE_OPERATOR_GTHAN },
-    { TokenType::TOKEN_LTHANEQ, ASTType::EXPR_COMPARE_OPERATOR_LTHANEQ },
-    { TokenType::TOKEN_GTHANEQ, ASTType::EXPR_COMPARE_OPERATOR_GTHANEQ },
+    { TokenType::EQEQ, ASTType::EXPR_COMPARE_OPERATOR_EQ },
+    { TokenType::NOTEQ, ASTType::EXPR_COMPARE_OPERATOR_NOTEQ },
+    { TokenType::LTHAN, ASTType::EXPR_COMPARE_OPERATOR_LTHAN },
+    { TokenType::GTHAN, ASTType::EXPR_COMPARE_OPERATOR_GTHAN },
+    { TokenType::LTHANEQ, ASTType::EXPR_COMPARE_OPERATOR_LTHANEQ },
+    { TokenType::GTHANEQ, ASTType::EXPR_COMPARE_OPERATOR_GTHANEQ },
   };
 
   const std::map<TokenType, ASTType> _boolean_operators = {
-    { TokenType::TOKEN_AND, ASTType::EXPR_BOOLEAN_OPERATOR_AND },
-    { TokenType::TOKEN_OR, ASTType::EXPR_BOOLEAN_OPERATOR_OR },
+    { TokenType::AND, ASTType::EXPR_BOOLEAN_OPERATOR_AND },
+    { TokenType::OR, ASTType::EXPR_BOOLEAN_OPERATOR_OR },
   };
 
   const std::map<TokenType, ASTType> _assign_operators = {
-    { TokenType::TOKEN_EQ, ASTType::EXPR_ASSIGN_OPERATOR_EQ },
-    { TokenType::TOKEN_ADDEQ, ASTType::EXPR_ASSIGN_OPERATOR_ADDEQ },
-    { TokenType::TOKEN_SUBEQ, ASTType::EXPR_ASSIGN_OPERATOR_SUBEQ },
-    { TokenType::TOKEN_MULEQ, ASTType::EXPR_ASSIGN_OPERATOR_MULEQ },
-    { TokenType::TOKEN_DIVEQ, ASTType::EXPR_ASSIGN_OPERATOR_DIVEQ },
-    { TokenType::TOKEN_MODEQ, ASTType::EXPR_ASSIGN_OPERATOR_MODEQ },
-    { TokenType::TOKEN_SHLEQ, ASTType::EXPR_ASSIGN_OPERATOR_SHLEQ },
-    { TokenType::TOKEN_SHREQ, ASTType::EXPR_ASSIGN_OPERATOR_SHREQ },
-    { TokenType::TOKEN_BANDEQ, ASTType::EXPR_ASSIGN_OPERATOR_ANDEQ },
-    { TokenType::TOKEN_BOREQ, ASTType::EXPR_ASSIGN_OPERATOR_OREQ },
-    { TokenType::TOKEN_BXOREQ, ASTType::EXPR_ASSIGN_OPERATOR_XOREQ },
+    { TokenType::EQ, ASTType::EXPR_ASSIGN_OPERATOR_EQ },
+    { TokenType::ADDEQ, ASTType::EXPR_ASSIGN_OPERATOR_ADDEQ },
+    { TokenType::SUBEQ, ASTType::EXPR_ASSIGN_OPERATOR_SUBEQ },
+    { TokenType::MULEQ, ASTType::EXPR_ASSIGN_OPERATOR_MULEQ },
+    { TokenType::DIVEQ, ASTType::EXPR_ASSIGN_OPERATOR_DIVEQ },
+    { TokenType::MODEQ, ASTType::EXPR_ASSIGN_OPERATOR_MODEQ },
+    { TokenType::SHLEQ, ASTType::EXPR_ASSIGN_OPERATOR_SHLEQ },
+    { TokenType::SHREQ, ASTType::EXPR_ASSIGN_OPERATOR_SHREQ },
+    { TokenType::BANDEQ, ASTType::EXPR_ASSIGN_OPERATOR_ANDEQ },
+    { TokenType::BOREQ, ASTType::EXPR_ASSIGN_OPERATOR_OREQ },
+    { TokenType::BXOREQ, ASTType::EXPR_ASSIGN_OPERATOR_XOREQ },
   };
 
   const std::map<TokenType, ASTType> _prefix_operators = {
-    { TokenType::TOKEN_NOT, ASTType::EXPR_PREFIX_OPERATOR_NOT },
-    { TokenType::TOKEN_BNOT, ASTType::EXPR_PREFIX_OPERATOR_BNOT },
-    { TokenType::TOKEN_SUB, ASTType::EXPR_PREFIX_OPERATOR_NEG },
-    { TokenType::TOKEN_MUL, ASTType::EXPR_PREFIX_OPERATOR_DEREF },
-    { TokenType::TOKEN_BAND, ASTType::EXPR_PREFIX_OPERATOR_ADDRESS },
+    { TokenType::NOT, ASTType::EXPR_PREFIX_OPERATOR_NOT },
+    { TokenType::BNOT, ASTType::EXPR_PREFIX_OPERATOR_BNOT },
+    { TokenType::SUB, ASTType::EXPR_PREFIX_OPERATOR_NEG },
+    { TokenType::MUL, ASTType::EXPR_PREFIX_OPERATOR_DEREF },
+    { TokenType::BAND, ASTType::EXPR_PREFIX_OPERATOR_ADDRESS },
   };
 
   const std::vector<TokenType> _numeric_tokens = {
-    TokenType::TOKEN_NUM,      TokenType::TOKEN_NUMHEX,
-    TokenType::TOKEN_NUMBIN,   TokenType::TOKEN_NUMOCT,
-    TokenType::TOKEN_NUMFLOAT,
+    TokenType::NUM,    TokenType::NUMHEX,   TokenType::NUMBIN,
+    TokenType::NUMOCT, TokenType::NUMFLOAT,
   };
 
   const std::vector<std::string> _modifiers = {
