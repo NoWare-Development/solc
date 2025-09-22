@@ -2,7 +2,6 @@
 
 #include <cstddef>
 #include <cstdint>
-#include <memory>
 #include <string>
 #include <vector>
 
@@ -55,14 +54,19 @@ public:
   void set_compiler_action (CompilerAction act);
   CompilerAction get_compiler_action () const;
 
+  enum OutputArch
+  {
+    ARCH_X86,
+    ARCH_AMD64,
+    ARCH_ARM64,
+  };
+  void set_output_arch (OutputArch arch);
+  OutputArch get_output_arch () const;
+
+  OutputArch get_default_arch () const;
+
 private:
   Config () = default;
-
-  struct Arch
-  {
-    size_t bits;
-    std::string name;
-  } _arch{ .bits = 64, .name = "amd64" }; // TODO: make configurable
 
   std::vector<std::string> _include_paths{};
 
@@ -74,6 +78,7 @@ private:
   uint32_t _compiler_flags{};
 
   CompilerAction _compiler_action{};
+  OutputArch _output_arch{};
 };
 
 }
