@@ -75,4 +75,22 @@ Config::get_compiler_action () const
   return _compiler_action;
 }
 
+void
+Config::set_output_arch (OutputArch arch)
+{
+  _output_arch = arch;
+}
+
+Config::OutputArch
+Config::get_output_arch () const
+{
+  return _output_arch;
+}
+
+Config::OutputArch
+Config::get_default_arch () const
+{
+  return OutputArch::ARCH_AMD64;
+}
+
 }
