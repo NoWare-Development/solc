@@ -1,7 +1,7 @@
 project('nlc', 'cpp')
 
 libnlc_src = []
-libnlc_dep = []
+libnlc_dep = [ dependency('llvm') ]
 libnlc_inc = include_directories('include')
 subdir('libnlc')
 
@@ -10,6 +10,7 @@ libnlc_lib = shared_library(
   libnlc_src,
   dependencies: libnlc_dep,
   include_directories: libnlc_inc,
+  cpp_args: [ '-D_GLIBCXX_DEBUG' ],
 )
 
 libnlc = declare_dependency(
@@ -27,4 +28,5 @@ nlc_exe = executable(
   nlc_src,
   dependencies: libnlc,
   include_directories: nlc_inc,
+  cpp_args: [ '-D_GLIBCXX_DEBUG' ],
 )
