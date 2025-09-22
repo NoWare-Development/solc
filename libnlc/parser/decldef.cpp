@@ -24,7 +24,7 @@ Parser::parse_decldef ()
       {
         auto var_decldef = parse_variable_decldef ();
         VERIFY_POS (_pos);
-        VERIFY_TOKEN (_pos, _tokens.at (_pos).type, TokenType::_SEMI);
+        VERIFY_TOKEN (_pos, _tokens.at (_pos).type, TokenType::SEMI);
         _pos++;
         return var_decldef;
       }

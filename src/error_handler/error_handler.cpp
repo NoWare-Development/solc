@@ -123,7 +123,7 @@ ErrorHandler::print_errored_tokens () const
 
     for (auto &tok : tokens)
       {
-        if (tok.type == nlc::TokenType::TOKEN_ERR)
+        if (tok.type == nlc::TokenType::ERR)
           {
             invalid_tokens.push_back (tok);
           }
@@ -318,7 +318,7 @@ ErrorHandler::has_invalid_tokens () const
 {
   for (auto &tok : _tokens)
     {
-      if (tok.type == nlc::TokenType::TOKEN_ERR)
+      if (tok.type == nlc::TokenType::ERR)
         {
           return true;
         }
