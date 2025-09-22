@@ -18,6 +18,12 @@
     exit (-1);                                                                \
   }
 
+#define ERROR(msg)                                                            \
+  {                                                                           \
+    std::printf ("(%s:%d) %s\n", __func__, __LINE__, msg);                    \
+    exit (-1);                                                                \
+  }
+
 namespace nlc::util
 {
 
