@@ -7,7 +7,7 @@ namespace nlc
 AST
 Parser::parse_defer_statement ()
 {
-  AST defer_statement (_pos++, ASTType::AST_STMT_DEFER);
+  AST defer_statement (_pos++, ASTType::STMT_DEFER);
 
   VERIFY_POS (_pos);
 

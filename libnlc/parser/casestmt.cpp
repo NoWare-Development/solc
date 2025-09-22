@@ -21,11 +21,11 @@ Parser::parse_case_statement ()
       cur = _tokens.at (_pos);
       VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_COLON);
       _pos++;
-      out = AST (start_pos, ASTType::AST_STMT_DEFAULT);
+      out = AST (start_pos, ASTType::STMT_DEFAULT);
     }
   else if (cur.value == "case")
     {
-      out = AST (start_pos, ASTType::AST_STMT_CASE);
+      out = AST (start_pos, ASTType::STMT_CASE);
       _pos++;
 
       VERIFY_POS (_pos);

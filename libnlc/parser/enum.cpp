@@ -7,7 +7,7 @@ namespace nlc
 AST
 Parser::parse_enum_definition ()
 {
-  AST enum_definition (_pos++, ASTType::AST_ENUM_DEF);
+  AST enum_definition (_pos++, ASTType::ENUM_DEF);
 
   VERIFY_POS (_pos);
   auto cur = _tokens.at (_pos);
@@ -55,7 +55,7 @@ Parser::parse_enum_definition ()
 AST
 Parser::parse_enum_element ()
 {
-  AST enum_element (_pos, ASTType::AST_ENUM_ELEMENT);
+  AST enum_element (_pos, ASTType::ENUM_ELEMENT);
 
   VERIFY_POS (_pos);
   auto cur = _tokens.at (_pos);

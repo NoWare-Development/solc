@@ -15,7 +15,7 @@ Parser::parse_label ()
   cur = _tokens.at (_pos);
   VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_ID);
   _pos++;
-  return AST (start, ASTType::AST_LABEL, cur.value);
+  return AST (start, ASTType::LABEL, cur.value);
 }
 
 }

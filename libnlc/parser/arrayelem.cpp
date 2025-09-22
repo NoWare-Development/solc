@@ -15,7 +15,7 @@ Parser::parse_array_element (AST array)
       _pos++;
 
       VERIFY_POS (_pos);
-      buf = AST (_pos, ASTType::AST_EXPR_OPERAND_ARRAY_ELEMENT);
+      buf = AST (_pos, ASTType::EXPR_OPERAND_ARRAY_ELEMENT);
 
       auto expr = parse_expression ();
       buf.append (expr);

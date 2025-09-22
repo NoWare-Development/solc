@@ -11,7 +11,7 @@ namespace nlc
 AST
 Parser::parse_expression_statement ()
 {
-  AST expr_stmt (_pos, ASTType::AST_STMT_EXPR);
+  AST expr_stmt (_pos, ASTType::STMT_EXPR);
   auto expr = parse_expression (true);
   expr_stmt.append (expr);
   VERIFY_POS (_pos);
@@ -37,8 +37,8 @@ Parser::parse_expression (bool toplevel)
   std::string error_reason{};
   if (!validate_expression (expr_tree, invalid_pos, error_reason))
     {
-      AST out (start, ASTType::AST_EXPR);
-      out.append (AST (invalid_pos, ASTType::AST_ERR, error_reason));
+      AST out (start, ASTType::EXPR);
+      out.append (AST (invalid_pos, ASTType::ERR, error_reason));
       return out;
     }
 
@@ -48,7 +48,7 @@ Parser::parse_expression (bool toplevel)
 AST
 Parser::parse_expression_tree (bool toplevel)
 {
-  AST expr_tree (_pos, ASTType::AST_EXPR);
+  AST expr_tree (_pos, ASTType::EXPR);
 
   TokenType prev{ TokenType::TOKEN_ERR };
   while (_pos < _tokens.size ())
@@ -149,7 +149,7 @@ Parser::parse_expression_operand ()
       {
         if (cur.value == "cast")
           {
-            AST cast (_pos++, ASTType::AST_EXPR_OPERAND_CAST_TO);
+            AST cast (_pos++, ASTType::EXPR_OPERAND_CAST_TO);
 
             VERIFY_POS (_pos);
             auto cast_token = peek (_pos);
@@ -189,7 +189,7 @@ Parser::parse_expression_operand ()
             if (cur.type == TokenType::TOKEN_ID)
               {
                 out_operand.append (AST (
-                    _pos++, ASTType::AST_EXPR_OPERAND_NUMTYPESPEC, cur.value));
+                    _pos++, ASTType::EXPR_OPERAND_NUMTYPESPEC, cur.value));
               }
           }
         return out_operand;
@@ -203,14 +203,14 @@ Parser::parse_expression_operand ()
             value = '0' + value;
           }
 
-        out_operand = AST (_pos++, ASTType::AST_EXPR_OPERAND_NUMFLOAT, value);
+        out_operand = AST (_pos++, ASTType::EXPR_OPERAND_NUMFLOAT, value);
         if (_pos < _tokens.size ())
           {
             cur = _tokens.at (_pos);
             if (cur.type == TokenType::TOKEN_ID)
               {
                 out_operand.append (AST (
-                    _pos++, ASTType::AST_EXPR_OPERAND_NUMTYPESPEC, cur.value));
+                    _pos++, ASTType::EXPR_OPERAND_NUMTYPESPEC, cur.value));
               }
           }
         return out_operand;
@@ -218,15 +218,13 @@ Parser::parse_expression_operand ()
 
     case TokenType::TOKEN_STRING:
       {
-        out_operand
-            = AST (_pos++, ASTType::AST_EXPR_OPERAND_STRING, cur.value);
+        out_operand = AST (_pos++, ASTType::EXPR_OPERAND_STRING, cur.value);
         return out_operand;
       }
 
     case TokenType::TOKEN_SYMBOL:
       {
-        out_operand
-            = AST (_pos++, ASTType::AST_EXPR_OPERAND_SYMBOL, cur.value);
+        out_operand = AST (_pos++, ASTType::EXPR_OPERAND_SYMBOL, cur.value);
         return out_operand;
       }
 
@@ -240,7 +238,7 @@ Parser::parse_expression_operand ()
   auto next = peek (_pos);
   if (next == TokenType::TOKEN_PERIOD)
     {
-      AST access (_pos++, ASTType::AST_EXPR_OPERAND_ACCESS_MEMBER);
+      AST access (_pos++, ASTType::EXPR_OPERAND_ACCESS_MEMBER);
       VERIFY_POS (_pos);
       auto symbol = parse_expression_operand ();
       access.append (symbol);
@@ -264,22 +262,22 @@ Parser::validate_expression (const AST &expr_ast, size_t &invalid_pos,
   auto peek_ast_type
       = [] (const AST &root, int pos, size_t &tok_pos) -> ASTType {
     if (pos < 0 || pos >= root.children.size ())
-      return ASTType::AST_ERR;
+      return ASTType::ERR;
 
     tok_pos = root.children[pos].token_position;
     return root.children[pos].type;
   };
 
   const int children_len = expr_ast.children.size ();
-  ASTType prev = ASTType::AST_ERR;
-  ASTType cur = ASTType::AST_ERR;
+  ASTType prev = ASTType::ERR;
+  ASTType cur = ASTType::ERR;
   for (int i = 0; i < children_len; i++, prev = cur)
     {
       size_t cur_pos = 0;
       cur = peek_ast_type (expr_ast, i, cur_pos);
 
       if (is_prefix_operator (cur)
-          && (prev == ASTType::AST_ERR || is_operator (prev)))
+          && (prev == ASTType::ERR || is_operator (prev)))
         {
           size_t next_pos = 0;
           auto next = peek_ast_type (expr_ast, i + 1, next_pos);
@@ -298,7 +296,7 @@ Parser::validate_expression (const AST &expr_ast, size_t &invalid_pos,
           return false;
         }
       else if (is_operand (cur)
-               && !(prev == ASTType::AST_ERR || is_operator (prev)))
+               && !(prev == ASTType::ERR || is_operator (prev)))
         {
           invalid_pos = cur_pos;
           out_reason = "Two operands";
@@ -371,7 +369,7 @@ Parser::pratt_parse_expression (const std::vector<AST> &in, size_t *pos,
         }
 
       // Put everything to `lhs`
-      lhs = AST (cur.token_position, ASTType::AST_PREFIX_EXPR);
+      lhs = AST (cur.token_position, ASTType::PREFIX_EXPR);
       for (const auto &e : prefixlist)
         {
           lhs.append (e);
@@ -396,7 +394,7 @@ Parser::pratt_parse_expression (const std::vector<AST> &in, size_t *pos,
         }
       (*pos)++;
       auto rhs = pratt_parse_expression (in, pos, r_bp);
-      AST newlhs (lhs.token_position, ASTType::AST_EXPR);
+      AST newlhs (lhs.token_position, ASTType::EXPR);
       newlhs.append (lhs);
       newlhs.append (op);
       newlhs.append (rhs);
@@ -414,20 +412,20 @@ Parser::pratt_parse_expression (const std::vector<AST> &in, size_t *pos,
 void
 Parser::get_binding_power (ASTType op_type, int &l_bp, int &r_bp) const
 {
-  int group = (op_type & 0xFF00) >> 8;
+  ASTGroup group = static_cast<ASTGroup> (((uint16_t)op_type & 0xFF00) >> 8);
   switch (group)
     {
-    case AST_GROUP_EXPR_ASSIGN_OPERATOR:
+    case ASTGroup::EXPR_ASSIGN_OPERATOR:
       l_bp = 10;
       r_bp = 15;
       return;
 
-    case AST_GROUP_EXPR_BOOLEAN_OPERATOR:
+    case ASTGroup::EXPR_BOOLEAN_OPERATOR:
       l_bp = 60;
       r_bp = 65;
       return;
 
-    case AST_GROUP_EXPR_COMPARE_OPERATOR:
+    case ASTGroup::EXPR_COMPARE_OPERATOR:
       l_bp = 70;
       r_bp = 75;
       return;
@@ -438,28 +436,28 @@ Parser::get_binding_power (ASTType op_type, int &l_bp, int &r_bp) const
 
   switch (op_type)
     {
-    case ASTType::AST_EXPR_BINARY_OPERATOR_ADD:
-    case ASTType::AST_EXPR_BINARY_OPERATOR_SUB:
+    case ASTType::EXPR_BINARY_OPERATOR_ADD:
+    case ASTType::EXPR_BINARY_OPERATOR_SUB:
       l_bp = 20;
       r_bp = 25;
       return;
 
-    case ASTType::AST_EXPR_BINARY_OPERATOR_MUL:
-    case ASTType::AST_EXPR_BINARY_OPERATOR_DIV:
-    case ASTType::AST_EXPR_BINARY_OPERATOR_MOD:
+    case ASTType::EXPR_BINARY_OPERATOR_MUL:
+    case ASTType::EXPR_BINARY_OPERATOR_DIV:
+    case ASTType::EXPR_BINARY_OPERATOR_MOD:
       l_bp = 30;
       r_bp = 35;
       return;
 
-    case ASTType::AST_EXPR_BINARY_OPERATOR_SHL:
-    case ASTType::AST_EXPR_BINARY_OPERATOR_SHR:
+    case ASTType::EXPR_BINARY_OPERATOR_SHL:
+    case ASTType::EXPR_BINARY_OPERATOR_SHR:
       l_bp = 40;
       r_bp = 45;
       return;
 
-    case ASTType::AST_EXPR_BINARY_OPERATOR_AND:
-    case ASTType::AST_EXPR_BINARY_OPERATOR_OR:
-    case ASTType::AST_EXPR_BINARY_OPERATOR_XOR:
+    case ASTType::EXPR_BINARY_OPERATOR_AND:
+    case ASTType::EXPR_BINARY_OPERATOR_OR:
+    case ASTType::EXPR_BINARY_OPERATOR_XOR:
       l_bp = 50;
       r_bp = 55;
       return;

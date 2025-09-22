@@ -16,7 +16,7 @@ Parser::parse_identifier_operand (bool accept_modules, bool accept_functions)
   auto next = peek (_pos + 1);
   if (next == TokenType::TOKEN_DCOLON && accept_modules)
     {
-      AST out (_pos, ASTType::AST_FROM_MODULE, cur.value);
+      AST out (_pos, ASTType::FROM_MODULE, cur.value);
       _pos += 2;
       auto symbol
           = parse_identifier_operand (accept_modules, accept_functions);
@@ -29,8 +29,7 @@ Parser::parse_identifier_operand (bool accept_modules, bool accept_functions)
     }
   else
     {
-      out_operand
-          = AST (_pos++, ASTType::AST_EXPR_OPERAND_IDENTIFIER, cur.value);
+      out_operand = AST (_pos++, ASTType::EXPR_OPERAND_IDENTIFIER, cur.value);
     }
 
   next = peek (_pos);
@@ -41,15 +40,15 @@ Parser::parse_identifier_operand (bool accept_modules, bool accept_functions)
       auto symbol
           = parse_identifier_operand (accept_modules, accept_functions);
 
-      if (out_operand.type == ASTType::AST_EXPR_OPERAND_CALL)
+      if (out_operand.type == ASTType::EXPR_OPERAND_CALL)
         {
-          AST access (_pos - 1, ASTType::AST_EXPR_OPERAND_ACCESS_MEMBER);
+          AST access (_pos - 1, ASTType::EXPR_OPERAND_ACCESS_MEMBER);
           access.append (symbol);
           out_operand.append (access);
         }
       else
         {
-          out_operand.type = ASTType::AST_EXPR_OPERAND_ACCESS_MEMBER;
+          out_operand.type = ASTType::EXPR_OPERAND_ACCESS_MEMBER;
           out_operand.append (symbol);
         }
     }

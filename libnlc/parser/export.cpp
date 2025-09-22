@@ -7,7 +7,7 @@ namespace nlc
 AST
 Parser::parse_export ()
 {
-  AST export_ (_pos++, ASTType::AST_EXPORT);
+  AST export_ (_pos++, ASTType::EXPORT);
 
   VERIFY_POS (_pos);
 

@@ -10,7 +10,7 @@ Parser::parse_call_operand ()
   VERIFY_POS (_pos);
   auto cur = _tokens.at (_pos);
   VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_ID);
-  AST call (_pos++, ASTType::AST_EXPR_OPERAND_CALL, cur.value);
+  AST call (_pos++, ASTType::EXPR_OPERAND_CALL, cur.value);
 
   VERIFY_POS (_pos);
   cur = _tokens.at (_pos);

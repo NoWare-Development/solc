@@ -10,7 +10,7 @@ Parser::parse_argument_list ()
   VERIFY_POS (_pos);
   auto cur = _tokens.at (_pos);
   VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_LPAREN);
-  AST arglist (_pos, ASTType::AST_FUNC_ARGLIST);
+  AST arglist (_pos, ASTType::FUNC_ARGLIST);
 
   _pos++;
   VERIFY_POS (_pos);

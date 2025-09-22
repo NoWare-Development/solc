@@ -11,7 +11,7 @@ Parser::parse_type_raw ()
   auto cur = _tokens.at (_pos);
   if (cur.type == TokenType::TOKEN_MUL)
     {
-      AST type_raw_pointer (_pos++, ASTType::AST_TYPE_POINTER);
+      AST type_raw_pointer (_pos++, ASTType::TYPE_POINTER);
       VERIFY_POS (_pos);
       auto type_raw = parse_type_raw ();
       type_raw_pointer.append (type_raw);
@@ -27,14 +27,14 @@ Parser::parse_type_raw ()
   auto next = peek (_pos + 1);
   if (next == TokenType::TOKEN_DCOLON)
     {
-      AST out (_pos, ASTType::AST_FROM_MODULE, cur.value);
+      AST out (_pos, ASTType::FROM_MODULE, cur.value);
       _pos += 2;
       auto member_type = parse_type_raw ();
       out.append (member_type);
       return out;
     }
 
-  AST out (_pos++, ASTType::AST_TYPE_PLAIN, cur.value);
+  AST out (_pos++, ASTType::TYPE_PLAIN, cur.value);
   next = peek (_pos);
   if (next == TokenType::TOKEN_LTHAN)
     {

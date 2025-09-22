@@ -7,7 +7,7 @@ namespace nlc
 AST
 Parser::parse_function_pointer_type ()
 {
-  AST funcptrtype (_pos, ASTType::AST_TYPE_FUNCPTR);
+  AST funcptrtype (_pos, ASTType::TYPE_FUNCPTR);
 
   VERIFY_POS (_pos);
   auto cur = _tokens.at (_pos);
