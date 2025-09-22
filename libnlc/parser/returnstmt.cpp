@@ -12,12 +12,12 @@ Parser::parse_return_statement ()
   VERIFY_POS (_pos);
 
   auto cur = _tokens.at (_pos);
-  if (cur.type == TokenType::TOKEN_SEMI)
+  if (cur.type == TokenType::SEMI)
     {
       _pos++;
       return return_statement;
     }
-  else if (cur.type == TokenType::TOKEN_LBRACE)
+  else if (cur.type == TokenType::LBRACE)
     {
       auto initlist = parse_initialization_list ();
       return_statement.append (initlist);
@@ -29,7 +29,7 @@ Parser::parse_return_statement ()
     }
   VERIFY_POS (_pos);
   cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_SEMI);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::SEMI);
   _pos++;
 
   return return_statement;

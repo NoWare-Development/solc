@@ -9,14 +9,14 @@ Parser::parse_statement_list ()
 {
   AST stmtlist (_pos, ASTType::STMT_LIST);
   auto cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_LBRACE);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::LBRACE);
   _pos++;
   VERIFY_POS (_pos);
 
   while (_pos < _tokens.size ())
     {
       cur = _tokens.at (_pos);
-      if (cur.type == TokenType::TOKEN_RBRACE)
+      if (cur.type == TokenType::RBRACE)
         {
           break;
         }
@@ -26,7 +26,7 @@ Parser::parse_statement_list ()
     }
 
   VERIFY_POS (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_RBRACE);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::RBRACE);
   _pos++;
   return stmtlist;
 }
@@ -37,17 +37,17 @@ Parser::parse_statement ()
   auto cur = _tokens.at (_pos);
   switch (cur.type)
     {
-    case TokenType::TOKEN_SEMI:
+    case TokenType::SEMI:
       {
         return AST (_pos++, ASTType::NONE);
       }
 
-    case TokenType::TOKEN_LBRACE:
+    case TokenType::LBRACE:
       {
         return parse_statement_list ();
       }
 
-    case TokenType::TOKEN_ID:
+    case TokenType::ID:
       {
         if (cur.value == "struct")
           {
@@ -113,16 +113,16 @@ Parser::parse_statement ()
         auto next = peek (_pos + 1);
         switch (next)
           {
-          case TokenType::TOKEN_DCOLON:
+          case TokenType::DCOLON:
             // Check if statement is function declaration/definition.
             // If not, it is access from other module and should be treated as
             // expression statement.
             next = peek (_pos + 2);
-            if (next != TokenType::TOKEN_LPAREN)
+            if (next != TokenType::LPAREN)
               {
                 break;
               }
-          case TokenType::TOKEN_COLON:
+          case TokenType::COLON:
             return parse_decldef ();
           default:
             break;
@@ -131,7 +131,7 @@ Parser::parse_statement ()
         break;
       }
 
-    case TokenType::TOKEN_AT:
+    case TokenType::AT:
       {
         return parse_label_statement ();
       }

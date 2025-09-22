@@ -11,12 +11,12 @@ Parser::parse_top (bool for_export)
   VERIFY_POS (_pos);
   switch (cur.type)
     {
-    case TokenType::TOKEN_SEMI:
+    case TokenType::SEMI:
       {
         return AST (_pos++, ASTType::NONE);
       }
 
-    case TokenType::TOKEN_ID:
+    case TokenType::ID:
       {
         if (cur.value == "enum")
           {

@@ -34,19 +34,19 @@ Parser::number_to_operand (Token &tok) const
 
   switch (tok.type)
     {
-    case TokenType::TOKEN_NUM:
+    case TokenType::NUM:
       value = string_to_dec (tok.value);
       break;
 
-    case TokenType::TOKEN_NUMHEX:
+    case TokenType::NUMHEX:
       value = string_to_hex (tok.value);
       break;
 
-    case TokenType::TOKEN_NUMBIN:
+    case TokenType::NUMBIN:
       value = string_to_bin (tok.value);
       break;
 
-    case TokenType::TOKEN_NUMOCT:
+    case TokenType::NUMOCT:
       value = string_to_oct (tok.value);
       break;
 
@@ -204,7 +204,7 @@ Parser::peek (size_t pos) const
 {
   if (pos >= _tokens.size ())
     {
-      return TokenType::TOKEN_ERR;
+      return TokenType::ERR;
     }
   return _tokens.at (pos).type;
 }

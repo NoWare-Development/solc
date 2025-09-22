@@ -16,7 +16,7 @@ Parser::parse_expression_statement ()
   expr_stmt.append (expr);
   VERIFY_POS (_pos);
   auto cur = peek (_pos);
-  VERIFY_TOKEN (_pos, cur, TokenType::TOKEN_SEMI);
+  VERIFY_TOKEN (_pos, cur, TokenType::SEMI);
   _pos++;
   return expr_stmt;
 }
@@ -50,13 +50,13 @@ Parser::parse_expression_tree (bool toplevel)
 {
   AST expr_tree (_pos, ASTType::EXPR);
 
-  TokenType prev{ TokenType::TOKEN_ERR };
+  TokenType prev{ TokenType::ERR };
   while (_pos < _tokens.size ())
     {
       auto cur = peek (_pos);
 
       // Prefix operators
-      if ((prev == TokenType::TOKEN_ERR || is_operator (prev))
+      if ((prev == TokenType::ERR || is_operator (prev))
           && is_prefix_operator (cur))
         {
           expr_tree.append (AST (_pos++, _prefix_operators.at (cur)));
@@ -65,7 +65,7 @@ Parser::parse_expression_tree (bool toplevel)
         }
 
       // Operators
-      else if (!is_operator (prev) && prev != TokenType::TOKEN_ERR)
+      else if (!is_operator (prev) && prev != TokenType::ERR)
         {
           // Binary operators
           if (is_binary_operator (cur))
@@ -99,12 +99,12 @@ Parser::parse_expression_tree (bool toplevel)
             }
         }
 
-      else if (is_operator (prev) || prev == TokenType::TOKEN_ERR)
+      else if (is_operator (prev) || prev == TokenType::ERR)
         {
-          if (cur == TokenType::TOKEN_ID        // Identifier
-              || cur == TokenType::TOKEN_LPAREN // Nested expression
-              || cur == TokenType::TOKEN_STRING
-              || cur == TokenType::TOKEN_SYMBOL || is_numeric_token (cur))
+          if (cur == TokenType::ID        // Identifier
+              || cur == TokenType::LPAREN // Nested expression
+              || cur == TokenType::STRING || cur == TokenType::SYMBOL
+              || is_numeric_token (cur))
             {
               auto operand = parse_expression_operand ();
               expr_tree.append (operand);
@@ -129,7 +129,7 @@ Parser::parse_expression_operand ()
 
   switch (cur.type)
     {
-    case TokenType::TOKEN_LPAREN:
+    case TokenType::LPAREN:
       {
         _pos++;
         VERIFY_POS (_pos);
@@ -138,14 +138,14 @@ Parser::parse_expression_operand ()
 
         VERIFY_POS (_pos);
         cur = _tokens.at (_pos);
-        VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_RPAREN);
+        VERIFY_TOKEN (_pos, cur.type, TokenType::RPAREN);
 
         _pos++;
 
         return nested_expr;
       }
 
-    case TokenType::TOKEN_ID:
+    case TokenType::ID:
       {
         if (cur.value == "cast")
           {
@@ -153,7 +153,7 @@ Parser::parse_expression_operand ()
 
             VERIFY_POS (_pos);
             auto cast_token = peek (_pos);
-            VERIFY_TOKEN (_pos, cast_token, TokenType::TOKEN_LPAREN);
+            VERIFY_TOKEN (_pos, cast_token, TokenType::LPAREN);
 
             _pos++;
             VERIFY_POS (_pos);
@@ -162,7 +162,7 @@ Parser::parse_expression_operand ()
 
             VERIFY_POS (_pos);
             cast_token = peek (_pos);
-            VERIFY_TOKEN (_pos, cast_token, TokenType::TOKEN_RPAREN);
+            VERIFY_TOKEN (_pos, cast_token, TokenType::RPAREN);
 
             _pos++;
             VERIFY_POS (_pos);
@@ -176,17 +176,17 @@ Parser::parse_expression_operand ()
         break;
       }
 
-    case TokenType::TOKEN_NUM:
-    case TokenType::TOKEN_NUMHEX:
-    case TokenType::TOKEN_NUMBIN:
-    case TokenType::TOKEN_NUMOCT:
+    case TokenType::NUM:
+    case TokenType::NUMHEX:
+    case TokenType::NUMBIN:
+    case TokenType::NUMOCT:
       {
         out_operand = number_to_operand (cur);
         _pos++;
         if (_pos < _tokens.size ())
           {
             cur = _tokens.at (_pos);
-            if (cur.type == TokenType::TOKEN_ID)
+            if (cur.type == TokenType::ID)
               {
                 out_operand.append (AST (
                     _pos++, ASTType::EXPR_OPERAND_NUMTYPESPEC, cur.value));
@@ -195,7 +195,7 @@ Parser::parse_expression_operand ()
         return out_operand;
       }
 
-    case TokenType::TOKEN_NUMFLOAT:
+    case TokenType::NUMFLOAT:
       {
         auto value = cur.value;
         if (value.at (0) == '.')
@@ -207,7 +207,7 @@ Parser::parse_expression_operand ()
         if (_pos < _tokens.size ())
           {
             cur = _tokens.at (_pos);
-            if (cur.type == TokenType::TOKEN_ID)
+            if (cur.type == TokenType::ID)
               {
                 out_operand.append (AST (
                     _pos++, ASTType::EXPR_OPERAND_NUMTYPESPEC, cur.value));
@@ -216,13 +216,13 @@ Parser::parse_expression_operand ()
         return out_operand;
       }
 
-    case TokenType::TOKEN_STRING:
+    case TokenType::STRING:
       {
         out_operand = AST (_pos++, ASTType::EXPR_OPERAND_STRING, cur.value);
         return out_operand;
       }
 
-    case TokenType::TOKEN_SYMBOL:
+    case TokenType::SYMBOL:
       {
         out_operand = AST (_pos++, ASTType::EXPR_OPERAND_SYMBOL, cur.value);
         return out_operand;
@@ -236,7 +236,7 @@ Parser::parse_expression_operand ()
   out_operand = parse_array_element (out_operand);
 
   auto next = peek (_pos);
-  if (next == TokenType::TOKEN_PERIOD)
+  if (next == TokenType::PERIOD)
     {
       AST access (_pos++, ASTType::EXPR_OPERAND_ACCESS_MEMBER);
       VERIFY_POS (_pos);

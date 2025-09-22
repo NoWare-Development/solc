@@ -9,7 +9,7 @@ AST
 Parser::parse_type_raw ()
 {
   auto cur = _tokens.at (_pos);
-  if (cur.type == TokenType::TOKEN_MUL)
+  if (cur.type == TokenType::MUL)
     {
       AST type_raw_pointer (_pos++, ASTType::TYPE_POINTER);
       VERIFY_POS (_pos);
@@ -17,15 +17,15 @@ Parser::parse_type_raw ()
       type_raw_pointer.append (type_raw);
       return type_raw_pointer;
     }
-  else if (cur.type == TokenType::TOKEN_LPAREN)
+  else if (cur.type == TokenType::LPAREN)
     {
       auto funcptrtype = parse_function_pointer_type ();
       return funcptrtype;
     }
 
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_ID);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::ID);
   auto next = peek (_pos + 1);
-  if (next == TokenType::TOKEN_DCOLON)
+  if (next == TokenType::DCOLON)
     {
       AST out (_pos, ASTType::FROM_MODULE, cur.value);
       _pos += 2;
@@ -36,7 +36,7 @@ Parser::parse_type_raw ()
 
   AST out (_pos++, ASTType::TYPE_PLAIN, cur.value);
   next = peek (_pos);
-  if (next == TokenType::TOKEN_LTHAN)
+  if (next == TokenType::LTHAN)
     {
       auto generic_type_list = parse_generic_type_list ();
       out.append (generic_type_list);

@@ -11,14 +11,14 @@ Parser::parse_enum_definition ()
 
   VERIFY_POS (_pos);
   auto cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_ID);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::ID);
 
   enum_definition.value = cur.value;
 
   _pos++;
   VERIFY_POS (_pos);
   cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_LBRACE);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::LBRACE);
 
   _pos++;
   VERIFY_POS (_pos);
@@ -27,7 +27,7 @@ Parser::parse_enum_definition ()
     {
       VERIFY_POS (_pos);
       cur = _tokens.at (_pos);
-      if (cur.type == TokenType::TOKEN_RBRACE)
+      if (cur.type == TokenType::RBRACE)
         {
           break;
         }
@@ -35,18 +35,18 @@ Parser::parse_enum_definition ()
       auto enum_element = parse_enum_element ();
       enum_definition.append (enum_element);
       auto next = peek (_pos);
-      if (next == TokenType::TOKEN_COMMA)
+      if (next == TokenType::COMMA)
         {
           _pos++;
         }
-      else if (next == TokenType::TOKEN_ID)
+      else if (next == TokenType::ID)
         {
           add_error (ParserError::ErrType::PARSER_ERROR_UNEXPECTED, _pos);
           return {};
         }
     }
 
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_RBRACE);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::RBRACE);
   _pos++;
 
   return enum_definition;
@@ -59,14 +59,14 @@ Parser::parse_enum_element ()
 
   VERIFY_POS (_pos);
   auto cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_ID);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::ID);
   enum_element.value = cur.value;
   _pos++;
 
   if (_pos < _tokens.size ())
     {
       auto next = peek (_pos);
-      if (next == TokenType::TOKEN_EQ)
+      if (next == TokenType::EQ)
         {
           _pos++;
           VERIFY_POS (_pos);

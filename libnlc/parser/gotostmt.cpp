@@ -13,7 +13,7 @@ Parser::parse_goto_statement ()
   goto_statement.append (label);
   VERIFY_POS (_pos);
   auto cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_SEMI);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::SEMI);
   _pos++;
   return goto_statement;
 }

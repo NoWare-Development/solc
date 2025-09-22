@@ -11,13 +11,13 @@ Parser::parse_generic_type_list ()
 
   VERIFY_POS (_pos);
   auto cur = peek (_pos);
-  VERIFY_TOKEN (_pos, cur, TokenType::TOKEN_LTHAN);
+  VERIFY_TOKEN (_pos, cur, TokenType::LTHAN);
   _pos++;
 
   while (_pos < _tokens.size ())
     {
       cur = peek (_pos);
-      if (cur == TokenType::TOKEN_GTHAN)
+      if (cur == TokenType::GTHAN)
         {
           break;
         }
@@ -26,17 +26,17 @@ Parser::parse_generic_type_list ()
       gtl.append (type);
 
       auto next = peek (_pos);
-      if (next != TokenType::TOKEN_GTHAN)
+      if (next != TokenType::GTHAN)
         {
           VERIFY_POS (_pos);
-          VERIFY_TOKEN (_pos, next, TokenType::TOKEN_COMMA);
+          VERIFY_TOKEN (_pos, next, TokenType::COMMA);
           _pos++;
         }
     }
 
   VERIFY_POS (_pos);
   cur = peek (_pos);
-  VERIFY_TOKEN (_pos, cur, TokenType::TOKEN_GTHAN);
+  VERIFY_TOKEN (_pos, cur, TokenType::GTHAN);
   _pos++;
 
   return gtl;

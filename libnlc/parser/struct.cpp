@@ -11,13 +11,13 @@ Parser::parse_struct ()
 
   VERIFY_POS (_pos);
   auto cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_ID);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::ID);
   structure.value = cur.value;
 
   _pos++;
   VERIFY_POS (_pos);
   cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_LBRACE);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::LBRACE);
 
   _pos++;
   VERIFY_POS (_pos);
@@ -25,12 +25,12 @@ Parser::parse_struct ()
   while (_pos < _tokens.size ())
     {
       cur = _tokens.at (_pos);
-      if (cur.type == TokenType::TOKEN_RBRACE)
+      if (cur.type == TokenType::RBRACE)
         {
           break;
         }
 
-      if (cur.type == TokenType::TOKEN_ID)
+      if (cur.type == TokenType::ID)
         {
           if (cur.value == "template")
             {
@@ -69,7 +69,7 @@ Parser::parse_struct ()
     }
   VERIFY_POS (_pos);
   cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_RBRACE);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::RBRACE);
   _pos++;
 
   return structure;

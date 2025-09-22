@@ -13,12 +13,12 @@ Parser::parse_type ()
   auto next = peek (_pos);
   AST current = type_raw;
   AST buf{};
-  while (_pos < _tokens.size () && next == TokenType::TOKEN_LBRACK)
+  while (_pos < _tokens.size () && next == TokenType::LBRACK)
     {
       buf = AST (_pos++, ASTType::TYPE_ARRAY);
 
       next = peek (_pos);
-      if (next != TokenType::TOKEN_RBRACK)
+      if (next != TokenType::RBRACK)
         {
           auto expr = parse_expression ();
           buf.append (expr);
@@ -26,7 +26,7 @@ Parser::parse_type ()
           next = peek (_pos);
         }
 
-      VERIFY_TOKEN (_pos, next, TokenType::TOKEN_RBRACK);
+      VERIFY_TOKEN (_pos, next, TokenType::RBRACK);
       _pos++;
       buf.append (current);
       current = buf;

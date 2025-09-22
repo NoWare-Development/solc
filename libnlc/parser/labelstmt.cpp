@@ -13,7 +13,7 @@ Parser::parse_label_statement ()
   label_statement.append (label);
   VERIFY_POS (_pos);
   auto cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_COLON);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::COLON);
   _pos++;
   return label_statement;
 }

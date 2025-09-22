@@ -9,12 +9,12 @@ Parser::parse_identifier_operand (bool accept_modules, bool accept_functions)
 {
   VERIFY_POS (_pos);
   auto cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_ID);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::ID);
 
   AST out_operand;
 
   auto next = peek (_pos + 1);
-  if (next == TokenType::TOKEN_DCOLON && accept_modules)
+  if (next == TokenType::DCOLON && accept_modules)
     {
       AST out (_pos, ASTType::FROM_MODULE, cur.value);
       _pos += 2;
@@ -23,7 +23,7 @@ Parser::parse_identifier_operand (bool accept_modules, bool accept_functions)
       out.append (symbol);
       return out;
     }
-  else if (next == TokenType::TOKEN_LPAREN && accept_functions)
+  else if (next == TokenType::LPAREN && accept_functions)
     {
       out_operand = parse_call_operand ();
     }
@@ -33,7 +33,7 @@ Parser::parse_identifier_operand (bool accept_modules, bool accept_functions)
     }
 
   next = peek (_pos);
-  if (next == TokenType::TOKEN_PERIOD)
+  if (next == TokenType::PERIOD)
     {
       _pos++;
       VERIFY_POS (_pos);

@@ -11,19 +11,19 @@ Parser::parse_function_pointer_type ()
 
   VERIFY_POS (_pos);
   auto cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_LPAREN);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::LPAREN);
   auto arglist = parse_argument_list ();
   funcptrtype.append (arglist);
 
   auto next = peek (_pos);
-  if (next != TokenType::TOKEN_RARROW)
+  if (next != TokenType::RARROW)
     {
       return funcptrtype;
     }
 
   VERIFY_POS (_pos);
   cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_RARROW);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::RARROW);
 
   _pos++;
   VERIFY_POS (_pos);

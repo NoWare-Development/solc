@@ -9,7 +9,7 @@ Parser::parse_argument_list ()
 {
   VERIFY_POS (_pos);
   auto cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_LPAREN);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::LPAREN);
   AST arglist (_pos, ASTType::FUNC_ARGLIST);
 
   _pos++;
@@ -17,7 +17,7 @@ Parser::parse_argument_list ()
   while (_pos < _tokens.size ())
     {
       cur = _tokens.at (_pos);
-      if (cur.type == TokenType::TOKEN_RPAREN)
+      if (cur.type == TokenType::RPAREN)
         {
           break;
         }
@@ -25,10 +25,10 @@ Parser::parse_argument_list ()
       AST argument = parse_function_argument ();
       arglist.append (argument);
       auto next = peek (_pos);
-      if (next != TokenType::TOKEN_RPAREN)
+      if (next != TokenType::RPAREN)
         {
           VERIFY_POS (_pos);
-          VERIFY_TOKEN (_pos, next, TokenType::TOKEN_COMMA);
+          VERIFY_TOKEN (_pos, next, TokenType::COMMA);
           _pos++;
           continue;
         }
@@ -36,7 +36,7 @@ Parser::parse_argument_list ()
 
   VERIFY_POS (_pos);
   cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_RPAREN);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::RPAREN);
   _pos++;
 
   return arglist;
