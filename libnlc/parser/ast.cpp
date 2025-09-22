@@ -21,7 +21,7 @@ AST::to_string () const
       out += "(" + std::to_string (_depth) + ") ";
     }
 
-  out += "AST: " + asttype_to_string (type) + " \"" + value + "\"";
+  out += asttype_to_string (type) + " \"" + value + "\"";
 
   if (!children.empty ())
     {
