@@ -15,12 +15,12 @@ Parser::parse_visibility_marker ()
 
   if (cur.value == "public")
     {
-      vismarker = AST (_pos, ASTType::AST_VISIBILITY_MARKER_PUBLIC);
+      vismarker = AST (_pos, ASTType::VISIBILITY_MARKER_PUBLIC);
     }
   else
     {
       VERIFY_VALUE (_pos, cur.value, "private");
-      vismarker = AST (_pos, ASTType::AST_VISIBILITY_MARKER_PRIVATE);
+      vismarker = AST (_pos, ASTType::VISIBILITY_MARKER_PRIVATE);
     }
 
   _pos++;

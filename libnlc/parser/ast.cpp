@@ -1,4 +1,5 @@
 #include "parser/ast.hpp"
+#include <cstdint>
 
 namespace nlc
 {
@@ -57,8 +58,8 @@ AST::append (AST child)
   return &children.at (children.size () - 1);
 }
 
-#define __AST_GET_GROUP(type) (((type) & 0xFF00) >> 8)
-#define __AST_GET_ID(type) ((type) & 0xFF)
+#define __AST_GET_GROUP(type) (((uint16_t)(type) & 0xFF00) >> 8)
+#define __AST_GET_ID(type) ((uint16_t)(type) & 0xFF)
 
 static std::string
 asttype_to_string (ASTType type)

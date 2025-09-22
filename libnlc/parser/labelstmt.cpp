@@ -7,7 +7,7 @@ namespace nlc
 AST
 Parser::parse_label_statement ()
 {
-  AST label_statement (_pos, ASTType::AST_STMT_LABEL);
+  AST label_statement (_pos, ASTType::STMT_LABEL);
   VERIFY_POS (_pos);
   auto label = parse_label ();
   label_statement.append (label);

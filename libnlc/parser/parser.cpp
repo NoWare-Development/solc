@@ -11,7 +11,7 @@ namespace nlc
 AST
 Parser::parse ()
 {
-  AST prog (_pos, ASTType::AST_PROG);
+  AST prog (_pos, ASTType::PROG);
 
   while (_pos < _tokens.size ())
     {
@@ -54,7 +54,7 @@ Parser::number_to_operand (Token &tok) const
       return {};
     }
 
-  return AST (_pos, ASTType::AST_EXPR_OPERAND_NUM, hex_to_string (value));
+  return AST (_pos, ASTType::EXPR_OPERAND_NUM, hex_to_string (value));
 }
 
 uint64_t
@@ -273,38 +273,43 @@ Parser::is_operator (ASTType type) const
 bool
 Parser::is_binary_operator (ASTType type) const
 {
-  return ((type >> 8) & 0xFF) == AST_GROUP_EXPR_BINARY_OPERATOR;
+  return (((uint16_t)type >> 8) & 0xFF)
+         == (uint16_t)ASTGroup::EXPR_BINARY_OPERATOR;
 }
 
 bool
 Parser::is_assign_operator (ASTType type) const
 {
-  return ((type >> 8) & 0xFF) == AST_GROUP_EXPR_ASSIGN_OPERATOR;
+  return (((uint16_t)type >> 8) & 0xFF)
+         == (uint16_t)ASTGroup::EXPR_ASSIGN_OPERATOR;
 }
 
 bool
 Parser::is_compare_operator (ASTType type) const
 {
-  return ((type >> 8) & 0xFF) == AST_GROUP_EXPR_COMPARE_OPERATOR;
+  return (((uint16_t)type >> 8) & 0xFF)
+         == (uint16_t)ASTGroup::EXPR_COMPARE_OPERATOR;
 }
 
 bool
 Parser::is_boolean_operator (ASTType type) const
 {
-  return ((type >> 8) & 0xFF) == AST_GROUP_EXPR_BOOLEAN_OPERATOR;
+  return (((uint16_t)type >> 8) & 0xFF)
+         == (uint16_t)ASTGroup::EXPR_BOOLEAN_OPERATOR;
 }
 
 bool
 Parser::is_prefix_operator (ASTType type) const
 {
-  return ((type >> 8) & 0xFF) == AST_GROUP_EXPR_PREFIX_OPERATOR;
+  return (((uint16_t)type >> 8) & 0xFF)
+         == (uint16_t)ASTGroup::EXPR_PREFIX_OPERATOR;
 }
 
 bool
 Parser::is_operand (ASTType type) const
 {
-  return ((type & 0xFF00) >> 8) == AST_GROUP_EXPR_OPERAND || type == AST_EXPR
-         || type == AST_FROM_MODULE;
+  return (((uint16_t)type & 0xFF00) >> 8) == (uint16_t)ASTGroup::EXPR_OPERAND
+         || type == ASTType::EXPR || type == ASTType::FROM_MODULE;
 }
 
 bool

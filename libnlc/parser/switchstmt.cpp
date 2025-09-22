@@ -7,7 +7,7 @@ namespace nlc
 AST
 Parser::parse_switch_statement ()
 {
-  AST switch_statement (_pos++, ASTType::AST_STMT_SWITCH);
+  AST switch_statement (_pos++, ASTType::STMT_SWITCH);
 
   VERIFY_POS (_pos);
   auto cur = _tokens.at (_pos);
@@ -38,7 +38,7 @@ Parser::parse_switch_statement ()
         }
 
       auto case_statement = parse_case_statement ();
-      if (case_statement.type == ASTType::AST_ERR)
+      if (case_statement.type == ASTType::ERR)
         {
           return {};
         }

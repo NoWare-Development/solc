@@ -7,7 +7,7 @@ namespace nlc
 AST
 Parser::parse_typedef ()
 {
-  AST typedef_ (_pos++, ASTType::AST_TYPEDEF);
+  AST typedef_ (_pos++, ASTType::TYPEDEF);
 
   VERIFY_POS (_pos);
   auto type_ = parse_type ();

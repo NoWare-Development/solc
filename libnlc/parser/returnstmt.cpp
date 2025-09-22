@@ -8,7 +8,7 @@ namespace nlc
 AST
 Parser::parse_return_statement ()
 {
-  AST return_statement (_pos++, ASTType::AST_STMT_RETURN);
+  AST return_statement (_pos++, ASTType::STMT_RETURN);
   VERIFY_POS (_pos);
 
   auto cur = _tokens.at (_pos);

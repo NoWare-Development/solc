@@ -7,7 +7,7 @@ namespace nlc
 AST
 Parser::parse_import ()
 {
-  AST import (_pos++, ASTType::AST_IMPORT);
+  AST import (_pos++, ASTType::IMPORT);
 
   VERIFY_POS (_pos);
   auto module = parse_module ();

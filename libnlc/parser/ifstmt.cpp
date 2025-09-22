@@ -7,7 +7,7 @@ namespace nlc
 AST
 Parser::parse_if_statement ()
 {
-  AST ifstmt (_pos++, ASTType::AST_STMT_IF);
+  AST ifstmt (_pos++, ASTType::STMT_IF);
 
   VERIFY_POS (_pos);
   auto cur = _tokens.at (_pos);
@@ -43,7 +43,7 @@ Parser::parse_if_statement ()
 AST
 Parser::parse_else_statement ()
 {
-  AST elsestmt (_pos, ASTType::AST_STMT_ELSE);
+  AST elsestmt (_pos, ASTType::STMT_ELSE);
 
   _pos++;
   VERIFY_POS (_pos);

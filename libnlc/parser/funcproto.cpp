@@ -7,7 +7,7 @@ namespace nlc
 AST
 Parser::parse_function_prototype ()
 {
-  AST funcproto (_pos, ASTType::AST_FUNC_PROTO, _tokens.at (_pos).value);
+  AST funcproto (_pos, ASTType::FUNC_PROTO, _tokens.at (_pos).value);
 
   _pos += 2;
   VERIFY_POS (_pos);

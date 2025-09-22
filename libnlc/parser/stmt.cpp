@@ -7,7 +7,7 @@ namespace nlc
 AST
 Parser::parse_statement_list ()
 {
-  AST stmtlist (_pos, ASTType::AST_STMT_LIST);
+  AST stmtlist (_pos, ASTType::STMT_LIST);
   auto cur = _tokens.at (_pos);
   VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_LBRACE);
   _pos++;
@@ -39,7 +39,7 @@ Parser::parse_statement ()
     {
     case TokenType::TOKEN_SEMI:
       {
-        return AST (_pos++, ASTType::AST_NONE);
+        return AST (_pos++, ASTType::NONE);
       }
 
     case TokenType::TOKEN_LBRACE:

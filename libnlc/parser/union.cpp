@@ -7,7 +7,7 @@ namespace nlc
 AST
 Parser::parse_union ()
 {
-  AST uniondef (_pos, ASTType::AST_UNION);
+  AST uniondef (_pos, ASTType::UNION);
 
   VERIFY_POS (_pos);
   _pos++;

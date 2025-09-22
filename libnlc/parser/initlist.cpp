@@ -10,7 +10,7 @@ Parser::parse_initialization_list ()
   VERIFY_POS (_pos);
   auto cur = _tokens.at (_pos);
   VERIFY_TOKEN (_pos, cur.type, TokenType::TOKEN_LBRACE);
-  AST initlist (_pos, ASTType::AST_INITLIST);
+  AST initlist (_pos, ASTType::INITLIST);
   _pos++;
 
   while (_pos < _tokens.size ())
@@ -51,10 +51,10 @@ Parser::parse_initialization_list_entry ()
     {
       VERIFY_POS (_pos);
       cur = _tokens.at (_pos);
-      AST explicit_init (_pos++, ASTType::AST_INITLIST_ENTRY_INIT_EXPLICIT);
+      AST explicit_init (_pos++, ASTType::INITLIST_ENTRY_INIT_EXPLICIT);
       VERIFY_POS (_pos);
 
-      AST target (_pos, ASTType::AST_INITLIST_ENTRY_INIT_EXPLICIT_TARGET);
+      AST target (_pos, ASTType::INITLIST_ENTRY_INIT_EXPLICIT_TARGET);
       auto target_symbol = parse_identifier_operand (false, false);
       target_symbol = parse_array_element (target_symbol);
       target.append (target_symbol);
@@ -80,7 +80,7 @@ Parser::parse_initialization_list_entry ()
       return explicit_init;
     }
 
-  AST init (_pos, ASTType::AST_INITLIST_ENTRY_INIT);
+  AST init (_pos, ASTType::INITLIST_ENTRY_INIT);
 
   if (cur.type == TokenType::TOKEN_LBRACE)
     {

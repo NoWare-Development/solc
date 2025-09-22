@@ -7,7 +7,7 @@ namespace nlc
 AST
 Parser::parse_generic_type_list ()
 {
-  AST gtl (_pos, ASTType::AST_GENERIC_TYPE_LIST);
+  AST gtl (_pos, ASTType::GENERIC_TYPE_LIST);
 
   VERIFY_POS (_pos);
   auto cur = peek (_pos);

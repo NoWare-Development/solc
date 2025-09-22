@@ -15,14 +15,14 @@ Parser::parse_function_argument ()
       VERIFY_TOKEN (_pos + 1, peek (_pos + 1), TokenType::TOKEN_PERIOD);
       VERIFY_TOKEN (_pos + 2, peek (_pos + 2), TokenType::TOKEN_PERIOD);
 
-      AST out (_pos, ASTType::AST_VARIADIC);
+      AST out (_pos, ASTType::VARIADIC);
       _pos += 3;
       return out;
     }
 
   if (cur.type == TokenType::TOKEN_ID && is_modifier (cur.value))
     {
-      AST modifier_arg (_pos++, ASTType::AST_MODIFIER, cur.value);
+      AST modifier_arg (_pos++, ASTType::MODIFIER, cur.value);
       auto argument = parse_function_argument ();
       modifier_arg.append (argument);
       return modifier_arg;
