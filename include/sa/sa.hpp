@@ -11,7 +11,7 @@ namespace nlc
 class SemanticAnalyzer
 {
 public:
-  SemanticAnalyzer () = default;
+  SemanticAnalyzer ();
   ~SemanticAnalyzer () = default;
 
   std::unique_ptr<SymbolTable> analyze (const AST &root);
@@ -55,6 +55,11 @@ private:
 
     { "bool", Type::create_basic (BuiltinType::BOOL) },
   };
+
+  std::unordered_map<std::string, std::shared_ptr<Type>>
+      _architecture_dependent_types{};
+
+  void populate_architecture_dependent_types ();
 
   std::vector<SAError> _errors{};
 

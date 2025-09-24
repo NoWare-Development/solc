@@ -355,7 +355,7 @@ ErrorHandler::has_invalid_tokens () const
 bool
 ErrorHandler::has_parser_errors () const
 {
-  return _parser_errors.size () > 0;
+  return !_parser_errors.empty ();
 }
 
 std::string
