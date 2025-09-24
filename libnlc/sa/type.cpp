@@ -46,7 +46,7 @@ SemanticAnalyzer::get_type_from_type_ast (const AST &type)
               }
             else
               {
-                // TODO: also check for imported symbols
+                // TODO: Check for imported symbols.
                 for (const auto &scope : *_scope_stack)
                   {
                     // Check for aliases
@@ -120,6 +120,24 @@ SemanticAnalyzer::get_basic_type (const std::string &type)
     return nullptr;
 
   return _basic_types.at (type);
+}
+
+bool
+SemanticAnalyzer::does_type_exist (const std::string &type) const
+{
+  if (is_basic_type (type))
+    return true;
+
+  for (const auto &scope : *_scope_stack)
+    {
+      if (scope.has_alias (type) || scope.has_struct (type)
+          || scope.has_enum (type) || scope.has_union (type))
+        return true;
+    }
+
+  // TODO: Check for imported symbols.
+
+  return false;
 }
 
 }
