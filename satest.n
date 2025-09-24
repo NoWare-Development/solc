@@ -1,6 +1,5 @@
-// var1: *int = cast(*int)4;
-// boolvar: bool = true;
-// boolvarptr: *bool = nullptr;
-// testvar: int;
-
-funcptr: (a: int) -> int = nullptr;
+// Typedef test
+typedef uint uint32_t;
+typedef ulong uint64_t;
+typedef uint64_t test64;
+typedef invalid_type invalid_t;

@@ -11,7 +11,7 @@
     exit (-1);                                                                \
   }
 
-#define NEVERREACH()                                                          \
+#define NOREACH()                                                             \
   {                                                                           \
     std::printf ("(%s:%d) Reached point that should be never reached.\n",     \
                  __func__, __LINE__);                                         \

@@ -1,8 +1,9 @@
 #pragma once
 
-#include "parser/parser.hpp"
 #include "util/util.hpp"
 #include <lexer/token.hpp>
+#include <parser/parser.hpp>
+#include <sa/sa.hpp>
 #include <vector>
 
 class ErrorHandler
@@ -16,6 +17,11 @@ public:
   bool handle_tokens () const;
   bool handle_parser_errors () const;
   bool handle_invalid_expressions (const nlc::AST &root) const;
+  void handle_sa_errors (
+      const std::vector<nlc::SemanticAnalyzer::SAError> &errors) const;
+
+  std::string
+  get_sa_error_reason (const nlc::SemanticAnalyzer::SAError &err) const;
 
 private:
   std::vector<nlc::Token> _tokens{};
