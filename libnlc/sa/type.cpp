@@ -1,3 +1,4 @@
+#include "config/config.hpp"
 #include "libnlc/util.hpp"
 #include "sa/sa.hpp"
 #include "types.hpp"
@@ -41,7 +42,7 @@ SemanticAnalyzer::get_type_from_type_ast (const AST &type)
             if (is_basic_type (value))
               {
                 // Basic types
-                type = get_basic_type (value)->copy ();
+                type = get_basic_type (value);
                 return type;
               }
             else
@@ -110,7 +111,9 @@ SemanticAnalyzer::get_type_from_type_ast (const AST &type)
 bool
 SemanticAnalyzer::is_basic_type (const std::string &type) const
 {
-  return _basic_types.find (type) != _basic_types.end ();
+  return _basic_types.find (type) != _basic_types.end ()
+         || _architecture_dependent_types.find (type)
+                != _architecture_dependent_types.end ();
 }
 
 std::shared_ptr<Type>
@@ -119,7 +122,10 @@ SemanticAnalyzer::get_basic_type (const std::string &type)
   if (!is_basic_type (type))
     return nullptr;
 
-  return _basic_types.at (type);
+  if (_basic_types.find (type) != _basic_types.end ())
+    return _basic_types.at (type)->copy ();
+
+  return _architecture_dependent_types.at (type)->copy ();
 }
 
 bool
@@ -138,6 +144,38 @@ SemanticAnalyzer::does_type_exist (const std::string &type) const
   // TODO: Check for imported symbols.
 
   return false;
+}
+
+void
+SemanticAnalyzer::populate_architecture_dependent_types ()
+{
+  switch (Config::get_instance ()->get_output_arch ())
+    {
+    case Config::OutputArch::ARCH_X86:
+      _architecture_dependent_types["size_t"]
+          = Type::create_basic (BuiltinType::ULONG);
+      _architecture_dependent_types["uptr"]
+          = Type::create_basic (BuiltinType::ULONG);
+
+      _architecture_dependent_types["off_t"]
+          = Type::create_basic (BuiltinType::LONG);
+      _architecture_dependent_types["iptr"]
+          = Type::create_basic (BuiltinType::LONG);
+      break;
+
+    case Config::OutputArch::ARCH_AMD64:
+    case Config::OutputArch::ARCH_ARM64:
+      _architecture_dependent_types["size_t"]
+          = Type::create_basic (BuiltinType::UINT);
+      _architecture_dependent_types["uptr"]
+          = Type::create_basic (BuiltinType::UINT);
+
+      _architecture_dependent_types["off_t"]
+          = Type::create_basic (BuiltinType::INT);
+      _architecture_dependent_types["iptr"]
+          = Type::create_basic (BuiltinType::INT);
+      break;
+    }
 }
 
 }

@@ -6,6 +6,11 @@
 namespace nlc
 {
 
+SemanticAnalyzer::SemanticAnalyzer ()
+{
+  populate_architecture_dependent_types ();
+}
+
 std::unique_ptr<SymbolTable>
 SemanticAnalyzer::analyze (const AST &root)
 {
