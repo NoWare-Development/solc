@@ -94,6 +94,32 @@ ErrorHandler::handle_invalid_expressions (const nlc::AST &root) const
 }
 
 void
+ErrorHandler::handle_sa_errors (
+    const std::vector<nlc::SemanticAnalyzer::SAError> &errors) const
+{
+  for (const auto &e : errors)
+    {
+      if (e.tok_pos >= _tokens.size ())
+        continue;
+
+      const auto &token = _tokens.at (e.tok_pos);
+
+      std::string message = get_message_start (
+          token.line + 1, token.end - token.end + 1, "error",
+          ESCColor::ESCCOLOR_RED, ESCGraphics::ESCGRAPHICS_BOLD);
+
+      message += get_sa_error_reason (e);
+
+      message += '\n';
+      message += get_highlighted_token (token, ESCColor::ESCCOLOR_RED,
+                                        ESCGraphics::ESCGRAPHICS_BOLD);
+      message += '\n';
+
+      std::cout << message;
+    }
+}
+
+void
 ErrorHandler::collect_invalid_expressions (const nlc::AST &node,
                                            std::vector<nlc::AST> &v) const
 {

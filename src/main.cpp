@@ -7,6 +7,7 @@
 #include <iostream>
 #include <lexer/lexer.hpp>
 #include <parser/parser.hpp>
+#include <sa/sa.hpp>
 #include <sstream>
 
 static void handle_arguments (ArgParser &argparser);
@@ -72,18 +73,17 @@ main (int argc, char **argv)
 
       nlc::Parser parser (tokens);
       auto root = parser.parse ();
+      std::cout << root.to_string () << '\n';
       auto errors = parser.get_errors ();
       handler.add_parser_errors (errors);
 
-      // TODO: remove me
-      std::cout << root.to_string () << '\n';
-      if (!handler.handle_parser_errors ())
+      nlc::SemanticAnalyzer sa{};
+      auto symbol_table = sa.analyze (root);
+      auto sa_errors = sa.get_errors ();
+      if (!sa_errors.empty ())
         {
+          handler.handle_sa_errors (sa_errors);
           return -4;
-        }
-      if (!handler.handle_invalid_expressions (root))
-        {
-          return -5;
         }
     }
 
