@@ -76,6 +76,10 @@ main (int argc, char **argv)
       std::cout << root.to_string () << '\n';
       auto errors = parser.get_errors ();
       handler.add_parser_errors (errors);
+      if (!handler.handle_parser_errors ())
+        {
+          return -4;
+        }
 
       nlc::SemanticAnalyzer sa{};
       auto symbol_table = sa.analyze (root);
@@ -83,7 +87,7 @@ main (int argc, char **argv)
       if (!sa_errors.empty ())
         {
           handler.handle_sa_errors (sa_errors);
-          return -4;
+          return -5;
         }
     }
 
