@@ -17,6 +17,14 @@ ErrorHandler::get_sa_error_reason (
       out += "\"";
       break;
 
+    case nlc::SemanticAnalyzer::SAErrorType::TYPE_REDEF:
+      out += "Redefinition of type \"";
+      out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+      out += _tokens.at (err.tok_pos).value;
+      out += escape_reset ();
+      out += "\"";
+      break;
+
     default:
       out = "<Unknown semantic analyzer error>";
       break;

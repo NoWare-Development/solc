@@ -19,6 +19,7 @@ public:
   enum class SAErrorType
   {
     UNDEFINED_TYPE,
+    TYPE_REDEF,
   };
   struct SAError
   {
@@ -59,6 +60,8 @@ private:
 
   bool is_basic_type (const std::string &type) const;
   std::shared_ptr<Type> get_basic_type (const std::string &type);
+
+  bool does_type_exist (const std::string &type) const;
 
   void analyze_prog (const AST &prog);
 
