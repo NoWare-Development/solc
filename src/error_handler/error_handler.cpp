@@ -215,13 +215,13 @@ ErrorHandler::get_parser_error (const nlc::Parser::ParserError &err) const
     }
   error_string += error_reason;
 
-  if (err.type == nlc::Parser::ParserError::ErrType::PARSER_ERROR_UNEXPECTED)
-    {
-      error_string += '\n';
-      error_string += get_highlighted_token (_tokens.at (err.pos),
-                                             ESCColor::ESCCOLOR_RED,
-                                             ESCGraphics::ESCGRAPHICS_BOLD);
-    }
+  const auto &token
+      = err.type == nlc::Parser::ParserError::ErrType::PARSER_ERROR_UNEXPECTED
+            ? _tokens.at (err.pos)
+            : *(_tokens.end () - 1);
+  error_string += '\n';
+  error_string += get_highlighted_token (token, ESCColor::ESCCOLOR_RED,
+                                         ESCGraphics::ESCGRAPHICS_BOLD);
 
   return error_string;
 }
