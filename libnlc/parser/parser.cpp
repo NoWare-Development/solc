@@ -309,7 +309,8 @@ bool
 Parser::is_operand (ASTType type) const
 {
   return (((uint16_t)type & 0xFF00) >> 8) == (uint16_t)ASTGroup::EXPR_OPERAND
-         || type == ASTType::EXPR || type == ASTType::FROM_MODULE;
+         || type == ASTType::EXPR || type == ASTType::FROM_MODULE
+         || type == ASTType::PREFIX_EXPR;
 }
 
 bool
