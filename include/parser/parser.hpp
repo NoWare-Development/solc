@@ -16,19 +16,19 @@ public:
 
   struct ParserError
   {
-    enum ErrType
+    enum class Type
     {
-      PARSER_ERROR_UNK,
-      PARSER_ERROR_EXPECTED,
-      PARSER_ERROR_UNEXPECTED,
-      PARSER_ERROR_INVALID_EXPR,
+      UNK,
+      EXPECTED,
+      UNEXPECTED,
+      INVALID_EXPR,
     };
 
-    ErrType type;
+    Type type;
     size_t pos;
     size_t len;
 
-    ParserError (ErrType type, size_t pos, size_t len = 1)
+    ParserError (Type type, size_t pos, size_t len = 1)
         : type{ type }, pos{ pos }, len{ len }
     {
     }

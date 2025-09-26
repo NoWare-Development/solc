@@ -36,7 +36,7 @@ Parser::parse_decldef ()
 
     case TokenType::ERR:
       {
-        add_error (ParserError::ErrType::PARSER_ERROR_EXPECTED, _pos++);
+        add_error (ParserError::Type::EXPECTED, _pos++);
         return {};
       }
 
@@ -44,7 +44,7 @@ Parser::parse_decldef ()
       break;
     }
 
-  add_error (ParserError::ErrType::PARSER_ERROR_UNEXPECTED, _pos++);
+  add_error (ParserError::Type::UNEXPECTED, _pos++);
   return {};
 }
 

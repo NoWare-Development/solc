@@ -29,7 +29,7 @@ Parser::parse_expression (bool toplevel)
   auto expr_tree = parse_expression_tree (toplevel);
   if (expr_tree.is_empty ())
     {
-      add_error (ParserError::ErrType::PARSER_ERROR_UNEXPECTED, _pos);
+      add_error (ParserError::Type::UNEXPECTED, _pos);
       return {};
     }
 
@@ -229,7 +229,7 @@ Parser::parse_expression_operand ()
       }
 
     default:
-      add_error (ParserError::ErrType::PARSER_ERROR_UNEXPECTED, _pos++);
+      add_error (ParserError::Type::UNEXPECTED, _pos++);
       return {};
     }
 
@@ -348,7 +348,6 @@ Parser::pratt_parse_expression (const std::vector<AST> &in, size_t *pos,
   // Handle prefix operators
   if (is_prefix_operator (lhs.type))
     {
-      auto start_ast_pos = lhs.token_position;
       auto cur = lhs;
       std::vector<AST> prefixlist{};
 

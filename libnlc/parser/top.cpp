@@ -57,7 +57,7 @@ Parser::parse_top (bool for_export)
       break;
     }
 
-  add_error (ParserError::ErrType::PARSER_ERROR_UNEXPECTED, _pos++);
+  add_error (ParserError::Type::UNEXPECTED, _pos++);
   return {};
 }
 

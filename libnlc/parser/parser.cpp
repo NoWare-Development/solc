@@ -169,7 +169,7 @@ Parser::verify_pos (size_t pos)
 {
   if (pos >= _tokens.size ())
     {
-      add_error (ParserError::ErrType::PARSER_ERROR_EXPECTED, pos);
+      add_error (ParserError::Type::EXPECTED, pos);
       return false;
     }
 
@@ -181,7 +181,7 @@ Parser::verify_token (size_t pos, TokenType got, TokenType expected)
 {
   if (got != expected)
     {
-      add_error (ParserError::ErrType::PARSER_ERROR_UNEXPECTED, pos);
+      add_error (ParserError::Type::UNEXPECTED, pos);
       return false;
     }
   return true;
@@ -193,7 +193,7 @@ Parser::verify_value (size_t pos, const std::string &got,
 {
   if (got != expected)
     {
-      add_error (ParserError::ErrType::PARSER_ERROR_EXPECTED, pos);
+      add_error (ParserError::Type::EXPECTED, pos);
       return false;
     }
   return true;
