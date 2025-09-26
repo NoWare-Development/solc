@@ -41,7 +41,7 @@ Parser::parse_enum_definition ()
         }
       else if (next == TokenType::ID)
         {
-          add_error (ParserError::ErrType::PARSER_ERROR_UNEXPECTED, _pos);
+          add_error (ParserError::Type::UNEXPECTED, _pos);
           return {};
         }
     }

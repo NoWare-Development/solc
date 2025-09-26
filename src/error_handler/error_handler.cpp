@@ -99,10 +99,10 @@ ErrorHandler::handle_sa_errors (
 {
   for (const auto &e : errors)
     {
-      if (e.tok_pos >= _tokens.size ())
+      if (e.token_positions.at (0) >= _tokens.size ())
         continue;
 
-      const auto &token = _tokens.at (e.tok_pos);
+      const auto &token = _tokens.at (e.token_positions.at (0));
 
       std::string message = get_message_start (
           token.line + 1, token.end - token.end + 1, "error",
@@ -200,7 +200,7 @@ ErrorHandler::get_parser_error (const nlc::Parser::ParserError &err) const
   const std::string error_reason = get_parser_error_reason (err);
   std::string error_string{};
 
-  if (err.type != nlc::Parser::ParserError::ErrType::PARSER_ERROR_UNEXPECTED)
+  if (err.type != nlc::Parser::ParserError::Type::UNEXPECTED)
     {
       error_string += get_message_start (_nol, last_line ().length (), "error",
                                          ESCColor::ESCCOLOR_RED,
@@ -215,10 +215,9 @@ ErrorHandler::get_parser_error (const nlc::Parser::ParserError &err) const
     }
   error_string += error_reason;
 
-  const auto &token
-      = err.type == nlc::Parser::ParserError::ErrType::PARSER_ERROR_UNEXPECTED
-            ? _tokens.at (err.pos)
-            : *(_tokens.end () - 1);
+  const auto &token = err.type == nlc::Parser::ParserError::Type::UNEXPECTED
+                          ? _tokens.at (err.pos)
+                          : *(_tokens.end () - 1);
   error_string += '\n';
   error_string += get_highlighted_token (token, ESCColor::ESCCOLOR_RED,
                                          ESCGraphics::ESCGRAPHICS_BOLD);
@@ -309,24 +308,24 @@ ErrorHandler::get_parser_error_reason (
 
   switch (err.type)
     {
-    case Parser::ParserError::ErrType::PARSER_ERROR_UNK:
+    case Parser::ParserError::Type::UNK:
       return "<Unknown error>";
 
-    case Parser::ParserError::ErrType::PARSER_ERROR_EXPECTED:
+    case Parser::ParserError::Type::EXPECTED:
       {
         std::string out{};
         out += "Expected token";
         return out;
       }
 
-    case Parser::ParserError::ErrType::PARSER_ERROR_UNEXPECTED:
+    case Parser::ParserError::Type::UNEXPECTED:
       {
         std::string out{};
         out += "Unexpected token \"" + _tokens.at (err.pos).value + "\"";
         return out;
       }
 
-    case Parser::ParserError::ErrType::PARSER_ERROR_INVALID_EXPR:
+    case Parser::ParserError::Type::INVALID_EXPR:
       {
         std::string out{};
         out += "Invalid expression at line "

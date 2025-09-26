@@ -39,7 +39,7 @@ Parser::parse_case_statement ()
     }
   else
     {
-      add_error (ParserError::ErrType::PARSER_ERROR_UNEXPECTED, _pos);
+      add_error (ParserError::Type::UNEXPECTED, _pos);
       return {};
     }
 
