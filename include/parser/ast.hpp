@@ -147,6 +147,18 @@ enum struct ASTType
 };
 #undef __AST_DEF
 
+static constexpr ASTGroup
+get_ast_group (ASTType type)
+{
+  return static_cast<ASTGroup> ((static_cast<uint16_t> (type) >> 8) & 0xFF);
+}
+
+static constexpr size_t
+get_ast_index_in_group (ASTType type)
+{
+  return static_cast<uint16_t> (type) & 0xFF;
+}
+
 struct AST
 {
   friend class Parser;
