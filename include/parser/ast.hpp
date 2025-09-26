@@ -7,7 +7,7 @@
 namespace nlc
 {
 
-enum class ASTGroup
+enum class ASTGroup : uint8_t
 {
   NONE = 0,
   STMT,
@@ -27,7 +27,7 @@ enum class ASTGroup
 };
 
 #define __AST_DEF(group, id) (((uint8_t)(group) & 0xFF) << 8) | ((id) & 0xFF)
-enum struct ASTType
+enum struct ASTType : uint16_t
 {
   ERR = __AST_DEF (ASTGroup::NONE, 0),
 
