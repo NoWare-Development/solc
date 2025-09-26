@@ -273,42 +273,37 @@ Parser::is_operator (ASTType type) const
 bool
 Parser::is_binary_operator (ASTType type) const
 {
-  return (((uint16_t)type >> 8) & 0xFF)
-         == (uint16_t)ASTGroup::EXPR_BINARY_OPERATOR;
+  return get_ast_group (type) == ASTGroup::EXPR_BINARY_OPERATOR;
 }
 
 bool
 Parser::is_assign_operator (ASTType type) const
 {
-  return (((uint16_t)type >> 8) & 0xFF)
-         == (uint16_t)ASTGroup::EXPR_ASSIGN_OPERATOR;
+  return get_ast_group (type) == ASTGroup::EXPR_ASSIGN_OPERATOR;
 }
 
 bool
 Parser::is_compare_operator (ASTType type) const
 {
-  return (((uint16_t)type >> 8) & 0xFF)
-         == (uint16_t)ASTGroup::EXPR_COMPARE_OPERATOR;
+  return get_ast_group (type) == ASTGroup::EXPR_COMPARE_OPERATOR;
 }
 
 bool
 Parser::is_boolean_operator (ASTType type) const
 {
-  return (((uint16_t)type >> 8) & 0xFF)
-         == (uint16_t)ASTGroup::EXPR_BOOLEAN_OPERATOR;
+  return get_ast_group (type) == ASTGroup::EXPR_BOOLEAN_OPERATOR;
 }
 
 bool
 Parser::is_prefix_operator (ASTType type) const
 {
-  return (((uint16_t)type >> 8) & 0xFF)
-         == (uint16_t)ASTGroup::EXPR_PREFIX_OPERATOR;
+  return get_ast_group (type) == ASTGroup::EXPR_PREFIX_OPERATOR;
 }
 
 bool
 Parser::is_operand (ASTType type) const
 {
-  return (((uint16_t)type & 0xFF00) >> 8) == (uint16_t)ASTGroup::EXPR_OPERAND
+  return get_ast_group (type) == ASTGroup::EXPR_OPERAND
          || type == ASTType::EXPR || type == ASTType::FROM_MODULE
          || type == ASTType::PREFIX_EXPR;
 }
