@@ -13,14 +13,10 @@ class Config
 public:
   ~Config () = default;
 
-  static Config *
-  get_instance ()
+  static Config &
+  the ()
   {
-    static Config *_instance = nullptr;
-    if (_instance == nullptr)
-      {
-        _instance = new Config ();
-      }
+    static Config _instance;
     return _instance;
   }
 
