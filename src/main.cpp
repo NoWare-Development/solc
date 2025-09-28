@@ -77,9 +77,9 @@ main (int argc, char **argv)
       auto errors = parser.get_errors ();
       handler.add_parser_errors (errors);
       if (!handler.handle_parser_errors ())
-        {
-          return -4;
-        }
+        return -4;
+      else if (!handler.handle_invalid_expressions (root))
+        return -5;
 
       nlc::SemanticAnalyzer sa{};
       auto symbol_table = sa.analyze (root);
@@ -87,7 +87,7 @@ main (int argc, char **argv)
       if (!sa_errors.empty ())
         {
           handler.handle_sa_errors (sa_errors);
-          return -5;
+          return -6;
         }
     }
 
@@ -98,28 +98,28 @@ static void
 handle_arguments (ArgParser &argparser)
 {
   auto optlevel = argparser.get_argument_value<size_t> ("opt");
-  nlc::Config::get_instance ()->set_optimization_level (optlevel);
+  nlc::Config::the ().set_optimization_level (optlevel);
 
   auto includes = argparser.get_argument_value_list<std::string> ("include");
-  nlc::Config::get_instance ()->set_include_paths (includes);
+  nlc::Config::the ().set_include_paths (includes);
 
   auto libpaths = argparser.get_argument_value_list<std::string> ("libpath");
-  nlc::Config::get_instance ()->set_link_lib_search_paths (libpaths);
+  nlc::Config::the ().set_link_lib_search_paths (libpaths);
 
   auto libs = argparser.get_argument_value_list<std::string> ("linkwith");
-  nlc::Config::get_instance ()->set_link_libs (libs);
+  nlc::Config::the ().set_link_libs (libs);
 
   auto has_nostdlib = argparser.has_argument ("nostdlib");
   if (has_nostdlib)
     {
-      nlc::Config::get_instance ()->set_compiler_flag (
+      nlc::Config::the ().set_compiler_flag (
           nlc::Config::CompilerFlag::COMPILER_FLAG_NOSTDLIB);
     }
 
   auto has_freestanding = argparser.has_argument ("freestanding");
   if (has_freestanding)
     {
-      nlc::Config::get_instance ()->set_compiler_flag (
+      nlc::Config::the ().set_compiler_flag (
           nlc::Config::CompilerFlag::COMPILER_FLAG_FREESTANDING);
     }
 
@@ -141,8 +141,7 @@ get_arch (ArgParser &argparser)
                        "architecture option.\n";
         }
 
-      nlc::Config::get_instance ()->set_output_arch (
-          nlc::Config::OutputArch::ARCH_X86);
+      nlc::Config::the ().set_output_arch (nlc::Config::OutputArch::ARCH_X86);
       arch_set = true;
     }
 
@@ -154,7 +153,7 @@ get_arch (ArgParser &argparser)
           std::cout << "Argument -mamd64 will override previously set target "
                        "architecture option.\n";
         }
-      nlc::Config::get_instance ()->set_output_arch (
+      nlc::Config::the ().set_output_arch (
           nlc::Config::OutputArch::ARCH_AMD64);
       arch_set = true;
     }
@@ -167,14 +166,14 @@ get_arch (ArgParser &argparser)
           std::cout << "Argument -marm64 will override previously set target "
                        "architecture option.\n";
         }
-      nlc::Config::get_instance ()->set_output_arch (
+      nlc::Config::the ().set_output_arch (
           nlc::Config::OutputArch::ARCH_ARM64);
       arch_set = true;
     }
 
   if (!arch_set)
     {
-      nlc::Config::get_instance ()->set_output_arch (
-          nlc::Config::get_instance ()->get_default_arch ());
+      nlc::Config::the ().set_output_arch (
+          nlc::Config::the ().get_default_arch ());
     }
 }
