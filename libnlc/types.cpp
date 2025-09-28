@@ -41,22 +41,37 @@ bool
 Type::is_integer () const
 {
   auto group = get_builtin_type_group (builtin_type);
-  return group == BuiltinTypeGroup::INT || group == BuiltinTypeGroup::UINT;
+  return (group == BuiltinTypeGroup::INT || group == BuiltinTypeGroup::UINT)
+         && !is_pointer ();
 }
 
 bool
 Type::is_floating () const
 {
-  return get_builtin_type_group (builtin_type) == BuiltinTypeGroup::FLOAT;
+  return get_builtin_type_group (builtin_type) == BuiltinTypeGroup::FLOAT
+         && !is_pointer ();
 }
 
 bool
 Type::is_complex () const
 {
-  return get_builtin_type_group (builtin_type) == BuiltinTypeGroup::COMPLEX;
+  return get_builtin_type_group (builtin_type) == BuiltinTypeGroup::COMPLEX
+         && !is_pointer ();
 }
 
-const std::vector<size_t> &
+bool
+Type::is_enum () const
+{
+  return builtin_type == BuiltinType::ENUM;
+}
+
+bool
+Type::is_function_pointer () const
+{
+  return pointer_indirection == 1 && builtin_type == BuiltinType::FUNC;
+}
+
+const std::vector<std::shared_ptr<AST>> &
 Type::get_array_sizes () const
 {
   return array_sizes;
@@ -109,40 +124,45 @@ std::shared_ptr<Type>
 get_converted_type (const std::shared_ptr<Type> &from,
                     const std::shared_ptr<Type> &to)
 {
-  if (from->is_array () && !to->is_explicit_pointer () && !to->is_integer ())
-    {
-      return nullptr;
-    }
-
-  if (from->is_explicit_pointer () && !to->is_integer ()
-      && !to->is_explicit_pointer ())
+  if (to->is_array ())
     return nullptr;
 
-  if (get_converted_builtin_type (from->builtin_type, to->builtin_type)
-      == BuiltinType::UNK)
+  if (to->is_explicit_pointer ())
+    return from->is_pointer () || from->is_integer () ? to : nullptr;
+
+  if (to->is_complex ())
     {
-      if (from->is_complex () && to->is_complex ())
-        {
-          if (from->get_type_name () != to->get_type_name ())
-            return nullptr;
-
-          const auto &from_path = from->get_type_path ();
-          const auto &to_path = to->get_type_path ();
-          if (from_path.size () != to_path.size ())
-            return nullptr;
-
-          auto path_size = from_path.size ();
-          for (size_t i = 0; i < path_size; i++)
-            {
-              if (from_path.at (i) != to_path.at (i))
-                return nullptr;
-            }
-        }
-      else
+      if (!from->is_complex ())
         return nullptr;
+
+      if (to->get_type_name () != from->get_type_name ())
+        return nullptr;
+
+      const auto &from_path = from->get_type_path ();
+      const auto &to_path = to->get_type_path ();
+
+      auto from_path_size = from_path.size ();
+      auto to_path_size = to_path.size ();
+      if (from_path_size != to_path_size)
+        return nullptr;
+
+      for (size_t i = 0; i < from_path_size; i++)
+        {
+          if (from_path.at (i) != to_path.at (i))
+            return nullptr;
+        }
+
+      return to;
     }
 
-  return to;
+  auto builtin_type
+      = get_converted_builtin_type (from->builtin_type, to->builtin_type);
+  if (builtin_type == BuiltinType::UNK)
+    return nullptr;
+
+  auto new_type = to->copy ();
+  new_type->builtin_type = builtin_type;
+  return new_type;
 }
 
 BuiltinType

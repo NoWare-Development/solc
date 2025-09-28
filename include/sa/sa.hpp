@@ -1,9 +1,11 @@
 #pragma once
 
+#include "symbols/symbol.hpp"
 #include <memory>
 #include <sa/scope.hpp>
 #include <symbols/symboltable.hpp>
 #include <types.hpp>
+#include <unordered_map>
 
 namespace nlc
 {
@@ -18,16 +20,72 @@ public:
 
   enum class SAErrorType
   {
+    NONE,
+
     UNDEFINED_TYPE,
+
     TYPE_REDEF,
+    VAR_REDECL,
+
+    UNDECLARED_VARIABLE,
+
+    ARRAY_IN_TYPEDEF,
+
+    ARRAY_SIZE_NOT_COMPTIME,
+    ARRAY_SIZE_NOT_INTEGER,
+
+    IDENTIFIER_IN_CONST_EXPR,
+    DEREF_IN_CONST_EXPR,
+    ADDRESS_IN_CONST_EXPR,
+    ARRAY_ELEM_IN_CONST_EXPR,
+    ACCESS_MEMBER_IN_CONST_EXPR,
+    CALL_IN_CONST_EXPR,
+    STRING_IN_CONST_EXPR,
+
+    CANNOT_CONVERT_TYPES_EXPR,
+    BITWISE_OPERATION_ON_FLOAT,
+
+    UNKNOWN_NUMERIC_TYPESPEC,
+    INT_TYPESPEC_ON_FLOAT,
+
+    EXPR_VAR_NOT_ARRAY,
+    TAKE_ADDRESS_OF_NUMERIC_LITERAL,
+    TAKE_ADDRESS_OF_BOOLEAN_LITERAL,
+    TAKE_ADDRESS_OF_NULLPTR_LITERAL,
+    TAKE_ADDRESS_OF_ENUM_ELEMENT,
+    DEREF_ON_NUMERIC_LITERAL,
+    DEREF_ON_BOOLEAN_LITERAL,
+    DEREF_ON_NULLPTR_LITERAL,
+    DEREF_ON_ENUM_ELEMENT,
+
+    CANNOT_CAST_IN_CAST,
+    DEREF_ON_NONPTR,
   };
   struct SAError
   {
-    SAErrorType type;
-    size_t tok_pos;
+    std::vector<std::shared_ptr<Type>> types{};
+    std::vector<size_t> token_positions{};
 
-    SAError (SAErrorType type, size_t tok_pos) : type (type), tok_pos (tok_pos)
+    SAErrorType type = SAErrorType::NONE;
+
+    SAError () = default;
+    SAError (SAErrorType type, size_t tok_pos,
+             std::vector<std::shared_ptr<Type>> types = {})
+        : types (std::move (types)), type (type)
     {
+      token_positions.push_back (tok_pos);
+    }
+    SAError (SAErrorType type, std::vector<size_t> token_positions,
+             std::vector<std::shared_ptr<Type>> types = {})
+        : types (std::move (types)),
+          token_positions (std::move (token_positions)), type (type)
+    {
+    }
+
+    static SAError
+    success ()
+    {
+      return SAError ();
     }
   };
 
@@ -56,23 +114,62 @@ private:
     { "bool", Type::create_basic (BuiltinType::BOOL) },
   };
 
+  const std::unordered_map<std::string, std::shared_ptr<Type>>
+      _typespec_to_type{
+        { "hh", _basic_types.at ("char") },
+        { "hhi", _basic_types.at ("char") },
+        { "h", _basic_types.at ("short") },
+        { "hi", _basic_types.at ("short") },
+        { "i", _basic_types.at ("int") },
+        { "l", _basic_types.at ("long") },
+        { "li", _basic_types.at ("long") },
+
+        { "hhu", _basic_types.at ("uchar") },
+        { "hu", _basic_types.at ("ushort") },
+        { "u", _basic_types.at ("uint") },
+        { "lu", _basic_types.at ("ulong") },
+
+        { "f", _basic_types.at ("float") },
+        { "d", _basic_types.at ("double") },
+        { "lf", _basic_types.at ("double") },
+      };
+
   std::unordered_map<std::string, std::shared_ptr<Type>>
       _architecture_dependent_types{};
+  const std::unordered_map<std::string, std::shared_ptr<Type>> _literal_type{
+    { "true", _basic_types.at ("bool") },
+    { "false", _basic_types.at ("bool") },
+    { "nullptr", Type::create_basic (BuiltinType::VOID, 1) },
+  };
 
   void populate_architecture_dependent_types ();
 
   std::vector<SAError> _errors{};
 
   bool is_basic_type (const std::string &type) const;
-  std::shared_ptr<Type> get_basic_type (const std::string &type);
+  std::shared_ptr<Type> get_basic_type (const std::string &type) const;
+
+  bool is_valid_typespec (const std::string &ts) const;
+  std::shared_ptr<Type> get_typespec (const std::string &ts) const;
+
+  bool is_valid_literal (const std::string &literal) const;
+  std::shared_ptr<Type> get_literal_type (const std::string &literal) const;
 
   bool does_type_exist (const std::string &type) const;
 
   void analyze_prog (const AST &prog);
-
   void analyze_typedef (const AST &tdef);
+  void analyze_vardecl (const AST &vardecl,
+                        ModifierFlags flags
+                        = ModifierFlagBits::MODIFIER_FLAG_NONE);
+  void analyze_vardef (const AST &vardef,
+                       ModifierFlags flags
+                       = ModifierFlagBits::MODIFIER_FLAG_NONE);
 
   std::shared_ptr<Type> get_type_from_type_ast (const AST &type);
+
+  SAError is_expr_known_at_comptime (const AST &expr) const;
+  std::shared_ptr<Type> get_type_from_expr_ast (const AST &expr);
 
   template <typename... Args>
   void

@@ -1,7 +1,9 @@
 #pragma once
 
+#include "types.hpp"
 #include "util/util.hpp"
 #include <lexer/token.hpp>
+#include <memory>
 #include <parser/parser.hpp>
 #include <sa/sa.hpp>
 #include <vector>
@@ -60,4 +62,6 @@ private:
   std::string last_line () const;
 
   size_t get_number_length (long long num) const;
+
+  std::string type_to_string (std::shared_ptr<nlc::Type> type) const;
 };

@@ -16,8 +16,10 @@ SemanticAnalyzer::analyze_typedef (const AST &tdef)
     }
 
   if (type == nullptr)
+    return;
+  else if (type->is_array ())
     {
-      add_error (SAErrorType::UNDEFINED_TYPE,
+      add_error (SAErrorType::ARRAY_IN_TYPEDEF,
                  tdef.children.at (0).token_position);
       return;
     }
