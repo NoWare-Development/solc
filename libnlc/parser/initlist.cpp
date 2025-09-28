@@ -46,54 +46,41 @@ Parser::parse_initialization_list_entry ()
 {
   VERIFY_POS (_pos);
 
-  auto cur = _tokens.at (_pos);
-  if (cur.type == TokenType::PERIOD)
+  auto current = _tokens.at (_pos);
+  AST entry;
+  if (current.type == TokenType::PERIOD)
     {
-      VERIFY_POS (_pos);
-      cur = _tokens.at (_pos);
-      AST explicit_init (_pos++, ASTType::INITLIST_ENTRY_INIT_EXPLICIT);
-      VERIFY_POS (_pos);
-
-      AST target (_pos, ASTType::INITLIST_ENTRY_INIT_EXPLICIT_TARGET);
-      auto target_symbol = parse_identifier_operand (false, false);
-      target_symbol = parse_array_element (target_symbol);
-      target.append (target_symbol);
-
-      VERIFY_POS (_pos);
-      cur = _tokens.at (_pos);
-      VERIFY_TOKEN (_pos, cur.type, TokenType::EQ);
       _pos++;
 
       VERIFY_POS (_pos);
-      cur = _tokens.at (_pos);
-      if (cur.type == TokenType::LBRACE)
-        {
-          auto initlist = parse_initialization_list ();
-          explicit_init.append (initlist);
-        }
-      else
-        {
-          auto expr = parse_expression ();
-          explicit_init.append (expr);
-        }
+      current = _tokens.at (_pos);
+      VERIFY_TOKEN (_pos, current.type, TokenType::ID);
+      entry = AST (_pos, ASTType::INITLIST_ENTRY_EXPLICIT, current.value);
 
-      return explicit_init;
-    }
+      _pos++;
+      VERIFY_POS (_pos);
+      current = _tokens.at (_pos);
+      VERIFY_TOKEN (_pos, current.type, TokenType::EQ);
 
-  AST init (_pos, ASTType::INITLIST_ENTRY_INIT);
-
-  if (cur.type == TokenType::LBRACE)
-    {
-      auto initlist = parse_initialization_list ();
-      init.append (initlist);
+      _pos++;
+      VERIFY_POS (_pos);
+      current = _tokens.at (_pos);
     }
   else
     {
-      auto expr = parse_expression ();
-      init.append (expr);
+      entry = AST (_pos, ASTType::INITLIST_ENTRY);
     }
 
-  return init;
+  if (current.type == TokenType::LBRACE)
+    {
+      entry.append (parse_initialization_list ());
+    }
+  else
+    {
+      entry.append (parse_expression ());
+    }
+
+  return entry;
 }
 
 }

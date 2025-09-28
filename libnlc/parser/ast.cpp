@@ -79,7 +79,7 @@ asttype_to_string (ASTType type)
     "EXPR_OPERAND",
     "TEMPLATE",
     "VISIBILITY_MARKER",
-    "INITLIST_ENTRY",
+    "INITLIST",
   };
 
   constexpr const char *ids[0x100][0x100] = {
@@ -221,10 +221,9 @@ asttype_to_string (ASTType type)
         "PRIVATE",
     },
     {
-        // INITLIST_ENTRY
-        "INIT",
-        "INIT_EXPLICIT",
-        "INIT_EXPLICT_TARGET",
+        // INITLIST
+        "ENTRY",
+        "ENTRY_EXPLICIT",
     },
   };
 
