@@ -11,7 +11,7 @@ std::shared_ptr<Type>
 SemanticAnalyzer::get_type_from_type_ast (const AST &type)
 {
   size_t pointer_indirection = 0;
-  std::vector<size_t> array_sizes{};
+  std::vector<std::shared_ptr<AST>> array_sizes{};
 
   auto *current = const_cast<AST *> (&type);
   while (true)
@@ -26,7 +26,41 @@ SemanticAnalyzer::get_type_from_type_ast (const AST &type)
           break;
 
         case ASTType::TYPE_ARRAY:
-          TODO ("Array implementation");
+          {
+            if (current->children.size () > 1)
+              {
+                auto comptime_error
+                    = is_expr_known_at_comptime (current->children.at (0));
+                if (comptime_error.type != SAErrorType::NONE)
+                  {
+                    add_error (comptime_error);
+                    add_error (SAErrorType::ARRAY_SIZE_NOT_COMPTIME,
+                               current->children.at (0).token_position);
+                    return nullptr;
+                  }
+
+                auto type_of_expr
+                    = get_type_from_expr_ast (current->children.at (0));
+                if (type_of_expr == nullptr)
+                  return nullptr;
+                else if (!type_of_expr->is_integer ())
+                  {
+                    add_error (SAErrorType::ARRAY_SIZE_NOT_INTEGER,
+                               current->children.at (0).token_position);
+                    return nullptr;
+                  }
+
+                array_sizes.push_back (
+                    std::make_shared<AST> (current->children.at (0)));
+                current = &current->children.at (1);
+              }
+            else
+              {
+                array_sizes.push_back (nullptr);
+                current = &current->children.at (0);
+              }
+          }
+          break;
 
         case ASTType::FROM_MODULE:
           TODO ("Type from module");
@@ -43,59 +77,51 @@ SemanticAnalyzer::get_type_from_type_ast (const AST &type)
               {
                 // Basic types
                 type = get_basic_type (value);
+                type->pointer_indirection += pointer_indirection;
+                type->array_sizes.insert (type->array_sizes.end (),
+                                          array_sizes.begin (),
+                                          array_sizes.end ());
                 return type;
               }
-            else
+
+            // TODO: Check for imported symbols.
+            for (const auto &scope : *_scope_stack)
               {
-                // TODO: Check for imported symbols.
-                for (const auto &scope : *_scope_stack)
+                // Check for aliases
+                if (scope.has_alias (value))
                   {
-                    // Check for aliases
-                    if (scope.has_alias (value))
-                      {
-                        type = scope.get_alias (value)->copy ();
-                        type->pointer_indirection += pointer_indirection;
-
-                        auto got_array_begin = array_sizes.begin ();
-                        auto got_array_end = array_sizes.end ();
-                        auto type_array_end = type->array_sizes.end ();
-
-                        type->array_sizes.insert (
-                            type_array_end, got_array_begin, got_array_end);
-
-                        return type;
-                      }
-
-                    // Structs, Enums, Unions,
-                    BuiltinType builtin_type = BuiltinType::UNK;
-                    if (scope.has_struct (value))
-                      {
-                        builtin_type = BuiltinType::STRUCT;
-                      }
-                    else if (scope.has_enum (value))
-                      {
-                        builtin_type = BuiltinType::STRUCT;
-                      }
-
-                    if (builtin_type == BuiltinType::UNK)
-                      {
-                        return nullptr;
-                      }
-
-                    auto path = _scope_stack->construct_path (&scope);
-                    type = Type::create_complex (builtin_type, value, path);
-
-                    auto got_array_begin = array_sizes.begin ();
-                    auto got_array_end = array_sizes.end ();
-                    auto type_array_end = type->array_sizes.end ();
-
-                    type->array_sizes.insert (type_array_end, got_array_begin,
-                                              got_array_end);
+                    type = scope.get_alias (value)->copy ();
+                    type->pointer_indirection += pointer_indirection;
+                    type->array_sizes.insert (type->array_sizes.end (),
+                                              array_sizes.begin (),
+                                              array_sizes.end ());
 
                     return type;
                   }
+
+                // Check for structs, enums, unions,
+                BuiltinType builtin_type = BuiltinType::UNK;
+                if (scope.has_struct (value))
+                  builtin_type = BuiltinType::STRUCT;
+                else if (scope.has_enum (value))
+                  builtin_type = BuiltinType::ENUM;
+                else if (scope.has_union (value))
+                  builtin_type = BuiltinType::UNION;
+                else
+                  continue;
+
+                auto path = _scope_stack->construct_path (&scope);
+                type = Type::create_complex (builtin_type, value, path);
+
+                type->pointer_indirection += pointer_indirection;
+                type->array_sizes.insert (type->array_sizes.end (),
+                                          array_sizes.begin (),
+                                          array_sizes.end ());
+
+                return type;
               }
 
+            add_error (SAErrorType::UNDEFINED_TYPE, current->token_position);
             return nullptr;
           }
           break;
@@ -117,7 +143,7 @@ SemanticAnalyzer::is_basic_type (const std::string &type) const
 }
 
 std::shared_ptr<Type>
-SemanticAnalyzer::get_basic_type (const std::string &type)
+SemanticAnalyzer::get_basic_type (const std::string &type) const
 {
   if (!is_basic_type (type))
     return nullptr;
@@ -149,7 +175,7 @@ SemanticAnalyzer::does_type_exist (const std::string &type) const
 void
 SemanticAnalyzer::populate_architecture_dependent_types ()
 {
-  switch (Config::get_instance ()->get_output_arch ())
+  switch (Config::the ().get_output_arch ())
     {
     case Config::OutputArch::ARCH_X86:
       _architecture_dependent_types["size_t"]
@@ -157,6 +183,8 @@ SemanticAnalyzer::populate_architecture_dependent_types ()
       _architecture_dependent_types["uptr"]
           = Type::create_basic (BuiltinType::ULONG);
 
+      _architecture_dependent_types["ssize_t"]
+          = Type::create_basic (BuiltinType::LONG);
       _architecture_dependent_types["off_t"]
           = Type::create_basic (BuiltinType::LONG);
       _architecture_dependent_types["iptr"]
@@ -170,12 +198,45 @@ SemanticAnalyzer::populate_architecture_dependent_types ()
       _architecture_dependent_types["uptr"]
           = Type::create_basic (BuiltinType::UINT);
 
+      _architecture_dependent_types["ssize_t"]
+          = Type::create_basic (BuiltinType::INT);
       _architecture_dependent_types["off_t"]
           = Type::create_basic (BuiltinType::INT);
       _architecture_dependent_types["iptr"]
           = Type::create_basic (BuiltinType::INT);
       break;
     }
+}
+
+bool
+SemanticAnalyzer::is_valid_typespec (const std::string &ts) const
+{
+  auto lowercase = util::string_lowercase (ts);
+  return _typespec_to_type.find (lowercase) != _typespec_to_type.end ();
+}
+
+std::shared_ptr<Type>
+SemanticAnalyzer::get_typespec (const std::string &ts) const
+{
+  if (!is_valid_typespec (ts))
+    return nullptr;
+
+  auto lowercase = util::string_lowercase (ts);
+  return _typespec_to_type.at (lowercase)->copy ();
+}
+
+bool
+SemanticAnalyzer::is_valid_literal (const std::string &literal) const
+{
+  return _literal_type.find (literal) != _literal_type.end ();
+}
+
+std::shared_ptr<Type>
+SemanticAnalyzer::get_literal_type (const std::string &literal) const
+{
+  if (!is_valid_literal (literal))
+    return nullptr;
+  return _literal_type.at (literal);
 }
 
 }

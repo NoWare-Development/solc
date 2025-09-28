@@ -2,12 +2,12 @@
 typedef uint uint32_t;
 typedef ulong uint64_t;
 typedef uint64_t test64;
-typedef invalid_type invalid_t;
-typedef float int;
 
 typedef size_t sz;
 typedef off_t off;
 typedef uptr uintptr_t;
 typedef iptr intptr_t;
 
-typedef float size_t;
+ivar: int = 10.0f * 5u;
+ivar_ptr: *int = &ivar;
+ivar_ptr_deref: int = (*ivar_ptr);

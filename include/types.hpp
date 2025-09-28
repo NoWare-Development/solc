@@ -91,7 +91,7 @@ struct Type final
   };
 
   std::vector<std::string> type_path{};
-  std::vector<size_t> array_sizes{};
+  std::vector<std::shared_ptr<AST>> array_sizes{};
   std::vector<FuncArg> arguments{};
 
   std::string type_name{};
@@ -107,7 +107,8 @@ struct Type final
       : pointer_indirection (pointer_indirection), builtin_type (builtin_type)
   {
   }
-  Type (BuiltinType builtin_type, std::vector<size_t> &&array_sizes,
+  Type (BuiltinType builtin_type,
+        std::vector<std::shared_ptr<AST>> &&array_sizes,
         size_t pointer_indirection)
       : array_sizes (array_sizes), pointer_indirection (pointer_indirection),
         builtin_type (builtin_type)
@@ -120,7 +121,8 @@ struct Type final
   {
   }
   Type (BuiltinType builtin_type, const std::string &type_name,
-        std::vector<size_t> &&array_sizes, size_t pointer_indirection)
+        std::vector<std::shared_ptr<AST>> &&array_sizes,
+        size_t pointer_indirection)
       : array_sizes (array_sizes), type_name (type_name),
         pointer_indirection (pointer_indirection), builtin_type (builtin_type)
   {
@@ -133,7 +135,8 @@ struct Type final
   }
   Type (BuiltinType builtin_type, const std::string &type_name,
         std::vector<std::string> &&type_path,
-        std::vector<size_t> &&array_sizes, size_t pointer_indirection)
+        std::vector<std::shared_ptr<AST>> &&array_sizes,
+        size_t pointer_indirection)
       : type_path (type_path), array_sizes (array_sizes),
         type_name (type_name), pointer_indirection (pointer_indirection),
         builtin_type (builtin_type)
@@ -159,14 +162,16 @@ struct Type final
         builtin_type (BuiltinType::FUNC)
   {
   }
-  Type (std::shared_ptr<Type> return_type, std::vector<size_t> &&array_sizes,
+  Type (std::shared_ptr<Type> return_type,
+        std::vector<std::shared_ptr<AST>> &&array_sizes,
         size_t pointer_indirection)
       : array_sizes (array_sizes), return_type (return_type),
         pointer_indirection (pointer_indirection + 1),
         builtin_type (BuiltinType::FUNC)
   {
   }
-  Type (std::vector<FuncArg> &&arguments, std::vector<size_t> &&array_sizes,
+  Type (std::vector<FuncArg> &&arguments,
+        std::vector<std::shared_ptr<AST>> &&array_sizes,
         size_t pointer_indirection)
       : array_sizes (array_sizes), arguments (arguments),
         return_type (create_basic (BuiltinType::VOID)),
@@ -175,7 +180,8 @@ struct Type final
   {
   }
   Type (std::shared_ptr<Type> return_type, std::vector<FuncArg> &&arguments,
-        std::vector<size_t> &&array_sizes, size_t pointer_indirection)
+        std::vector<std::shared_ptr<AST>> &&array_sizes,
+        size_t pointer_indirection)
       : array_sizes (array_sizes), arguments (arguments),
         return_type (return_type),
         pointer_indirection (pointer_indirection + 1),
@@ -191,7 +197,8 @@ struct Type final
     return std::make_shared<Type> (builtin_type, pointer_indirection);
   }
   static std::shared_ptr<Type>
-  create_array (BuiltinType builtin_type, std::vector<size_t> array_sizes,
+  create_array (BuiltinType builtin_type,
+                std::vector<std::shared_ptr<AST>> array_sizes,
                 size_t pointer_indirection = 0)
   {
     return std::make_shared<Type> (builtin_type, std::move (array_sizes),
@@ -206,7 +213,7 @@ struct Type final
   }
   static std::shared_ptr<Type>
   create_complex_array (BuiltinType builtin_type, const std::string &type_name,
-                        std::vector<size_t> array_sizes,
+                        std::vector<std::shared_ptr<AST>> array_sizes,
                         size_t pointer_indirection = 0)
   {
     return std::make_shared<Type> (
@@ -223,7 +230,7 @@ struct Type final
   static std::shared_ptr<Type>
   create_complex_array (BuiltinType builtin_type, const std::string &type_name,
                         std::vector<std::string> type_path,
-                        std::vector<size_t> array_sizes,
+                        std::vector<std::shared_ptr<AST>> array_sizes,
                         size_t pointer_indirection = 0)
   {
     return std::make_shared<Type> (
@@ -238,7 +245,7 @@ struct Type final
                                    pointer_indirection);
   }
   static std::shared_ptr<Type>
-  create_function_pointer_array (std::vector<size_t> array_sizes,
+  create_function_pointer_array (std::vector<std::shared_ptr<AST>> array_sizes,
                                  size_t pointer_indirection = 0)
   {
     return std::make_shared<Type> (create_basic (BuiltinType::VOID),
@@ -254,7 +261,7 @@ struct Type final
   }
   static std::shared_ptr<Type>
   create_function_pointer_array (std::shared_ptr<Type> return_type,
-                                 std::vector<size_t> array_sizes,
+                                 std::vector<std::shared_ptr<AST>> array_sizes,
                                  size_t pointer_indirection = 0)
   {
     return std::make_shared<Type> (return_type, std::move (array_sizes),
@@ -268,7 +275,7 @@ struct Type final
   }
   static std::shared_ptr<Type>
   create_function_pointer_array (std::vector<FuncArg> arguments,
-                                 std::vector<size_t> array_sizes,
+                                 std::vector<std::shared_ptr<AST>> array_sizes,
                                  size_t pointer_indirection = 0)
   {
     return std::make_shared<Type> (
@@ -285,7 +292,7 @@ struct Type final
   static std::shared_ptr<Type>
   create_function_pointer_array (std::shared_ptr<Type> return_type,
                                  std::vector<FuncArg> arguments,
-                                 std::vector<size_t> array_sizes,
+                                 std::vector<std::shared_ptr<AST>> array_sizes,
                                  size_t pointer_indirection = 0)
   {
     return std::make_shared<Type> (return_type, std::move (arguments),
@@ -299,8 +306,10 @@ struct Type final
   bool is_integer () const;
   bool is_floating () const;
   bool is_complex () const;
+  bool is_enum () const;
+  bool is_function_pointer () const;
 
-  const std::vector<size_t> &get_array_sizes () const;
+  const std::vector<std::shared_ptr<AST>> &get_array_sizes () const;
   size_t get_pointer_indirection () const;
   size_t get_full_pointer_indirection () const;
 

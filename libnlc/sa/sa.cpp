@@ -40,6 +40,14 @@ SemanticAnalyzer::analyze_prog (const AST &prog)
           analyze_typedef (child);
           break;
 
+        case ASTType::VAR_DECL:
+          analyze_vardecl (child);
+          break;
+
+        case ASTType::VAR_DEF:
+          analyze_vardef (child);
+          break;
+
         default:
           NOREACH ();
         }
