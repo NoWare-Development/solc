@@ -175,10 +175,22 @@ struct Enum : SymbolData
 
 struct Struct : SymbolData
 {
-  std::unordered_map<std::string, std::shared_ptr<Variable>> fields{};
+  struct PositionedType
+  {
+    std::shared_ptr<Type> handle;
+    size_t pos;
+
+    PositionedType () = default;
+    PositionedType (std::shared_ptr<Type> handle, size_t position)
+        : handle (handle), pos (position)
+    {
+    }
+  };
+
+  std::unordered_map<std::string, PositionedType> fields{};
 
   Struct () = default;
-  Struct (std::unordered_map<std::string, std::shared_ptr<Variable>> &&fields)
+  Struct (std::unordered_map<std::string, PositionedType> &&fields)
       : fields (fields)
   {
   }
@@ -191,42 +203,18 @@ struct Struct : SymbolData
   }
 
   static std::shared_ptr<Struct>
-  create (std::unordered_map<std::string, std::shared_ptr<Variable>> fields)
+  create (std::unordered_map<std::string, PositionedType> fields)
   {
     return std::make_shared<Struct> (std::move (fields));
   }
 
   bool has_field (const std::string &name) const;
-  void add_field (const std::string &name, std::shared_ptr<Variable> field);
-  const std::shared_ptr<Variable> &get_field (const std::string &name) const;
+  void add_field (const std::string &name, PositionedType field);
+  const std::shared_ptr<Type> &get_field (const std::string &name) const;
+
+  std::vector<std::shared_ptr<Type>> get_fields_sorted ();
 };
 
-struct Union : SymbolData
-{
-  std::unordered_map<std::string, std::shared_ptr<Variable>> fields{};
-
-  Union () = default;
-  Union (std::unordered_map<std::string, std::shared_ptr<Variable>> &&fields)
-      : fields (fields)
-  {
-  }
-  virtual ~Union () override = default;
-
-  static std::shared_ptr<Union>
-  create ()
-  {
-    return std::make_shared<Union> ();
-  }
-
-  static std::shared_ptr<Union>
-  create (std::unordered_map<std::string, std::shared_ptr<Variable>> fields)
-  {
-    return std::make_shared<Union> (std::move (fields));
-  }
-
-  bool has_field (const std::string &name) const;
-  void add_field (const std::string &name, std::shared_ptr<Variable> field);
-  const std::shared_ptr<Variable> &get_field (const std::string &name) const;
-};
+using Union = Struct;
 
 }

@@ -60,11 +60,25 @@ public:
 
     CANNOT_CAST_IN_CAST,
     DEREF_ON_NONPTR,
+
+    INITLIST_WRONG_NUMBER_OF_ENTRIES,
+    INITLIST_EXPLICIT_IN_ANON,
+    INITLIST_MULTIPLE_INITS_IN_ANON,
+    INITLIST_EXPLICIT_AFTER_ANON,
+    INITLIST_ANON_AFTER_EXPLICIT,
+    INITLIST_EXPLICIT_REINIT,
+
+    SYMBOL_REFERED_BY_TYPE_IS_NOT_STRUCT_OR_UNION,
+    SYMBOL_REFERED_BY_TYPE_DOES_NOT_CONTAIN_DATA,
+
+    STRUCT_HAS_NO_FIELD,
+    UNION_HAS_NO_FIELD,
   };
   struct SAError
   {
     std::vector<std::shared_ptr<Type>> types{};
     std::vector<size_t> token_positions{};
+    std::vector<long long> expected_ints{};
 
     SAErrorType type = SAErrorType::NONE;
 
@@ -79,6 +93,22 @@ public:
              std::vector<std::shared_ptr<Type>> types = {})
         : types (std::move (types)),
           token_positions (std::move (token_positions)), type (type)
+    {
+    }
+    SAError (SAErrorType type, size_t tok_pos,
+             std::vector<long long> expected_ints,
+             std::vector<std::shared_ptr<Type>> types = {})
+        : types (std::move (types)), expected_ints (std::move (expected_ints)),
+          type (type)
+    {
+      token_positions.push_back (tok_pos);
+    }
+    SAError (SAErrorType type, std::vector<size_t> token_positions,
+             std::vector<long long> expected_ints,
+             std::vector<std::shared_ptr<Type>> types = {})
+        : types (std::move (types)),
+          token_positions (std::move (token_positions)),
+          expected_ints (std::move (expected_ints)), type (type)
     {
     }
 
@@ -165,11 +195,16 @@ private:
   void analyze_vardef (const AST &vardef,
                        ModifierFlags flags
                        = ModifierFlagBits::MODIFIER_FLAG_NONE);
+  void analyze_structdef (const AST &structdef);
 
   std::shared_ptr<Type> get_type_from_type_ast (const AST &type);
 
   SAError is_expr_known_at_comptime (const AST &expr) const;
   std::shared_ptr<Type> get_type_from_expr_ast (const AST &expr);
+
+  bool verify_type_of_initlist (const AST &initlist,
+                                const std::shared_ptr<Type> &type,
+                                size_t type_tok_pos = -1);
 
   template <typename... Args>
   void

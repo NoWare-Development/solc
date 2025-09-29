@@ -13,15 +13,25 @@ SemanticAnalyzer::analyze_vardef (const AST &vardef, ModifierFlags flags)
   if (vardef_type == nullptr)
     return;
 
-  auto expr_type = get_type_from_expr_ast (vardef.children.at (1));
-  if (expr_type == nullptr)
-    return;
-
-  if (!can_convert_types (expr_type, vardef_type))
+  auto definition = vardef.children.at (1);
+  if (definition.type == ASTType::INITLIST)
     {
-      add_error (SAErrorType::CANNOT_CONVERT_TYPES_EXPR,
-                 vardef.children.at (1).token_position);
-      return;
+      if (!verify_type_of_initlist (definition, vardef_type,
+                                    vardef.children.at (0).token_position))
+        return;
+    }
+  else
+    {
+      auto expr_type = get_type_from_expr_ast (vardef.children.at (1));
+      if (expr_type == nullptr)
+        return;
+
+      if (!can_convert_types (expr_type, vardef_type))
+        {
+          add_error (SAErrorType::CANNOT_CONVERT_TYPES_EXPR,
+                     vardef.children.at (1).token_position);
+          return;
+        }
     }
 
   for (const auto &scope : *_scope_stack)

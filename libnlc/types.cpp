@@ -113,6 +113,107 @@ Type::get_function_arguments () const
   return arguments;
 }
 
+std::string
+Type::to_string () const
+{
+  std::string out{};
+
+  size_t pointer_indirection = get_full_pointer_indirection ()
+                               - (builtin_type == BuiltinType::FUNC ? 1 : 0);
+  for (size_t i = 0; i < pointer_indirection; i++)
+    {
+      out += '*';
+    }
+
+  switch (builtin_type)
+    {
+    case BuiltinType::UNK:
+      out += "<Unknown type>";
+      break;
+
+    case BuiltinType::VOID:
+      out += "void";
+      break;
+
+    case BuiltinType::UCHAR:
+      out += "uchar";
+      break;
+
+    case BuiltinType::USHORT:
+      out += "ushort";
+      break;
+
+    case BuiltinType::UINT:
+      out += "uint";
+      break;
+
+    case BuiltinType::ULONG:
+      out += "ulong";
+      break;
+
+    case BuiltinType::CHAR:
+      out += "char";
+      break;
+
+    case BuiltinType::SHORT:
+      out += "short";
+      break;
+
+    case BuiltinType::INT:
+      out += "int";
+      break;
+
+    case BuiltinType::LONG:
+      out += "long";
+      break;
+
+    case BuiltinType::FLOAT:
+      out += "float";
+      break;
+
+    case BuiltinType::DOUBLE:
+      out += "double";
+      break;
+
+    case BuiltinType::BOOL:
+      out += "bool";
+      break;
+
+    case BuiltinType::STRUCT:
+    case BuiltinType::UNION:
+    case BuiltinType::ENUM:
+      {
+        for (const auto &p : type_path)
+          {
+            out += p + "::";
+          }
+        out += type_name;
+      }
+      break;
+
+    case BuiltinType::FUNC:
+      {
+        out += "(";
+        size_t arguments_size = arguments.size ();
+        for (size_t i = 0; i < arguments_size; i++)
+          {
+            const auto &arg = arguments.at (i);
+
+            if (i > 0)
+              out += ", ";
+
+            out += arg.type->to_string ();
+          }
+
+        out += ") -> ";
+        out += return_type->to_string ();
+      }
+      break;
+    }
+
+  return out;
+}
+
 bool
 can_convert_types (const std::shared_ptr<Type> &from,
                    const std::shared_ptr<Type> &to)
