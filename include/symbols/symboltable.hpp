@@ -4,6 +4,7 @@
 #include <string>
 #include <symbols/symbol.hpp>
 #include <unordered_map>
+#include <variant>
 #include <vector>
 
 namespace nlc
@@ -24,7 +25,7 @@ struct SymbolTable
       ENUM,
     };
 
-    Symbol (Symbol *parent, Kind kind, std::unique_ptr<SymbolData> data)
+    Symbol (Symbol *parent, Kind kind, std::shared_ptr<SymbolData> data)
         : _data (std::move (data)), _parent (parent), _kind (kind)
     {
     }
@@ -32,7 +33,7 @@ struct SymbolTable
 
     static std::shared_ptr<Symbol>
     create_node (Symbol *parent, Kind kind,
-                 std::unique_ptr<SymbolData> data = {})
+                 std::shared_ptr<SymbolData> data = {})
     {
       return std::make_shared<Symbol> (parent, kind, std::move (data));
     }
@@ -43,8 +44,8 @@ struct SymbolTable
       return _data != nullptr;
     }
 
-    const std::unique_ptr<SymbolData> &
-    get_symbol () const
+    std::shared_ptr<SymbolData>
+    get_symbol ()
     {
       return _data;
     }
@@ -81,7 +82,8 @@ struct SymbolTable
 
   private:
     std::unordered_map<std::string, std::unique_ptr<Symbol>> _children{};
-    std::unique_ptr<SymbolData> _data;
+    std::shared_ptr<SymbolData> _data;
+
     Symbol *_parent;
 
     Kind _kind;

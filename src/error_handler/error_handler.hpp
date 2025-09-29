@@ -62,6 +62,4 @@ private:
   std::string last_line () const;
 
   size_t get_number_length (long long num) const;
-
-  std::string type_to_string (std::shared_ptr<nlc::Type> type) const;
 };

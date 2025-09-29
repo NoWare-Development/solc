@@ -318,6 +318,8 @@ struct Type final
 
   const std::shared_ptr<Type> &get_return_type () const;
   const std::vector<FuncArg> &get_function_arguments () const;
+
+  std::string to_string () const;
 };
 
 bool can_convert_types (const std::shared_ptr<Type> &from,

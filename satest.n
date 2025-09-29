@@ -8,6 +8,8 @@ typedef off_t off;
 typedef uptr uintptr_t;
 typedef iptr intptr_t;
 
-ivar: int = 10.0f * 5u;
-ivar_ptr: *int = &ivar;
-ivar_ptr_deref: int = (*ivar_ptr);
+ivar: int = {};
+ivar2: int = { 10.0f * 5u };
+// ivar_ptr: *int = &ivar;
+// ivar_ptr_deref: int = (*ivar_ptr);
+ivar3: int = ivar2;

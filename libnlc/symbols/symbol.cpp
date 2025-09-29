@@ -1,4 +1,5 @@
 #include "symbols/symbol.hpp"
+#include <algorithm>
 
 namespace nlc
 {
@@ -28,33 +29,37 @@ Struct::has_field (const std::string &name) const
 }
 
 void
-Struct::add_field (const std::string &name, std::shared_ptr<Variable> field)
+Struct::add_field (const std::string &name, PositionedType field)
 {
   fields[name] = field;
 }
 
-const std::shared_ptr<Variable> &
+const std::shared_ptr<Type> &
 Struct::get_field (const std::string &name) const
 {
-  return fields.at (name);
+  return fields.at (name).handle;
 }
 
-bool
-Union::has_field (const std::string &name) const
+std::vector<std::shared_ptr<Type>>
+Struct::get_fields_sorted ()
 {
-  return fields.find (name) != fields.end ();
-}
+  std::vector<PositionedType> posvars{};
+  for (auto &kv : fields)
+    posvars.push_back (kv.second);
 
-void
-Union::add_field (const std::string &name, std::shared_ptr<Variable> field)
-{
-  fields[name] = field;
-}
+  if (posvars.empty ())
+    return {};
 
-const std::shared_ptr<Variable> &
-Union::get_field (const std::string &name) const
-{
-  return fields.at (name);
+  std::sort (posvars.begin (), posvars.end (),
+             [] (const PositionedType &a, const PositionedType &b) {
+               return a.pos < b.pos;
+             });
+
+  std::vector<std::shared_ptr<Type>> out{};
+  for (auto &pv : posvars)
+    out.emplace_back (pv.handle);
+
+  return out;
 }
 
 }
