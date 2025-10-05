@@ -62,8 +62,8 @@ SemanticAnalyzer::get_type_from_type_ast (const AST &type)
           }
           break;
 
-        case ASTType::FROM_MODULE:
-          TODO ("Type from module");
+        case ASTType::NAMESPACE:
+          TODO ("Type from namespace");
 
         case ASTType::TYPE_FUNCPTR:
           TODO ("Function pointer");

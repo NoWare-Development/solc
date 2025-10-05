@@ -304,7 +304,7 @@ bool
 Parser::is_operand (ASTType type) const
 {
   return get_ast_group (type) == ASTGroup::EXPR_OPERAND
-         || type == ASTType::EXPR || type == ASTType::FROM_MODULE
+         || type == ASTType::EXPR || type == ASTType::NAMESPACE
          || type == ASTType::PREFIX_EXPR;
 }
 

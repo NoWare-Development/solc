@@ -27,7 +27,7 @@ Parser::parse_type_raw ()
   auto next = peek (_pos + 1);
   if (next == TokenType::DCOLON)
     {
-      AST out (_pos, ASTType::FROM_MODULE, cur.value);
+      AST out (_pos, ASTType::NAMESPACE, cur.value);
       _pos += 2;
       auto member_type = parse_type_raw ();
       out.append (member_type);

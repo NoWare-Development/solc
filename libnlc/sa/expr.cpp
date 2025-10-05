@@ -94,8 +94,8 @@ SemanticAnalyzer::is_expr_known_at_comptime (const AST &expr) const
         return SAError::success ();
       }
 
-    case ASTType::FROM_MODULE:
-      TODO ("Implementation");
+    case ASTType::NAMESPACE:
+      TODO ("Namespace identifier");
 
     default:
       break;
@@ -411,8 +411,8 @@ SemanticAnalyzer::get_type_from_expr_ast (const AST &expr)
         return operand_type;
       }
 
-    case ASTType::FROM_MODULE:
-      TODO ("Type from module");
+    case ASTType::NAMESPACE:
+      TODO ("Type from namespace");
 
     default:
       break;
