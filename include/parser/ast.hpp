@@ -44,7 +44,7 @@ enum struct ASTType : uint16_t
   TEMPLATE = __AST_DEF (ASTGroup::NONE, 11),
   STRUCT = __AST_DEF (ASTGroup::NONE, 12),
   UNION = __AST_DEF (ASTGroup::NONE, 13),
-  FROM_MODULE = __AST_DEF (ASTGroup::NONE, 14),
+  NAMESPACE = __AST_DEF (ASTGroup::NONE, 14),
   INITLIST = __AST_DEF (ASTGroup::NONE, 15),
   GENERIC_TYPE_LIST = __AST_DEF (ASTGroup::NONE, 16),
   PREFIX_EXPR = __AST_DEF (ASTGroup::NONE, 17),

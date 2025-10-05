@@ -100,7 +100,7 @@ asttype_to_string (ASTType type)
         "TEMPLATE",
         "STRUCT",
         "UNION",
-        "FROM_MODULE",
+        "NAMESPACE",
         "INITLIST",
         "GENERIC_TYPE_LIST",
         "PREFIX_EXPR",

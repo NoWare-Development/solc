@@ -16,7 +16,7 @@ Parser::parse_identifier_operand (bool accept_modules, bool accept_functions)
   auto next = peek (_pos + 1);
   if (next == TokenType::DCOLON && accept_modules)
     {
-      AST out (_pos, ASTType::FROM_MODULE, cur.value);
+      AST out (_pos, ASTType::NAMESPACE, cur.value);
       _pos += 2;
       auto symbol
           = parse_identifier_operand (accept_modules, accept_functions);
