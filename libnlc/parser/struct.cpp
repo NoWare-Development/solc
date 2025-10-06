@@ -64,8 +64,7 @@ Parser::parse_struct ()
             }
         }
 
-      auto decldef
-          = parse_decldef (DECL_DEF_FUNC | DECL_DEF_DECL | DECL_DEF_MOD);
+      auto decldef = parse_decldef ();
       structure.append (decldef);
     }
   VERIFY_POS (_pos);
