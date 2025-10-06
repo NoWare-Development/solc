@@ -22,11 +22,6 @@ public:
       EXPECTED,
       UNEXPECTED,
       INVALID_EXPR,
-
-      DEF_NOT_ALLOWED,
-      DECL_NOT_ALLOWED,
-      MOD_NOT_ALLOWED,
-      FUNC_NOT_ALLOWED,
     };
 
     Type type;
@@ -48,17 +43,6 @@ public:
   }
 
 private:
-  enum DeclDefFlagBits
-  {
-    DECL_DEF_NONE = 0,
-    DECL_DEF_DECL = 1 << 0,
-    DECL_DEF_DEF = 1 << 1,
-    DECL_DEF_MOD = 1 << 2,
-    DECL_DEF_FUNC = 1 << 3,
-    DECL_DEF_ALL = 0b1111,
-  };
-  using DeclDefFlags = uint32_t;
-
   std::vector<Token> _tokens;
   std::vector<ParserError> _errors{};
   size_t _pos{};
@@ -129,7 +113,7 @@ private:
   //   | <vardef>;
   //   | <funcdef>
   //   ;
-  AST parse_decldef (DeclDefFlags flags = DECL_DEF_ALL);
+  AST parse_decldef ();
 
   // <vardecl>
   //   : <id>: <type>
@@ -138,7 +122,7 @@ private:
   // <vardef>
   //   : <id>: <type> = <expr>
   //   ;
-  AST parse_variable_decldef (DeclDefFlags flags = DECL_DEF_ALL);
+  AST parse_variable_decldef ();
 
   // <funcdef>
   //   : <funcproto> <stmtlist>

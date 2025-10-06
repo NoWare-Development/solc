@@ -47,7 +47,7 @@ Parser::parse_union ()
             }
         }
 
-      auto decldef = parse_decldef (DECL_DEF_DECL);
+      auto decldef = parse_decldef ();
       uniondef.append (decldef);
     }
 

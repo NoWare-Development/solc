@@ -333,15 +333,6 @@ ErrorHandler::get_parser_error_reason (
         return out;
       }
 
-    case Parser::ParserError::Type::MOD_NOT_ALLOWED:
-      return "modifiers are not allowed";
-    case Parser::ParserError::Type::FUNC_NOT_ALLOWED:
-      return "functions are not allowed";
-    case Parser::ParserError::Type::DECL_NOT_ALLOWED:
-      return "declarations are not allowed";
-    case Parser::ParserError::Type::DEF_NOT_ALLOWED:
-      return "definitions are not allowed";
-
     default:
       return {};
     }
