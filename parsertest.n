@@ -115,10 +115,10 @@ testfunc :: () -> void {
 
 struct StructWithMarkers {
 public:
-  public_field: int = 5;
+  public_field: int;
 
 private:
-  private_field: int = 4;
+  private_field: int;
 }
 
 testFunc :: () -> void {

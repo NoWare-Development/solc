@@ -5,22 +5,15 @@ namespace nlc
 {
 
 AST
-Parser::parse_function_decldef ()
+Parser::parse_function_def ()
 {
   auto funcproto = parse_function_prototype ();
-
-  auto next = peek (_pos);
-  if (next == TokenType::SEMI)
-    {
-      AST funcdecl (_pos++, ASTType::FUNC_DECL);
-      funcdecl.append (funcproto);
-      return funcdecl;
-    }
 
   AST funcdef (_pos, ASTType::FUNC_DEF);
   funcdef.append (funcproto);
 
-  VERIFY_TOKEN (_pos, next, TokenType::LBRACE);
+  VERIFY_POS (_pos);
+  VERIFY_TOKEN (_pos, _tokens.at (_pos).type, TokenType::LBRACE);
 
   auto stmtlist = parse_statement_list ();
   funcdef.append (stmtlist);
