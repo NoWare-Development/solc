@@ -182,7 +182,7 @@ ErrorHandler::get_token_error (const nlc::Token &tok) const
   error_string += get_message_start (tok.line + 1, tok.end - tok.len + 1,
                                      "error", ESCColor::ESCCOLOR_RED,
                                      ESCGraphics::ESCGRAPHICS_BOLD);
-  error_string += "Unidentified token '";
+  error_string += "unidentified token '";
   error_string += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
   error_string += tok.value;
   error_string += escape_reset ();
@@ -314,24 +314,33 @@ ErrorHandler::get_parser_error_reason (
     case Parser::ParserError::Type::EXPECTED:
       {
         std::string out{};
-        out += "Expected token";
+        out += "expected token";
         return out;
       }
 
     case Parser::ParserError::Type::UNEXPECTED:
       {
         std::string out{};
-        out += "Unexpected token \"" + _tokens.at (err.pos).value + "\"";
+        out += "unexpected token \"" + _tokens.at (err.pos).value + "\"";
         return out;
       }
 
     case Parser::ParserError::Type::INVALID_EXPR:
       {
         std::string out{};
-        out += "Invalid expression at line "
+        out += "invalid expression at line "
                + std::to_string (_tokens.at (err.pos).line + 1);
         return out;
       }
+
+    case Parser::ParserError::Type::MOD_NOT_ALLOWED:
+      return "modifiers are not allowed";
+    case Parser::ParserError::Type::FUNC_NOT_ALLOWED:
+      return "functions are not allowed";
+    case Parser::ParserError::Type::DECL_NOT_ALLOWED:
+      return "declarations are not allowed";
+    case Parser::ParserError::Type::DEF_NOT_ALLOWED:
+      return "definitions are not allowed";
 
     default:
       return {};

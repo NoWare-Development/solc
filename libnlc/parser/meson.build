@@ -12,7 +12,7 @@ libnlc_src += [
   'libnlc/parser/export.cpp',
   'libnlc/parser/expr.cpp',
   'libnlc/parser/funcarg.cpp',
-  'libnlc/parser/funcdecldef.cpp',
+  'libnlc/parser/funcdef.cpp',
   'libnlc/parser/funcproto.cpp',
   'libnlc/parser/funcptrtype.cpp',
   'libnlc/parser/generic.cpp',

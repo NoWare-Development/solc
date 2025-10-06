@@ -144,7 +144,6 @@ asttype_to_string (ASTType type)
     {
         // FUNC
         "PROTO",
-        "DECL",
         "DEF",
         "ARGLIST",
     },
