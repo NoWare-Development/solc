@@ -223,6 +223,7 @@ asttype_to_string (ASTType type)
         // INITLIST
         "ENTRY",
         "ENTRY_EXPLICIT",
+        "ENTRY_EXPLICIT_ARRAY_ELEM",
     },
   };
 
