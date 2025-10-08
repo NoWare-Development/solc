@@ -60,6 +60,22 @@ Parser::parse_initialization_list_entry ()
       _pos++;
       VERIFY_POS (_pos);
       current = _tokens.at (_pos);
+      if (current.type == TokenType::LBRACK)
+        {
+          entry.type = ASTType::INITLIST_ENTRY_EXPLICIT_ARRAY_ELEM;
+
+          _pos++;
+          auto expr = parse_expression ();
+          entry.append (expr);
+
+          VERIFY_POS (_pos);
+          current = _tokens.at (_pos);
+          VERIFY_TOKEN (_pos, current.type, TokenType::RBRACK);
+
+          _pos++;
+          VERIFY_POS (_pos);
+          current = _tokens.at (_pos);
+        }
       VERIFY_TOKEN (_pos, current.type, TokenType::EQ);
 
       _pos++;
