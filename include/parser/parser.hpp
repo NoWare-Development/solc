@@ -333,12 +333,15 @@ private:
 
   bool is_operand (ASTType type) const;
 
+  void advance_to_terminator ();
+
   template <typename... Args>
   void
   add_error (Args &&...args)
   {
     _errored = true;
     _errors.emplace_back (args...);
+    advance_to_terminator ();
   }
 
   const std::map<TokenType, ASTType> _binary_operators = {

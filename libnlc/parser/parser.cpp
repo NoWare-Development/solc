@@ -319,4 +319,27 @@ Parser::is_numeric_token (TokenType type) const
   return false;
 }
 
+void
+Parser::advance_to_terminator ()
+{
+  while (_pos < _tokens.size ())
+    {
+      auto type = _tokens.at (_pos).type;
+      switch (type)
+        {
+        case TokenType::LPAREN:
+        case TokenType::RPAREN:
+        case TokenType::SEMI:
+        case TokenType::COMMA:
+        case TokenType::LBRACE:
+        case TokenType::RBRACE:
+          return;
+
+        default:
+          break;
+        }
+      _pos++;
+    }
+}
+
 }
