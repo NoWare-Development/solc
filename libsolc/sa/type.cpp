@@ -62,9 +62,19 @@ SemanticAnalyzer::get_type_from_type_ast (const AST &type)
     case ASTType::TYPE_ARRAY:
       {
         // TODO: verify that array size is comptime.
-        auto out = get_type_from_type_ast (type.children.at (1));
-        out->array_sizes.push_back (
-            std::make_shared<AST> (type.children.at (0)));
+        size_t type_pos = 0;
+        if (type.children.size () > 1)
+          {
+            type_pos = 1;
+          }
+
+        auto out = get_type_from_type_ast (type.children.at (type_pos));
+
+        if (type.children.size () > 1)
+          {
+            out->array_sizes.push_back (
+                std::make_shared<AST> (type.children.at (0)));
+          }
         return out;
       }
       break;
