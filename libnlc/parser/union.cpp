@@ -45,6 +45,12 @@ Parser::parse_union ()
               uniondef.append (uniondef2);
               continue;
             }
+          else if (cur.value == "typedef")
+            {
+              auto typedef_ = parse_typedef ();
+              uniondef.append (typedef_);
+              continue;
+            }
         }
 
       auto decldef = parse_decldef ();
