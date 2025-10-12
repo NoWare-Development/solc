@@ -1,5 +1,11 @@
 project('nlc', 'cpp')
 
+flags = []
+
+if get_option('buildtype') == 'debug'
+  flags += '-D_DEBUG'
+endif
+
 libnlc_src = []
 libnlc_dep = [ dependency('llvm') ]
 libnlc_inc = include_directories('include')
@@ -10,7 +16,7 @@ libnlc_lib = shared_library(
   libnlc_src,
   dependencies: libnlc_dep,
   include_directories: libnlc_inc,
-  cpp_args: [ '-D_GLIBCXX_DEBUG' ],
+  cpp_args: [ flags ],
 )
 
 libnlc = declare_dependency(
@@ -28,5 +34,5 @@ nlc_exe = executable(
   nlc_src,
   dependencies: libnlc,
   include_directories: nlc_inc,
-  cpp_args: [ '-D_GLIBCXX_DEBUG' ],
+  cpp_args: [ flags ],
 )

@@ -6,10 +6,26 @@ typedef uint64_t test64;
 typedef size_t sz;
 typedef off_t off;
 typedef uptr uintptr_t;
-typedef iptr intptr_t;
+typedef sptr intptr_t;
 
-ivar: int = {};
+ivar1: int = {};
 ivar2: int = { 10.0f * 5u };
-// ivar_ptr: *int = &ivar;
-// ivar_ptr_deref: int = (*ivar_ptr);
-ivar3: int = ivar2;
+
+struct MyStruct {
+  struct MyStruct2 {
+    struct MyStruct3 {
+      typedef uint u32;
+    }
+  }
+  typedef MyStruct2 ms2;
+  typedef MyStruct ms;
+}
+
+typedef MyStruct __ms_1;
+typedef MyStruct::ms __ms_2;
+typedef MyStruct::MyStruct2 __ms2_1;
+typedef __ms2_1 __ms2_2;
+typedef MyStruct::ms::ms2 __ms2_3;
+typedef MyStruct::ms::ms2::MyStruct3 __ms3_1;
+typedef MyStruct::ms::ms::ms2::MyStruct3 __ms3_2;
+typedef __ms3_2::u32 __u32;

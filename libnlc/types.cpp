@@ -1,4 +1,6 @@
 #include "types.hpp"
+#include "symbols/symbolscope.hpp"
+#include <algorithm>
 #include <memory>
 
 namespace nlc
@@ -8,10 +10,9 @@ std::shared_ptr<Type>
 Type::copy () const
 {
   auto new_type = std::make_shared<Type> ();
-  new_type->type_path = type_path;
   new_type->array_sizes = array_sizes;
   new_type->arguments = arguments;
-  new_type->type_name = type_name;
+  new_type->symbol_binding = symbol_binding;
   new_type->return_type = return_type;
   new_type->pointer_indirection = pointer_indirection;
   new_type->builtin_type = builtin_type;
@@ -89,16 +90,10 @@ Type::get_full_pointer_indirection () const
   return pointer_indirection + array_sizes.size ();
 }
 
-const std::vector<std::string> &
-Type::get_type_path () const
+Symbol *
+Type::get_symbol_binding () const
 {
-  return type_path;
-}
-
-const std::string &
-Type::get_type_name () const
-{
-  return type_name;
+  return symbol_binding;
 }
 
 const std::shared_ptr<Type> &
@@ -183,11 +178,28 @@ Type::to_string () const
     case BuiltinType::UNION:
     case BuiltinType::ENUM:
       {
-        for (const auto &p : type_path)
+        const auto &name = symbol_binding->get_symbol_name ();
+
+        auto current_scope = symbol_binding->get_symbol_scope ();
+        std::vector<std::string> ns{};
+
+        while (current_scope != nullptr)
           {
-            out += p + "::";
+            auto bound_symbol = current_scope->get_bound_symbol ();
+            if (bound_symbol != nullptr)
+              {
+                ns.push_back (bound_symbol->get_symbol_name ());
+              }
+            current_scope = current_scope->get_parent ();
           }
-        out += type_name;
+        std::reverse (ns.begin (), ns.end ());
+
+        for (const auto &s : ns)
+          {
+            out += s + "::";
+          }
+
+        out += name;
       }
       break;
 
@@ -236,22 +248,8 @@ get_converted_type (const std::shared_ptr<Type> &from,
       if (!from->is_complex ())
         return nullptr;
 
-      if (to->get_type_name () != from->get_type_name ())
+      if (to->get_symbol_binding () != from->get_symbol_binding ())
         return nullptr;
-
-      const auto &from_path = from->get_type_path ();
-      const auto &to_path = to->get_type_path ();
-
-      auto from_path_size = from_path.size ();
-      auto to_path_size = to_path.size ();
-      if (from_path_size != to_path_size)
-        return nullptr;
-
-      for (size_t i = 0; i < from_path_size; i++)
-        {
-          if (from_path.at (i) != to_path.at (i))
-            return nullptr;
-        }
 
       return to;
     }
