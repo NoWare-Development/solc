@@ -1,3 +1,3 @@
-nlc_src += [
+solc_src += [
   'src/info/info.cpp',
 ]

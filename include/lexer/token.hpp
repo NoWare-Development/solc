@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <string>
 
-namespace nlc
+namespace solc
 {
 
 enum class TokenType

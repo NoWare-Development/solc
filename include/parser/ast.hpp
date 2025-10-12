@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace nlc
+namespace solc
 {
 
 enum class ASTGroup : uint8_t

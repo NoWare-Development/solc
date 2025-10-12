@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace nlc
+namespace solc
 {
 
 struct Scope

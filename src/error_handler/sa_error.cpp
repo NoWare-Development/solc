@@ -3,17 +3,18 @@
 #include <sa/sa.hpp>
 #include <types.hpp>
 
-using SAErrorType = nlc::SemanticAnalyzer::SAErrorType;
+using SAErrorType = solc::SemanticAnalyzer::SAErrorType;
 
 std::string
 ErrorHandler::get_sa_error_reason (
-    const nlc::SemanticAnalyzer::SAError &err) const
+    const solc::SemanticAnalyzer::SAError &err) const
 {
   std::string out{};
   switch (err.type)
     {
     case SAErrorType::NONE:
-      out += "nlc::SemanticAnalyzer::SAErrorType::NONE -- This message should "
+      out += "solc::SemanticAnalyzer::SAErrorType::NONE -- This message "
+             "should "
              "never occur";
       break;
 

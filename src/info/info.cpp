@@ -4,13 +4,13 @@
 namespace info
 {
 
-// TODO: move me into something like `nlcinfo.hpp.in` and preprocess it with
+// TODO: move me into something like `solcinfo.hpp.in` and preprocess it with
 // meson.
 #define NLC_VERSION "1.0.0"
 #define COPYRIGHT_YEAR "2025"
 
 static const char *help_message
-    = "Usage: nlc [options] file...\n"
+    = "Usage: solc [options] file...\n"
       "Options:\n"
       "  -help             Display this information\n"
       "  -version          Display version\n"
@@ -24,7 +24,7 @@ static const char *help_message
     ;
 
 static const char *version_message
-    = "nlc (NLC) " NLC_VERSION "\n"
+    = "solc (NLC) " NLC_VERSION "\n"
       "Copyright (C) " COPYRIGHT_YEAR " NoWare-Development\n";
 
 void

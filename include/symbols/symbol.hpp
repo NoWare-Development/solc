@@ -8,7 +8,7 @@
 #include <types.hpp>
 #include <unordered_map>
 
-namespace nlc
+namespace solc
 {
 
 struct SymbolScope;
@@ -60,20 +60,20 @@ using ModifierFlags = uint8_t;
 
 struct Alias : Symbol
 {
-  std::shared_ptr<nlc::Type> type;
+  std::shared_ptr<solc::Type> type;
 
   Alias () = default;
   virtual ~Alias () override = default;
 
-  Alias (std::shared_ptr<nlc::Type> type) : type (type) {}
+  Alias (std::shared_ptr<solc::Type> type) : type (type) {}
 
   static std::shared_ptr<Alias>
-  create (std::shared_ptr<nlc::Type> type)
+  create (std::shared_ptr<solc::Type> type)
   {
     return std::make_shared<Alias> (type);
   }
 
-  std::shared_ptr<nlc::Type>
+  std::shared_ptr<solc::Type>
   get_type ()
   {
     return type;
@@ -88,18 +88,19 @@ struct Alias : Symbol
 
 struct Variable : Symbol
 {
-  std::shared_ptr<nlc::Type> type;
+  std::shared_ptr<solc::Type> type;
   ModifierFlags flags;
   bool defined;
 
-  Variable (std::shared_ptr<nlc::Type> type, bool defined, ModifierFlags flags)
+  Variable (std::shared_ptr<solc::Type> type, bool defined,
+            ModifierFlags flags)
       : type (type), flags (flags), defined (defined)
   {
   }
   virtual ~Variable () override = default;
 
   static std::shared_ptr<Variable>
-  create (std::shared_ptr<nlc::Type> type, bool defined,
+  create (std::shared_ptr<solc::Type> type, bool defined,
           ModifierFlags flags = MODIFIER_FLAG_NONE)
   {
     return std::make_shared<Variable> (type, defined, flags);
@@ -116,12 +117,12 @@ struct Function : Symbol
 {
   struct Arg
   {
-    std::shared_ptr<nlc::Type> type;
+    std::shared_ptr<solc::Type> type;
     std::string name;
     ModifierFlags flags;
 
     static Arg
-    create (std::shared_ptr<nlc::Type> type, const std::string &name,
+    create (std::shared_ptr<solc::Type> type, const std::string &name,
             ModifierFlags flags = MODIFIER_FLAG_NONE)
     {
       return { .type = type, .name = name, .flags = flags };
@@ -129,7 +130,7 @@ struct Function : Symbol
   };
 
   std::vector<Arg> arguments;
-  std::shared_ptr<nlc::Type> return_type;
+  std::shared_ptr<solc::Type> return_type;
   ModifierFlags flags;
 
   Function () = default;
@@ -154,7 +155,7 @@ struct Function : Symbol
   }
 
   void
-  set_return_type (std::shared_ptr<nlc::Type> return_type)
+  set_return_type (std::shared_ptr<solc::Type> return_type)
   {
     this->return_type = return_type;
   }
@@ -248,11 +249,11 @@ struct Struct : Symbol
 {
   struct PositionedType
   {
-    std::shared_ptr<nlc::Type> handle;
+    std::shared_ptr<solc::Type> handle;
     size_t pos;
 
     PositionedType () = default;
-    PositionedType (std::shared_ptr<nlc::Type> handle, size_t position)
+    PositionedType (std::shared_ptr<solc::Type> handle, size_t position)
         : handle (handle), pos (position)
     {
     }
@@ -286,13 +287,13 @@ struct Struct : Symbol
     fields[name] = field;
   }
 
-  std::shared_ptr<nlc::Type>
+  std::shared_ptr<solc::Type>
   get_field (const std::string &name)
   {
     return fields.at (name).handle;
   }
 
-  std::vector<std::shared_ptr<nlc::Type>>
+  std::vector<std::shared_ptr<solc::Type>>
   get_fields_sorted ()
   {
     std::vector<PositionedType> postypes{};
@@ -304,7 +305,7 @@ struct Struct : Symbol
                  return a.pos < b.pos;
                });
 
-    std::vector<std::shared_ptr<nlc::Type>> out{};
+    std::vector<std::shared_ptr<solc::Type>> out{};
     for (auto &t : postypes)
       out.push_back (t.handle);
 

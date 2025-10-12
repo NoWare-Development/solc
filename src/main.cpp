@@ -34,7 +34,7 @@ main (int argc, char **argv)
   if (sources.empty ())
     {
       std::cout << escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD)
-                << "nlc: " << escape_color (ESCColor::ESCCOLOR_RED)
+                << "solc: " << escape_color (ESCColor::ESCCOLOR_RED)
                 << "fatal error: " << escape_reset ()
                 << "no input files\ncompilation terminated.\n";
       return -1;
@@ -46,7 +46,7 @@ main (int argc, char **argv)
       if (!file.is_open ())
         {
           std::cout << escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD)
-                    << "nlc: " << escape_color (ESCColor::ESCCOLOR_RED)
+                    << "solc: " << escape_color (ESCColor::ESCCOLOR_RED)
                     << "fatal error: " << escape_reset ()
                     << "failed to open file \"" << srcfile << "\"\n";
           return -2;
@@ -57,7 +57,7 @@ main (int argc, char **argv)
 
       ErrorHandler handler (srcfile, src);
 
-      nlc::Lexer lexer{};
+      solc::Lexer lexer{};
       auto tokens = lexer.tokenize (src);
 
       // TODO: remove me
@@ -71,7 +71,7 @@ main (int argc, char **argv)
           return -3;
         }
 
-      nlc::Parser parser (tokens);
+      solc::Parser parser (tokens);
       auto root = parser.parse ();
       std::cout << root.to_string () << '\n';
       auto errors = parser.get_errors ();
@@ -81,7 +81,7 @@ main (int argc, char **argv)
       else if (!handler.handle_invalid_expressions (root))
         return -5;
 
-      nlc::SemanticAnalyzer sa{};
+      solc::SemanticAnalyzer sa{};
       sa.analyze (root);
       auto sa_errors = sa.get_errors ();
       if (!sa_errors.empty ())
@@ -98,29 +98,29 @@ static void
 handle_arguments (ArgParser &argparser)
 {
   auto optlevel = argparser.get_argument_value<size_t> ("opt");
-  nlc::Config::the ().set_optimization_level (optlevel);
+  solc::Config::the ().set_optimization_level (optlevel);
 
   auto includes = argparser.get_argument_value_list<std::string> ("include");
-  nlc::Config::the ().set_include_paths (includes);
+  solc::Config::the ().set_include_paths (includes);
 
   auto libpaths = argparser.get_argument_value_list<std::string> ("libpath");
-  nlc::Config::the ().set_link_lib_search_paths (libpaths);
+  solc::Config::the ().set_link_lib_search_paths (libpaths);
 
   auto libs = argparser.get_argument_value_list<std::string> ("linkwith");
-  nlc::Config::the ().set_link_libs (libs);
+  solc::Config::the ().set_link_libs (libs);
 
   auto has_nostdlib = argparser.has_argument ("nostdlib");
   if (has_nostdlib)
     {
-      nlc::Config::the ().set_compiler_flag (
-          nlc::Config::CompilerFlag::COMPILER_FLAG_NOSTDLIB);
+      solc::Config::the ().set_compiler_flag (
+          solc::Config::CompilerFlag::COMPILER_FLAG_NOSTDLIB);
     }
 
   auto has_freestanding = argparser.has_argument ("freestanding");
   if (has_freestanding)
     {
-      nlc::Config::the ().set_compiler_flag (
-          nlc::Config::CompilerFlag::COMPILER_FLAG_FREESTANDING);
+      solc::Config::the ().set_compiler_flag (
+          solc::Config::CompilerFlag::COMPILER_FLAG_FREESTANDING);
     }
 
   // Get arch
@@ -141,7 +141,8 @@ get_arch (ArgParser &argparser)
                        "architecture option.\n";
         }
 
-      nlc::Config::the ().set_output_arch (nlc::Config::OutputArch::ARCH_X86);
+      solc::Config::the ().set_output_arch (
+          solc::Config::OutputArch::ARCH_X86);
       arch_set = true;
     }
 
@@ -153,8 +154,8 @@ get_arch (ArgParser &argparser)
           std::cout << "Argument -mamd64 will override previously set target "
                        "architecture option.\n";
         }
-      nlc::Config::the ().set_output_arch (
-          nlc::Config::OutputArch::ARCH_AMD64);
+      solc::Config::the ().set_output_arch (
+          solc::Config::OutputArch::ARCH_AMD64);
       arch_set = true;
     }
 
@@ -166,14 +167,14 @@ get_arch (ArgParser &argparser)
           std::cout << "Argument -marm64 will override previously set target "
                        "architecture option.\n";
         }
-      nlc::Config::the ().set_output_arch (
-          nlc::Config::OutputArch::ARCH_ARM64);
+      solc::Config::the ().set_output_arch (
+          solc::Config::OutputArch::ARCH_ARM64);
       arch_set = true;
     }
 
   if (!arch_set)
     {
-      nlc::Config::the ().set_output_arch (
-          nlc::Config::the ().get_default_arch ());
+      solc::Config::the ().set_output_arch (
+          solc::Config::the ().get_default_arch ());
     }
 }
