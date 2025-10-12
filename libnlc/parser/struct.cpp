@@ -44,6 +44,12 @@ Parser::parse_struct ()
               structure.append (vismarker);
               continue;
             }
+          else if (cur.value == "typedef")
+            {
+              auto typedef_ = parse_typedef ();
+              structure.append (typedef_);
+              continue;
+            }
           else if (cur.value == "enum")
             {
               auto enumdef = parse_enum_definition ();
