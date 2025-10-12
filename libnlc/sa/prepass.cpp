@@ -1,0 +1,175 @@
+#include "libnlc/util.hpp"
+#include "sa/sa.hpp"
+
+namespace nlc
+{
+
+void
+SemanticAnalyzer::generate_symbol_scope_bindings (const AST &root)
+{
+  for (const auto &child : root.children)
+    {
+      switch (child.type)
+        {
+        case ASTType::FUNC_DEF:
+          {
+            const auto &name = child.children.at (0).value;
+            if (_current_symbol_scope->has_symbol (name))
+              {
+                add_error (SAErrorType::SYMBOL_REDEF, child.token_position);
+                break;
+              }
+            _current_symbol_scope->add_symbol (name, Function::create ());
+            generate_symbol_scope_bindings (child.children.at (1));
+          }
+          break;
+
+        case ASTType::ENUM_DEF:
+          {
+            const auto &name = child.value;
+            if (_current_symbol_scope->has_symbol (name))
+              {
+                add_error (SAErrorType::SYMBOL_REDEF, child.token_position);
+                break;
+              }
+            _current_symbol_scope->add_symbol (name, Enum::create ());
+            struct_union_asts.push_back (&child);
+          }
+          break;
+
+        case ASTType::STRUCT:
+          {
+            const auto &name = child.value;
+            if (_current_symbol_scope->has_symbol (name))
+              {
+                add_error (SAErrorType::SYMBOL_REDEF, child.token_position);
+                break;
+              }
+            auto struct_symbol = Struct::create ();
+
+            _current_symbol_scope->add_symbol (name, struct_symbol);
+            auto current_bound_symbol
+                = _current_symbol_scope->get_bound_symbol ();
+            if (current_bound_symbol != nullptr)
+              {
+                ((Struct *)current_bound_symbol)
+                    ->add_struct (name, struct_symbol);
+              }
+
+            _symbol_scope_bindings[(void *)&child]
+                = SymbolScope (_current_symbol_scope, struct_symbol.get ());
+            _current_symbol_scope
+                = &_symbol_scope_bindings.at ((void *)&child);
+            generate_symbol_scope_bindings (child);
+            _current_symbol_scope = _current_symbol_scope->get_parent ();
+
+            struct_union_asts.push_back (&child);
+          }
+          break;
+        case ASTType::UNION:
+          {
+            const auto &name = child.value;
+            if (_current_symbol_scope->has_symbol (name))
+              {
+                add_error (SAErrorType::SYMBOL_REDEF, child.token_position);
+                break;
+              }
+            auto union_symbol = Union::create ();
+
+            _current_symbol_scope->add_symbol (name, union_symbol);
+            auto current_bound_symbol
+                = _current_symbol_scope->get_bound_symbol ();
+            if (current_bound_symbol != nullptr)
+              {
+                ((Struct *)current_bound_symbol)
+                    ->add_union (name, union_symbol);
+              }
+
+            _symbol_scope_bindings[(void *)&child]
+                = SymbolScope (_current_symbol_scope, union_symbol.get ());
+            _current_symbol_scope
+                = &_symbol_scope_bindings.at ((void *)&child);
+            generate_symbol_scope_bindings (child);
+            _current_symbol_scope = _current_symbol_scope->get_parent ();
+
+            struct_union_asts.push_back (&child);
+          }
+          break;
+
+        default:
+          break;
+        }
+    }
+}
+
+void
+SemanticAnalyzer::generate_aliases (const AST &root)
+{
+  for (const auto &child : root.children)
+    {
+      switch (child.type)
+        {
+        case ASTType::TYPEDEF:
+          {
+            const auto &name = child.value;
+            for (auto scope = _current_symbol_scope; scope != nullptr;
+                 scope = scope->get_parent ())
+              {
+                if (scope->has_symbol (name))
+                  {
+                    add_error (SAErrorType::TYPE_REDEF, child.token_position);
+                    break;
+                  }
+              }
+
+            auto aliased_type = get_type_from_type_ast (child.children.at (0));
+            if (aliased_type == nullptr)
+              return;
+
+            if (aliased_type->is_array ())
+              {
+                add_error (SAErrorType::ARRAY_IN_TYPEDEF,
+                           child.children.at (0).token_position);
+                break;
+              }
+
+            auto alias = Alias::create (aliased_type);
+
+            _current_symbol_scope->add_symbol (name, alias);
+            auto current_bound_symbol
+                = _current_symbol_scope->get_bound_symbol ();
+            if (current_bound_symbol != nullptr)
+              {
+                ((Struct *)current_bound_symbol)->add_alias (name, alias);
+              }
+          }
+          break;
+
+        case ASTType::FUNC_DEF:
+          {
+            generate_symbol_scope_bindings (child.children.at (1));
+          }
+          break;
+
+        case ASTType::UNION:
+        case ASTType::STRUCT:
+          {
+            auto symbol_scope = &_symbol_scope_bindings.at ((void *)&child);
+            if (symbol_scope->get_parent () != _current_symbol_scope)
+              {
+                NOREACH ();
+              }
+
+            _current_symbol_scope = symbol_scope;
+            generate_aliases (child);
+            _current_symbol_scope = _current_symbol_scope->get_parent ();
+          }
+          break;
+
+        default:
+          break;
+        }
+    }
+}
+
+}

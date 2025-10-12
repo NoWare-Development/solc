@@ -1,0 +1,17 @@
+typedef int[32] aboba;
+
+test_func :: (a: int) {
+  test_struct: Chlen = { .test[0] = 0 };
+}
+
+struct Chlen {
+  test: int[32];
+}
+
+union Chlen2 {
+  struct SuperChlen {enum ChlenEnum {}}
+
+  chlenenum: SuperChlen::ChlenEnum;
+
+  testfptr: (a: int) -> *Chlen2;
+}

@@ -1,9 +1,11 @@
 #pragma once
 
+#include "parser/ast.hpp"
 #include "symbols/symbol.hpp"
 #include <memory>
 #include <sa/scope.hpp>
-#include <symbols/symboltable.hpp>
+#include <string>
+#include <symbols/symbolscope.hpp>
 #include <types.hpp>
 #include <unordered_map>
 
@@ -16,7 +18,7 @@ public:
   SemanticAnalyzer ();
   ~SemanticAnalyzer () = default;
 
-  std::unique_ptr<SymbolTable> analyze (const AST &root);
+  void analyze (const AST &root);
 
   enum class SAErrorType
   {
@@ -24,55 +26,11 @@ public:
 
     UNDEFINED_TYPE,
 
+    SYMBOL_REDEF,
     TYPE_REDEF,
     VAR_REDECL,
 
-    UNDECLARED_VARIABLE,
-
     ARRAY_IN_TYPEDEF,
-
-    ARRAY_SIZE_NOT_COMPTIME,
-    ARRAY_SIZE_NOT_INTEGER,
-
-    IDENTIFIER_IN_CONST_EXPR,
-    DEREF_IN_CONST_EXPR,
-    ADDRESS_IN_CONST_EXPR,
-    ARRAY_ELEM_IN_CONST_EXPR,
-    ACCESS_MEMBER_IN_CONST_EXPR,
-    CALL_IN_CONST_EXPR,
-    STRING_IN_CONST_EXPR,
-
-    CANNOT_CONVERT_TYPES_EXPR,
-    BITWISE_OPERATION_ON_FLOAT,
-
-    UNKNOWN_NUMERIC_TYPESPEC,
-    INT_TYPESPEC_ON_FLOAT,
-
-    EXPR_VAR_NOT_ARRAY,
-    TAKE_ADDRESS_OF_NUMERIC_LITERAL,
-    TAKE_ADDRESS_OF_BOOLEAN_LITERAL,
-    TAKE_ADDRESS_OF_NULLPTR_LITERAL,
-    TAKE_ADDRESS_OF_ENUM_ELEMENT,
-    DEREF_ON_NUMERIC_LITERAL,
-    DEREF_ON_BOOLEAN_LITERAL,
-    DEREF_ON_NULLPTR_LITERAL,
-    DEREF_ON_ENUM_ELEMENT,
-
-    CANNOT_CAST_IN_CAST,
-    DEREF_ON_NONPTR,
-
-    INITLIST_WRONG_NUMBER_OF_ENTRIES,
-    INITLIST_EXPLICIT_IN_ANON,
-    INITLIST_MULTIPLE_INITS_IN_ANON,
-    INITLIST_EXPLICIT_AFTER_ANON,
-    INITLIST_ANON_AFTER_EXPLICIT,
-    INITLIST_EXPLICIT_REINIT,
-
-    SYMBOL_REFERED_BY_TYPE_IS_NOT_STRUCT_OR_UNION,
-    SYMBOL_REFERED_BY_TYPE_DOES_NOT_CONTAIN_DATA,
-
-    STRUCT_HAS_NO_FIELD,
-    UNION_HAS_NO_FIELD,
   };
   struct SAError
   {
@@ -123,7 +81,12 @@ public:
 
 private:
   ScopeStack *_scope_stack{};
-  std::unique_ptr<SymbolTable> _symbol_table{};
+
+  // NOTE: using `void *` as a key to have access to scopes without
+  std::unordered_map<void *, SymbolScope> _symbol_scope_bindings{};
+  std::vector<const AST *> struct_union_asts{};
+  SymbolScope *_current_symbol_scope{};
+  SymbolScope *_global_symbol_scope{};
 
   const std::unordered_map<std::string, std::shared_ptr<Type>> _basic_types{
     { "void", Type::create_basic (BuiltinType::VOID) },
@@ -205,6 +168,14 @@ private:
   bool verify_type_of_initlist (const AST &initlist,
                                 const std::shared_ptr<Type> &type,
                                 size_t type_tok_pos = -1);
+
+  void generate_symbol_scope_bindings (const AST &root);
+  void generate_aliases (const AST &root);
+  void populate_symbols ();
+
+  std::shared_ptr<Type> resolve_type (const std::string &name) const;
+  std::shared_ptr<Type> resolve_type (const std::vector<std::string> &ns,
+                                      const std::string &name) const;
 
   template <typename... Args>
   void

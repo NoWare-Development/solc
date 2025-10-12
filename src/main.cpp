@@ -82,7 +82,7 @@ main (int argc, char **argv)
         return -5;
 
       nlc::SemanticAnalyzer sa{};
-      auto symbol_table = sa.analyze (root);
+      sa.analyze (root);
       auto sa_errors = sa.get_errors ();
       if (!sa_errors.empty ())
         {

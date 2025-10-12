@@ -76,6 +76,8 @@ get_builtin_type_index (BuiltinType type)
   return ((uint32_t)type >> 16) & 0xFF;
 }
 
+struct Symbol;
+
 struct Type final
 {
   struct FuncArg final
@@ -90,13 +92,12 @@ struct Type final
     }
   };
 
-  std::vector<std::string> type_path{};
   std::vector<std::shared_ptr<AST>> array_sizes{};
   std::vector<FuncArg> arguments{};
 
-  std::string type_name{};
-
   std::shared_ptr<Type> return_type{};
+
+  Symbol *symbol_binding{};
 
   size_t pointer_indirection;
 
@@ -114,32 +115,17 @@ struct Type final
         builtin_type (builtin_type)
   {
   }
-  Type (BuiltinType builtin_type, const std::string &type_name,
+  Type (BuiltinType builtin_type, Symbol *symbol_binding,
         size_t pointer_indirection)
-      : type_name (type_name), pointer_indirection (pointer_indirection),
-        builtin_type (builtin_type)
-  {
-  }
-  Type (BuiltinType builtin_type, const std::string &type_name,
-        std::vector<std::shared_ptr<AST>> &&array_sizes,
-        size_t pointer_indirection)
-      : array_sizes (array_sizes), type_name (type_name),
+      : symbol_binding (symbol_binding),
         pointer_indirection (pointer_indirection), builtin_type (builtin_type)
   {
   }
-  Type (BuiltinType builtin_type, const std::string &type_name,
-        std::vector<std::string> &&type_path, size_t pointer_indirection)
-      : type_path (type_path), type_name (type_name),
-        pointer_indirection (pointer_indirection), builtin_type (builtin_type)
-  {
-  }
-  Type (BuiltinType builtin_type, const std::string &type_name,
-        std::vector<std::string> &&type_path,
+  Type (BuiltinType builtin_type, Symbol *symbol_binding,
         std::vector<std::shared_ptr<AST>> &&array_sizes,
         size_t pointer_indirection)
-      : type_path (type_path), array_sizes (array_sizes),
-        type_name (type_name), pointer_indirection (pointer_indirection),
-        builtin_type (builtin_type)
+      : array_sizes (array_sizes), symbol_binding (symbol_binding),
+        pointer_indirection (pointer_indirection), builtin_type (builtin_type)
   {
   }
 
@@ -205,37 +191,20 @@ struct Type final
                                    pointer_indirection);
   }
   static std::shared_ptr<Type>
-  create_complex (BuiltinType builtin_type, const std::string &type_name,
+  create_complex (BuiltinType builtin_type, Symbol *symbol_binding,
                   size_t pointer_indirection = 0)
   {
-    return std::make_shared<Type> (builtin_type, type_name,
+    return std::make_shared<Type> (builtin_type, symbol_binding,
                                    pointer_indirection);
   }
   static std::shared_ptr<Type>
-  create_complex_array (BuiltinType builtin_type, const std::string &type_name,
+  create_complex_array (BuiltinType builtin_type, Symbol *symbol_binding,
                         std::vector<std::shared_ptr<AST>> array_sizes,
                         size_t pointer_indirection = 0)
   {
-    return std::make_shared<Type> (
-        builtin_type, type_name, std::move (array_sizes), pointer_indirection);
-  }
-  static std::shared_ptr<Type>
-  create_complex (BuiltinType builtin_type, const std::string &type_name,
-                  std::vector<std::string> type_path,
-                  size_t pointer_indirection = 0)
-  {
-    return std::make_shared<Type> (builtin_type, type_name,
-                                   std::move (type_path), pointer_indirection);
-  }
-  static std::shared_ptr<Type>
-  create_complex_array (BuiltinType builtin_type, const std::string &type_name,
-                        std::vector<std::string> type_path,
-                        std::vector<std::shared_ptr<AST>> array_sizes,
-                        size_t pointer_indirection = 0)
-  {
-    return std::make_shared<Type> (
-        builtin_type, type_name, std::move (type_path),
-        std::move (array_sizes), pointer_indirection);
+    return std::make_shared<Type> (builtin_type, symbol_binding,
+                                   std::move (array_sizes),
+                                   pointer_indirection);
   }
 
   static std::shared_ptr<Type>
@@ -313,8 +282,7 @@ struct Type final
   size_t get_pointer_indirection () const;
   size_t get_full_pointer_indirection () const;
 
-  const std::vector<std::string> &get_type_path () const;
-  const std::string &get_type_name () const;
+  Symbol *get_symbol_binding () const;
 
   const std::shared_ptr<Type> &get_return_type () const;
   const std::vector<FuncArg> &get_function_arguments () const;
