@@ -5,7 +5,7 @@
 #include <symbols/symbol.hpp>
 #include <unordered_map>
 
-namespace nlc
+namespace solc
 {
 
 struct SymbolScope

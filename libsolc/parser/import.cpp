@@ -1,0 +1,24 @@
+#include "libsolc/parser/macros.hpp"
+#include "parser/parser.hpp"
+
+namespace solc
+{
+
+AST
+Parser::parse_import ()
+{
+  AST import (_pos++, ASTType::IMPORT);
+
+  VERIFY_POS (_pos);
+  auto module = parse_module ();
+  import.append (module);
+
+  VERIFY_POS (_pos);
+  auto cur = _tokens.at (_pos);
+  VERIFY_TOKEN (_pos, cur.type, TokenType::SEMI);
+  _pos++;
+
+  return import;
+}
+
+}

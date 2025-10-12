@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-namespace nlc
+namespace solc
 {
 
 enum class BuiltinTypeGroup : uint16_t

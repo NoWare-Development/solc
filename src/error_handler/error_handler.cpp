@@ -23,14 +23,14 @@ ErrorHandler::ErrorHandler (const std::string &filename,
 }
 
 void
-ErrorHandler::add_tokens (const std::vector<nlc::Token> &tokens)
+ErrorHandler::add_tokens (const std::vector<solc::Token> &tokens)
 {
   _tokens = tokens;
 }
 
 void
 ErrorHandler::add_parser_errors (
-    const std::vector<nlc::Parser::ParserError> &errors)
+    const std::vector<solc::Parser::ParserError> &errors)
 {
   _parser_errors = errors;
 }
@@ -59,9 +59,9 @@ ErrorHandler::handle_parser_errors () const
 }
 
 bool
-ErrorHandler::handle_invalid_expressions (const nlc::AST &root) const
+ErrorHandler::handle_invalid_expressions (const solc::AST &root) const
 {
-  std::vector<nlc::AST> errored_asts{};
+  std::vector<solc::AST> errored_asts{};
   collect_invalid_expressions (root, errored_asts);
 
   if (!errored_asts.empty ())
@@ -95,7 +95,7 @@ ErrorHandler::handle_invalid_expressions (const nlc::AST &root) const
 
 void
 ErrorHandler::handle_sa_errors (
-    const std::vector<nlc::SemanticAnalyzer::SAError> &errors) const
+    const std::vector<solc::SemanticAnalyzer::SAError> &errors) const
 {
   for (const auto &e : errors)
     {
@@ -120,16 +120,16 @@ ErrorHandler::handle_sa_errors (
 }
 
 void
-ErrorHandler::collect_invalid_expressions (const nlc::AST &node,
-                                           std::vector<nlc::AST> &v) const
+ErrorHandler::collect_invalid_expressions (const solc::AST &node,
+                                           std::vector<solc::AST> &v) const
 {
   for (const auto &c : node.children)
     {
-      if (c.type == nlc::ASTType::EXPR)
+      if (c.type == solc::ASTType::EXPR)
         {
           for (const auto &ec : c.children)
             {
-              if (ec.type == nlc::ASTType::ERR)
+              if (ec.type == solc::ASTType::ERR)
                 {
                   v.push_back (ec);
                 }
@@ -143,13 +143,13 @@ ErrorHandler::collect_invalid_expressions (const nlc::AST &node,
 void
 ErrorHandler::print_errored_tokens () const
 {
-  auto get_invalid_tokens
-      = [] (const std::vector<nlc::Token> &tokens) -> std::vector<nlc::Token> {
-    std::vector<nlc::Token> invalid_tokens{};
+  auto get_invalid_tokens =
+      [] (const std::vector<solc::Token> &tokens) -> std::vector<solc::Token> {
+    std::vector<solc::Token> invalid_tokens{};
 
     for (auto &tok : tokens)
       {
-        if (tok.type == nlc::TokenType::ERR)
+        if (tok.type == solc::TokenType::ERR)
           {
             invalid_tokens.push_back (tok);
           }
@@ -157,7 +157,7 @@ ErrorHandler::print_errored_tokens () const
     return invalid_tokens;
   };
 
-  std::vector<nlc::Token> invalid_tokens = get_invalid_tokens (_tokens);
+  std::vector<solc::Token> invalid_tokens = get_invalid_tokens (_tokens);
 
   for (auto &tok : invalid_tokens)
     {
@@ -175,7 +175,7 @@ ErrorHandler::print_parser_errors () const
 }
 
 std::string
-ErrorHandler::get_token_error (const nlc::Token &tok) const
+ErrorHandler::get_token_error (const solc::Token &tok) const
 {
   std::string error_string{};
 
@@ -195,12 +195,12 @@ ErrorHandler::get_token_error (const nlc::Token &tok) const
 }
 
 std::string
-ErrorHandler::get_parser_error (const nlc::Parser::ParserError &err) const
+ErrorHandler::get_parser_error (const solc::Parser::ParserError &err) const
 {
   const std::string error_reason = get_parser_error_reason (err);
   std::string error_string{};
 
-  if (err.type != nlc::Parser::ParserError::Type::UNEXPECTED)
+  if (err.type != solc::Parser::ParserError::Type::UNEXPECTED)
     {
       error_string += get_message_start (_nol, last_line ().length (), "error",
                                          ESCColor::ESCCOLOR_RED,
@@ -215,7 +215,7 @@ ErrorHandler::get_parser_error (const nlc::Parser::ParserError &err) const
     }
   error_string += error_reason;
 
-  const auto &token = err.type == nlc::Parser::ParserError::Type::UNEXPECTED
+  const auto &token = err.type == solc::Parser::ParserError::Type::UNEXPECTED
                           ? _tokens.at (err.pos)
                           : *(_tokens.end () - 1);
   error_string += '\n';
@@ -246,7 +246,7 @@ ErrorHandler::get_message_start (size_t line, size_t start,
 }
 
 std::string
-ErrorHandler::get_highlighted_token (const nlc::Token &tok, ESCColor color,
+ErrorHandler::get_highlighted_token (const solc::Token &tok, ESCColor color,
                                      ESCGraphics mode) const
 {
   constexpr const size_t base_offset = 2;
@@ -302,9 +302,9 @@ ErrorHandler::get_highlighted_token (const nlc::Token &tok, ESCColor color,
 
 std::string
 ErrorHandler::get_parser_error_reason (
-    const nlc::Parser::ParserError &err) const
+    const solc::Parser::ParserError &err) const
 {
-  using namespace nlc;
+  using namespace solc;
 
   switch (err.type)
     {
@@ -343,7 +343,7 @@ ErrorHandler::has_invalid_tokens () const
 {
   for (auto &tok : _tokens)
     {
-      if (tok.type == nlc::TokenType::ERR)
+      if (tok.type == solc::TokenType::ERR)
         {
           return true;
         }

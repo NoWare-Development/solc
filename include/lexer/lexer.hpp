@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace nlc
+namespace solc
 {
 
 class Lexer

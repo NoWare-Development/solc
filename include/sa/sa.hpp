@@ -9,7 +9,7 @@
 #include <types.hpp>
 #include <unordered_map>
 
-namespace nlc
+namespace solc
 {
 
 class SemanticAnalyzer

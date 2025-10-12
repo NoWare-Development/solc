@@ -6,7 +6,7 @@
 #include <parser/ast.hpp>
 #include <vector>
 
-namespace nlc
+namespace solc
 {
 
 class Parser

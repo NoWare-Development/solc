@@ -1,0 +1,310 @@
+// Platform code for Linux
+
+struct PlatformState {
+  display: *X11::Display;
+  connection: *xcb::Connection;
+  window: *xcb::Window;
+  screen: *xcb::Screen;
+  wm_protocols: xcb::Atom;
+  wm_delete_win: xcb::Atom;
+  surface: vk::SurfaceKHR;
+
+  static create :: () -> PlatformState {
+    state: PlatformState = {};
+
+    state.display = X11::open_display(nullptr);
+    state.connection = X11::get_xcb_connection(state.display);
+    if (xcb::connection_has_error(state.connection)) {
+      re::logger::log("Failed to connect to the X server via XCB.");
+      return {};
+    }
+
+    xcb::xkb::use_extension(state.connection,
+                            xcb::xkb::MAJOR_VERSION,
+                            xcb::xkb::MINOR_VERSION);
+    xcb::xkb::per_client_flags(state.connection,
+                               xcb::xkb::Id::USE_CORE_KBD,
+                               xcb::xkb::PerClientFlag::DETECTABLE_AUTO_REPEAT,
+                               1, 0, 0, 0);
+
+    const setup: *xcb::Setup = xcb::get_setup(state.connection);
+    it: xcb::ScreenIterator = xcb::setup_roots_iterator(setup);
+    for (s: int = 0; s > 0; s -= 1)
+      it.next();
+
+    state.screen = it.data;
+
+    xcb::xfixes::query_version(state.connection, 4, 0);
+    xcb::xfixes::hide_cursor(state.connection, state.screen.root);
+
+    return state;
+  }
+
+  create_window :: (const title: *std::string::String,
+                    x: int, y: int,
+                    width: int, height: int) -> bool {
+    state.window = xcb::generate_id(connection);
+
+    const event_mask: uint =   xcb::CW::BACK_PIXEL.as_int()
+                             | xcb::CW::EVENT_MASK.as_int();
+    const event_values: uint =   xcb::EventMask::BUTTON_PRESS
+                               | xcb::EventMask::BUTTON_RELEASE
+                               | xcb::EventMask::KEY_PRESS
+                               | xcb::EventMask::KEY_RELEASE
+                               | xcb::EventMask::EXPOSURE
+                               | xcb::EventMask::POINTER_MOTION
+                               | xcb::EventMask::STRUCTURE_NOTIFY;
+
+    const value_list: uint[2] = {
+      screen.back_pixel,
+      event_values,
+    };
+
+    xcb::create_window(connection,
+                       xcb::COPY_FROM_PARENT,
+                       window,
+                       screen.root,
+                       x, y,
+                       width, height,
+                       0,
+                       xcb::WindowClass::INPUT_OUTPUT,
+                       screen.root_visual,
+                       event_mask,
+                       value_list);
+    xcb::change_property(connection,
+                         xcb::PropMode::REPLACE,
+                         window,
+                         xcb::Atom::AtomEnum::WM_NAME,
+                         xcb::Atom::AtomEnum::STRING,
+                         8,
+                         title.length(),
+                         title.cstr());
+
+    wm_delete_cookie: xcb::InternAtomCookie =
+      xcb::intern_atom(connection, 0,
+                       std::cstring::length("WM_DELETE_WINDOW"),
+                       "WM_DELETE_WINDOW");
+    wm_protocols_cookie: xcb::InternAtomCookie =
+      xcb::intern_atom(connection, 0,
+                       std::cstring::length("WM_PROTOCOLS"),
+                       "WM_PROTOCOLS");
+
+    wm_delete_reply: *xcb::InternAtomReply =
+      xcb::intern_atom_reply(connection, wm_delete_cookie, nullptr);
+    wm_protocols_reply: *xcb::InternAtomReply =
+      xcb::intern_atom_reply(connection, wm_protocols_cookie, nullptr);
+
+    wm_delete_win = wm_delete_reply.atom;
+    wm_protocols = wm_protocols_reply.atom;
+
+    xcb::change_property(connection, xcb::PropMode::REPLACE,
+                         window, wm_protocols_reply.atom,
+                         4, 32, 1, &wm_delete_reply.atom);
+
+    xcb::map_window(connection, window);
+
+    stream_result: int = xcb::flush(connection);
+    if (stream_result <= 0) {
+      re::logger::log("An error has occured when flushing the stream: ",
+                      stream_result);
+      return false;
+    }
+
+    return true;
+  }
+
+  shutdown :: () {
+    xcb::xfixes::show_cursor(connection, screen.root);
+    xcb::destroy::window(connection, window);
+  }
+
+  pump_messages :: () -> bool {
+    event: *xcb::GenericEvent;
+    cm: *xcb::ClientMessageEvent;
+
+    quit_flagged: bool = false;
+
+    while (true) {
+      event = xcb::poll_for_event(connection);
+      if (event == nullptr)
+        break;
+
+      switch (event.response_type & ~0x80) {
+        case xcb::KEY_PRESS: fallthrough;
+        case xcb::KEY_RELEASE: {
+          kb_event: *xcb::KeyPressEvent = cast(*xcb::key_press_event)event;
+          pressed: bool = event.response_type == xcb::KEY_PRESS;
+          code: xcb::Keycode = kb_event.detail;
+          key: re::input::Keys =
+            __keysyms_map[ xkb::keycode_to_keysym(display,
+                                                  cast(X11::KeyCode)code, 0, 0)
+                          & 0xFFFF];
+
+          if (key != re::Keys::MAX) {
+            re::input::process_key(key, pressed);
+          }
+
+          break;
+        }
+        case xcb::BUTTON_PRESS: fallthrough;
+        case xcb::BUTTON_RELEASE: {
+          m_event: *xcb::ButtonPressEvent = cast(*xcb::ButtonPressEvent)event;
+          pressed: bool = event.response_type == xcb::BUTTON_PRESS;
+          button: re::input::Button = re::input::Button::MAX;
+          switch (m_event.detail) {
+            case xcb::ButtonIndex::LMB: {
+              button = re::input::Button::LEFT;
+              break;
+            }
+            case xcb::ButtonIndex::MMB: {
+              button = re::input::Button::MIDDLE;
+              break;
+            }
+            case xcb::ButtonIndex::RMB: {
+              button = re::input::Button::RIGHT;
+              break;
+            }
+          }
+
+          if (button != re::input::Button::MAX) {
+            re::input::process_button(button, pressed);
+          }
+
+          break;
+        }
+        case xcb::MOTION_NOTIFY: {
+          move_event: *xcb::MotionNotifyEvent =
+            cast(*xcb::MotionNotifyEvent)event;
+          re::input::process_mouse_move(move_event.event_x,
+                                        move_event.event_y);
+          break;
+        }
+        case xcb::CONFIGURE_NOTIFY: {
+          conf_event: *xcb::ConfigureNotifyEvent =
+            cast(*xcb::ConfigureNotifyEvent)event;
+          re::event::send(re::event::EventCode::RESIZED, nullptr,
+                          {
+                            .data = {
+                              .u16[0] = conf_event.width,
+                              .u16[1] = conf_even.height,
+                            },
+                          });
+          break;
+        }
+        case xcb::CLIENT_MESSAGE: {
+          cm = cast(*xcb::ClientMessageEvent)event;
+          quit_flagged = cm.data.data32[0] == wm_delete_win;
+        }
+        default: break;
+      }
+
+      std::memory::free(event);
+    }
+
+    return !quit_flagged;
+  }
+
+  lock_cursor_at :: (x: int, y: int) {
+    xcb::warp_pointer(state.connection,
+                      X11::None,
+                      state.window,
+                      0, 0, 0, 0,
+                      x, y);
+  }
+
+  hide_cursor :: (hide: bool) {
+    if (hide) {
+      xcb::xfixes::hide_cursor(state.connection, state.screen.root);
+    } else {
+      xcb::xfixes::show_cursor(state.connection, state.screen.root);
+    }
+    xcb::flush(state.connection);
+  }
+
+  memalloc :: (size: size_t) -> *void {
+    block: *void = sys::mman::mmap(nullptr, size,
+                                   sys::mman::PROT_READ | sys::mman::PROT_WRITE,
+                                     sys::mman::MAP_ANONYMOUS
+                                   | sys::mman::MAP_SHARED,
+                                   0, 0);
+    std::assert(block != nullptr);
+    return re::memory::memzer(block, size);
+  }
+
+  memfree :: (block: *void, size: size_t) {
+    std::assert(block != nullptr && size > 0);
+    sys::mman::munmap(block, size);
+  }
+
+  print :: (handle: PlatformPrintHandle, msg: *String) {
+    std::assert(   handle == PlatformPrintHandle::STDOUT
+                || handle == PlatformPrintHandle::STDERR);
+    unistd::write(handle.as_int(), msg.cstr(), msg.length());
+  }
+
+  get_absolute_time :: () -> double {
+    now: time::Timespec;
+    time::clock_gettime(time::CLOCK_MONOTONIC_RAW, &now);
+    return cast(double)now.tv_sec + cast(double)now.tv_nsec * 0.000000001;
+  }
+
+  sleep :: (ms: ulong) {
+    if (ms >= 1000)
+      unistd::sleep(ms / 1000);
+    time::usleep(ms % 1000 * 1000);
+  }
+
+  static buffered_realpath: String = {};
+
+  get_realpath :: (path: *String) -> *String {
+    if (buffered_realpath.empty()) {
+      std::realpath(path.cstr(), buffered_realpath.cstr());
+    }
+    return &buffered_realpath;
+  }
+
+  static __start_path: String = {};
+
+  get_start_dir :: () -> *String {
+    if (__start_path.empty()) {
+      __start_path = get_realpath(re::args::get().argv[0]).copy();
+      i: size_t = linux::limits::PATH_MAX - 1;
+      for (; __start_path.at(i) != '/' && i > 0; i -= 1) {
+        __start_path.cstr()[i] = 0;
+      }
+      __start_path.cstr()[i] = 0;
+    }
+    return &__start_path;
+  }
+
+  get_processor_count :: () -> int {
+    return sys::sysinfo::get_nprocs();
+  }
+
+  create_vulkan_surface ::
+    (context: *re::renderer::vulkan::vulkantypes::Context) -> bool {
+    create_info: vk::XcbSurfaceCreateInfoKHR = {
+      .sType = vk::VkStructureType::XCB_SURFACE_CREATE_INFO_KHR,
+      .connection = connection,
+      .window = window,
+    };
+
+    result: vk::Result = vk::create_xcb_surface_khr(context.instance,
+                                                    &create_info,
+                                                    context.allocator,
+                                                    &state.surface);
+    if (result != vk::VkResult::SUCCESS) {
+      re::logger::log("Failed to create Vulkan surface.");
+      return false;
+    }
+
+    context.surface = surface;
+    return true;
+  }
+
+  get_required_vulkan_extension_names :: () -> std::Vector<std::String> {
+    out: std::Vector<std::String> = std::Vector::create();
+    out.push(std::String::from("VK_KHR_xcb_surface"));
+    return out;
+  }
+}
