@@ -1,4 +1,4 @@
-# N-Lang compiler
+# Solar compiler
 
 ## Manual build
 Linux/OSX
