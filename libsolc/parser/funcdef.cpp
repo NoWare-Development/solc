@@ -7,9 +7,11 @@ namespace solc
 AST
 Parser::parse_function_def ()
 {
+  auto pos = _pos;
+
   auto funcproto = parse_function_prototype ();
 
-  AST funcdef (_pos, ASTType::FUNC_DEF);
+  AST funcdef (pos, ASTType::FUNC_DEF);
   funcdef.append (funcproto);
 
   VERIFY_POS (_pos);
