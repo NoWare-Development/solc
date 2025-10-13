@@ -54,6 +54,9 @@ SemanticAnalyzer::get_type_from_type_ast (const AST &type)
     case ASTType::TYPE_POINTER:
       {
         auto out = get_type_from_type_ast (type.children.at (0));
+        if (out == nullptr)
+          return nullptr;
+
         out->pointer_indirection += 1;
         return out;
       }
@@ -69,6 +72,8 @@ SemanticAnalyzer::get_type_from_type_ast (const AST &type)
           }
 
         auto out = get_type_from_type_ast (type.children.at (type_pos));
+        if (out == nullptr)
+          return nullptr;
 
         if (type.children.size () > 1)
           {
