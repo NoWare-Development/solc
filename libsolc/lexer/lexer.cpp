@@ -1,6 +1,5 @@
 #include "lexer/lexer.hpp"
 #include <cctype>
-#include <iostream>
 #include <vector>
 
 namespace solc
@@ -455,8 +454,6 @@ Lexer::process_num ()
       buf += c;
       _pos++;
     }
-
-  std::cout << buf << '\n';
 
   return gen_token (buf.length (), _pos - 1,
                     has_dot ? TokenType::NUMFLOAT : TokenType::NUM, buf);
