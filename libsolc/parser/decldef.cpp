@@ -31,7 +31,7 @@ Parser::parse_decldef ()
 
     case TokenType::DCOLON:
       {
-        return parse_function_def ();
+        return parse_function ();
       }
 
     case TokenType::ERR:

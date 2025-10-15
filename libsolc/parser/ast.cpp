@@ -87,23 +87,10 @@ asttype_to_string (ASTType type)
         // Groupless
         "ERR",
 
-        "PROG",
-        "EXPR",
-        "MODULE",
-        "IMPORT",
-        "TYPEDEF",
-        "EXPORT",
-        "MODIFIER",
-        "NONE",
-        "LABEL",
-        "VARIADIC",
-        "TEMPLATE",
-        "STRUCT",
-        "UNION",
-        "NAMESPACE",
-        "INITLIST",
-        "GENERIC_TYPE_LIST",
-        "PREFIX_EXPR",
+        "PROG",      "EXPR",     "MODULE",      "IMPORT",  "TYPEDEF",
+        "EXPORT",    "MODIFIER", "NONE",        "LABEL",   "VARIADIC",
+        "TEMPLATE",  "STRUCT",   "UNION",       "ENUM",    "FUNC",
+        "NAMESPACE", "INITLIST", "PREFIX_EXPR", "GENERIC",
     },
     {
         // STMT
@@ -126,7 +113,6 @@ asttype_to_string (ASTType type)
     },
     {
         // ENUM
-        "DEF",
         "ELEMENT",
     },
     {
@@ -143,8 +129,6 @@ asttype_to_string (ASTType type)
     },
     {
         // FUNC
-        "PROTO",
-        "DEF",
         "ARGLIST",
     },
     {
@@ -224,6 +208,13 @@ asttype_to_string (ASTType type)
         "ENTRY",
         "ENTRY_EXPLICIT",
         "ENTRY_EXPLICIT_ARRAY_ELEM",
+    },
+    {
+        // Generic
+        "STRUCT",
+        "UNION",
+        "FUNC",
+        "TYPE_LIST",
     },
   };
 

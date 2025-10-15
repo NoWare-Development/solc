@@ -24,6 +24,7 @@ enum class ASTGroup : uint8_t
   TEMPLATE,
   VISIBILITY_MARKER,
   INITLIST,
+  GENERIC,
 };
 
 #define __AST_DEF(group, id) (((uint8_t)(group) & 0xFF) << 8) | ((id) & 0xFF)
@@ -44,10 +45,12 @@ enum struct ASTType : uint16_t
   TEMPLATE = __AST_DEF (ASTGroup::NONE, 11),
   STRUCT = __AST_DEF (ASTGroup::NONE, 12),
   UNION = __AST_DEF (ASTGroup::NONE, 13),
-  NAMESPACE = __AST_DEF (ASTGroup::NONE, 14),
-  INITLIST = __AST_DEF (ASTGroup::NONE, 15),
-  GENERIC_TYPE_LIST = __AST_DEF (ASTGroup::NONE, 16),
-  PREFIX_EXPR = __AST_DEF (ASTGroup::NONE, 17),
+  ENUM = __AST_DEF (ASTGroup::NONE, 14),
+  FUNC = __AST_DEF (ASTGroup::NONE, 15),
+  NAMESPACE = __AST_DEF (ASTGroup::NONE, 16),
+  INITLIST = __AST_DEF (ASTGroup::NONE, 17),
+  PREFIX_EXPR = __AST_DEF (ASTGroup::NONE, 18),
+  GENERIC = __AST_DEF (ASTGroup::NONE, 19),
 
   STMT_LIST = __AST_DEF (ASTGroup::STMT, 0),
   STMT_RETURN = __AST_DEF (ASTGroup::STMT, 1),
@@ -66,8 +69,7 @@ enum struct ASTType : uint16_t
   STMT_IF = __AST_DEF (ASTGroup::STMT, 14),
   STMT_ELSE = __AST_DEF (ASTGroup::STMT, 15),
 
-  ENUM_DEF = __AST_DEF (ASTGroup::ENUM, 0),
-  ENUM_ELEMENT = __AST_DEF (ASTGroup::ENUM, 1),
+  ENUM_ELEMENT = __AST_DEF (ASTGroup::ENUM, 0),
 
   TYPE_PLAIN = __AST_DEF (ASTGroup::TYPE, 0),
   TYPE_ARRAY = __AST_DEF (ASTGroup::TYPE, 1),
@@ -77,9 +79,7 @@ enum struct ASTType : uint16_t
   VAR_DECL = __AST_DEF (ASTGroup::VAR, 0),
   VAR_DEF = __AST_DEF (ASTGroup::VAR, 1),
 
-  FUNC_PROTO = __AST_DEF (ASTGroup::FUNC, 0),
-  FUNC_DEF = __AST_DEF (ASTGroup::FUNC, 1),
-  FUNC_ARGLIST = __AST_DEF (ASTGroup::FUNC, 2),
+  FUNC_ARGLIST = __AST_DEF (ASTGroup::FUNC, 0),
 
   EXPR_BINARY_OPERATOR_ADD = __AST_DEF (ASTGroup::EXPR_BINARY_OPERATOR, 0),
   EXPR_BINARY_OPERATOR_SUB = __AST_DEF (ASTGroup::EXPR_BINARY_OPERATOR, 1),
@@ -142,6 +142,11 @@ enum struct ASTType : uint16_t
   INITLIST_ENTRY = __AST_DEF (ASTGroup::INITLIST, 0),
   INITLIST_ENTRY_EXPLICIT = __AST_DEF (ASTGroup::INITLIST, 1),
   INITLIST_ENTRY_EXPLICIT_ARRAY_ELEM = __AST_DEF (ASTGroup::INITLIST, 2),
+
+  GENERIC_STRUCT = __AST_DEF (ASTGroup::GENERIC, 0),
+  GENERIC_UNION = __AST_DEF (ASTGroup::GENERIC, 1),
+  GENERIC_FUNC = __AST_DEF (ASTGroup::GENERIC, 2),
+  GENERIC_TYPE_LIST = __AST_DEF (ASTGroup::GENERIC, 3),
 };
 #undef __AST_DEF
 

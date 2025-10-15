@@ -13,7 +13,7 @@ Parser::parse_enum_definition ()
   auto cur = _tokens.at (_pos);
   VERIFY_TOKEN (_pos, cur.type, TokenType::ID);
 
-  AST enum_definition (_pos, ASTType::ENUM_DEF);
+  AST enum_definition (_pos, ASTType::ENUM);
 
   enum_definition.value = cur.value;
 

@@ -11,23 +11,25 @@ SemanticAnalyzer::generate_symbol_scope_bindings (const AST &root)
     {
       switch (child.type)
         {
-        case ASTType::FUNC_DEF:
+        case ASTType::FUNC:
           {
-            const auto &name = child.children.at (0).value;
+            const auto &name = child.value;
             if (_current_symbol_scope->has_symbol (name))
               {
                 add_error (SAErrorType::SYMBOL_REDEF, child.token_position);
                 break;
               }
+
             auto func = Function::create ();
             _current_symbol_scope->add_symbol (name, func);
             _symbol_scope_bindings[(void *)&child] = *_current_symbol_scope;
             func_asts.emplace_back (func.get (), &child);
-            generate_symbol_scope_bindings (child.children.at (1));
+            generate_symbol_scope_bindings (
+                *std::prev (child.children.end ()));
           }
           break;
 
-        case ASTType::ENUM_DEF:
+        case ASTType::ENUM:
           {
             const auto &name = child.value;
             if (_current_symbol_scope->has_symbol (name))
@@ -150,9 +152,14 @@ SemanticAnalyzer::generate_aliases (const AST &root)
           }
           break;
 
-        case ASTType::FUNC_DEF:
+        case ASTType::FUNC:
           {
-            generate_symbol_scope_bindings (child.children.at (1));
+            auto last = std::prev (child.children.cend ());
+            if (last->type != ASTType::STMT_LIST)
+              {
+                NOREACH ();
+              }
+            generate_symbol_scope_bindings (*last);
           }
           break;
 

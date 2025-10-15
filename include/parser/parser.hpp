@@ -125,14 +125,9 @@ private:
   AST parse_variable_decldef ();
 
   // <funcdef>
-  //   : <funcproto> <stmtlist>
+  //   : <id> :: (<funcargs>) [-> <type>] <stmtlist>
   //   ;
-  AST parse_function_def ();
-
-  // <funcproto>
-  //   : <id> :: (<funcargs>) -> <type>
-  //   ;
-  AST parse_function_prototype ();
+  AST parse_function ();
 
   // <funcarg>
   //   : <vardecl>

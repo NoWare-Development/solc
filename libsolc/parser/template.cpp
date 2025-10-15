@@ -52,7 +52,7 @@ Parser::parse_template ()
   VERIFY_POS (_pos + 1);
   cur = _tokens.at (_pos + 1);
   VERIFY_TOKEN (_pos, cur.type, TokenType::DCOLON);
-  auto func_decldef = parse_function_def ();
+  auto func_decldef = parse_function ();
   template_.append (func_decldef);
 
   return template_;
