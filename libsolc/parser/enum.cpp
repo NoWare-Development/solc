@@ -7,11 +7,13 @@ namespace solc
 AST
 Parser::parse_enum_definition ()
 {
-  AST enum_definition (_pos++, ASTType::ENUM_DEF);
+  _pos++;
 
   VERIFY_POS (_pos);
   auto cur = _tokens.at (_pos);
   VERIFY_TOKEN (_pos, cur.type, TokenType::ID);
+
+  AST enum_definition (_pos, ASTType::ENUM_DEF);
 
   enum_definition.value = cur.value;
 
