@@ -1,7 +1,6 @@
 #include "libsolc/util.hpp"
 #include "sa/sa.hpp"
 #include "types.hpp"
-#include <iostream>
 
 namespace solc
 {
@@ -458,10 +457,13 @@ SemanticAnalyzer::get_expr_comptime_ivalue (const AST &expr) const
               {
               case ASTType::EXPR_PREFIX_OPERATOR_BNOT:
                 operand = ~operand;
+                break;
               case ASTType::EXPR_PREFIX_OPERATOR_NEG:
                 operand = -operand;
+                break;
               case ASTType::EXPR_PREFIX_OPERATOR_NOT:
                 operand = !operand;
+                break;
 
               default:
                 NOREACH ();
