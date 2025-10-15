@@ -7,15 +7,13 @@ namespace solc
 AST
 Parser::parse_union ()
 {
-  AST uniondef (_pos, ASTType::UNION);
-
   VERIFY_POS (_pos);
   _pos++;
 
   VERIFY_POS (_pos);
   auto cur = _tokens.at (_pos);
   VERIFY_TOKEN (_pos, cur.type, TokenType::ID);
-  uniondef.value = cur.value;
+  AST uniondef (_pos, ASTType::UNION, cur.value);
   _pos++;
 
   VERIFY_POS (_pos);
