@@ -7,12 +7,12 @@ namespace solc
 AST
 Parser::parse_struct ()
 {
-  AST structure (_pos++, ASTType::STRUCT);
+  _pos++;
 
   VERIFY_POS (_pos);
   auto cur = _tokens.at (_pos);
   VERIFY_TOKEN (_pos, cur.type, TokenType::ID);
-  structure.value = cur.value;
+  AST structure (_pos, ASTType::STRUCT, cur.value);
 
   _pos++;
   VERIFY_POS (_pos);
