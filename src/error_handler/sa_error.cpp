@@ -86,6 +86,11 @@ ErrorHandler::get_sa_error_reason (
       out += "array elements in constant expressions are not allowed";
       break;
 
+    case SAErrorType::ACCESS_MEMBER_IN_CONST_EXPR:
+      out += "accessing members of structs or unions in constant expressions "
+             "is not allowed";
+      break;
+
     case SAErrorType::TAKE_ADDRESS_IN_CONST_EXPR:
       out += "taking address of a value in constant expressions is not "
              "allowed";
@@ -175,6 +180,30 @@ ErrorHandler::get_sa_error_reason (
       out += err.types.at (0)->to_string ();
       out += escape_reset ();
       out += " is not an integer";
+      break;
+
+    case SAErrorType::ENUM_IS_EMPTY:
+      out += "enum \"";
+      out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+      out += _tokens.at (err.token_positions.at (0)).value;
+      out += escape_reset ();
+      out += "\" is empty";
+      break;
+
+    case SAErrorType::ENUM_ELEM_EXPR_NOT_INT:
+      out += "enum element \"";
+      out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+      out += _tokens.at (err.token_positions.at (0)).value;
+      out += escape_reset ();
+      out += "\" is assinged to not an integer \"";
+      break;
+
+    case SAErrorType::ENUM_ELEM_REDEF:
+      out += "redefinition of enum element \"";
+      out += escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD);
+      out += _tokens.at (err.token_positions.at (0)).value;
+      out += escape_reset ();
+      out += "\"";
       break;
 
     default:

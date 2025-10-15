@@ -1,6 +1,7 @@
 #include "libsolc/util.hpp"
 #include "sa/sa.hpp"
 #include "types.hpp"
+#include <iostream>
 
 namespace solc
 {
@@ -40,6 +41,9 @@ SemanticAnalyzer::is_expr_known_at_comptime (const AST &expr) const
 
     case ASTType::EXPR_OPERAND_ARRAY_ELEMENT:
       return { SAErrorType::ARRAY_ELEM_IN_CONST_EXPR, expr.token_position };
+
+    case ASTType::EXPR_OPERAND_ACCESS_MEMBER:
+      return { SAErrorType::ACCESS_MEMBER_IN_CONST_EXPR, expr.token_position };
 
     case ASTType::EXPR:
       {
@@ -183,6 +187,11 @@ SemanticAnalyzer::get_type_from_expr_ast (const AST &expr, bool taking_address)
     case ASTType::EXPR_OPERAND_ARRAY_ELEMENT:
       {
         TODO ("Array elements");
+      }
+
+    case ASTType::EXPR_OPERAND_ACCESS_MEMBER:
+      {
+        TODO ("Access member");
       }
 
     case ASTType::EXPR_OPERAND_CAST_TO:
@@ -340,6 +349,8 @@ SemanticAnalyzer::get_type_from_expr_ast (const AST &expr, bool taking_address)
                 break;
               }
           }
+
+        return operand_type;
       }
 
     default:
