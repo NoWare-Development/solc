@@ -171,39 +171,24 @@ struct Enum : Symbol
 {
   struct Element
   {
-    std::shared_ptr<AST> expr_ast;
-    size_t position;
+    size_t value;
 
     static Element
     create ()
     {
-      return { .expr_ast = {}, .position = 0 };
+      return { .value = 0 };
     }
 
     static Element
-    create (std::shared_ptr<AST> expr_ast)
+    create (size_t value)
     {
-      return { .expr_ast = expr_ast, .position = 0 };
+      return { .value = value };
     }
 
     static Element
     create (const Element &e)
     {
-      if (e.expr_ast != nullptr)
-        {
-          AST add_op (e.expr_ast->token_position,
-                      ASTType::EXPR_BINARY_OPERATOR_ADD);
-          AST num_1 (e.expr_ast->token_position, ASTType::EXPR_OPERAND_NUM,
-                     "1");
-          auto new_expr = std::make_shared<AST> (e.expr_ast->token_position,
-                                                 ASTType::EXPR);
-          new_expr->append (*e.expr_ast);
-          new_expr->append (add_op);
-          new_expr->append (num_1);
-          return { .expr_ast = new_expr, .position = 0 };
-        }
-
-      return { .expr_ast = nullptr, .position = e.position + 1 };
+      return { .value = e.value + 1 };
     }
   };
 

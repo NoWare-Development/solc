@@ -1,5 +1,6 @@
 libsolc_src += [
-  'libsolc/sa/find_type.cpp',
+  'libsolc/sa/expr.cpp',
+  'libsolc/sa/resolver.cpp',
   'libsolc/sa/populate.cpp',
   'libsolc/sa/prepass.cpp',
   'libsolc/sa/sa.cpp',

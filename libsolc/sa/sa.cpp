@@ -34,7 +34,10 @@ SemanticAnalyzer::analyze (const AST &root)
 void
 SemanticAnalyzer::analyze_prog (const AST &prog)
 {
-  struct_union_asts.clear ();
+  struct_asts.clear ();
+  union_asts.clear ();
+  enum_asts.clear ();
+  func_asts.clear ();
 
   _current_symbol_scope = _global_symbol_scope;
   generate_symbol_scope_bindings (prog);

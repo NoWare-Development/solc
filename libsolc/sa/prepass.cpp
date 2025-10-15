@@ -19,7 +19,10 @@ SemanticAnalyzer::generate_symbol_scope_bindings (const AST &root)
                 add_error (SAErrorType::SYMBOL_REDEF, child.token_position);
                 break;
               }
-            _current_symbol_scope->add_symbol (name, Function::create ());
+            auto func = Function::create ();
+            _current_symbol_scope->add_symbol (name, func);
+            _symbol_scope_bindings[(void *)&child] = *_current_symbol_scope;
+            func_asts.emplace_back (func.get (), &child);
             generate_symbol_scope_bindings (child.children.at (1));
           }
           break;
@@ -32,8 +35,10 @@ SemanticAnalyzer::generate_symbol_scope_bindings (const AST &root)
                 add_error (SAErrorType::SYMBOL_REDEF, child.token_position);
                 break;
               }
-            _current_symbol_scope->add_symbol (name, Enum::create ());
-            struct_union_asts.push_back (&child);
+            auto e = Enum::create ();
+            _symbol_scope_bindings[(void *)&child] = _current_symbol_scope;
+            _current_symbol_scope->add_symbol (name, e);
+            enum_asts.emplace_back (e.get (), &child);
           }
           break;
 
@@ -63,7 +68,7 @@ SemanticAnalyzer::generate_symbol_scope_bindings (const AST &root)
             generate_symbol_scope_bindings (child);
             _current_symbol_scope = _current_symbol_scope->get_parent ();
 
-            struct_union_asts.push_back (&child);
+            struct_asts.emplace_back (struct_symbol.get (), &child);
           }
           break;
         case ASTType::UNION:
@@ -92,7 +97,7 @@ SemanticAnalyzer::generate_symbol_scope_bindings (const AST &root)
             generate_symbol_scope_bindings (child);
             _current_symbol_scope = _current_symbol_scope->get_parent ();
 
-            struct_union_asts.push_back (&child);
+            union_asts.emplace_back (union_symbol.get (), &child);
           }
           break;
 

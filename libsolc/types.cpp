@@ -72,7 +72,7 @@ Type::is_function_pointer () const
   return pointer_indirection == 1 && builtin_type == BuiltinType::FUNC;
 }
 
-const std::vector<std::shared_ptr<AST>> &
+const std::vector<size_t> &
 Type::get_array_sizes () const
 {
   return array_sizes;

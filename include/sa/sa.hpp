@@ -1,10 +1,11 @@
 #pragma once
 
-#include "parser/ast.hpp"
-#include "symbols/symbol.hpp"
+#include <cstdint>
 #include <memory>
+#include <parser/ast.hpp>
 #include <sa/scope.hpp>
 #include <string>
+#include <symbols/symbol.hpp>
 #include <symbols/symbolscope.hpp>
 #include <types.hpp>
 #include <unordered_map>
@@ -31,6 +32,35 @@ public:
     VAR_REDECL,
 
     ARRAY_IN_TYPEDEF,
+
+    INVALID_TYPESPEC,
+    INT_TYPESPEC_ON_FLOAT,
+
+    ID_IN_CONST_EXPR,
+    STRING_IN_CONST_EXPR,
+    NAMESPACE_IN_CONST_EXPR,
+    CALL_IN_CONST_EXPR,
+    ARRAY_ELEM_IN_CONST_EXPR,
+
+    TAKE_ADDRESS_IN_CONST_EXPR,
+    DEREF_IN_CONST_EXPR,
+
+    CANNOT_CAST,
+    CANNOT_CONVERT_TYPES_IN_EXPR,
+    BITWISE_OP_ON_FLOAT,
+
+    TAKE_ADDRESS_OF_A_LITERAL,
+    DEREF_ON_NONPTR,
+    TOO_BIG_PTR_INDIRECTION,
+
+    NEG_ON_NONNUM,
+    BINOP_ON_NONNUM,
+
+    NONINT_IN_ARRAY_DECL,
+
+    ENUM_IS_EMPTY,
+    ENUM_ELEM_EXPR_NOT_INT,
+    ENUM_ELEM_REDEF,
   };
   struct SAError
   {
@@ -84,7 +114,10 @@ private:
 
   // NOTE: using `void *` as a key to have access to scopes without
   std::unordered_map<void *, SymbolScope> _symbol_scope_bindings{};
-  std::vector<const AST *> struct_union_asts{};
+  std::vector<std::pair<Struct *, const AST *>> struct_asts{};
+  std::vector<std::pair<Union *, const AST *>> union_asts{};
+  std::vector<std::pair<Enum *, const AST *>> enum_asts{};
+  std::vector<std::pair<Function *, const AST *>> func_asts{};
   SymbolScope *_current_symbol_scope{};
   SymbolScope *_global_symbol_scope{};
 
@@ -163,7 +196,9 @@ private:
   std::shared_ptr<Type> get_type_from_type_ast (const AST &type);
 
   SAError is_expr_known_at_comptime (const AST &expr) const;
-  std::shared_ptr<Type> get_type_from_expr_ast (const AST &expr);
+  std::shared_ptr<Type> get_type_from_expr_ast (const AST &expr,
+                                                bool taking_address = false);
+  size_t get_expr_comptime_ivalue (const AST &expr) const;
 
   bool verify_type_of_initlist (const AST &initlist,
                                 const std::shared_ptr<Type> &type,
@@ -171,7 +206,15 @@ private:
 
   void generate_symbol_scope_bindings (const AST &root);
   void generate_aliases (const AST &root);
+
   void populate_symbols ();
+  void populate_enums (const std::vector<std::pair<Enum *, const AST *>> asts);
+  void
+  populate_structs (const std::vector<std::pair<Struct *, const AST *>> asts);
+  void
+  populate_unions (const std::vector<std::pair<Union *, const AST *>> asts);
+  void
+  populate_funcs (const std::vector<std::pair<Function *, const AST *>> asts);
 
   std::shared_ptr<Type> resolve_type (const std::string &name) const;
   std::shared_ptr<Type> resolve_type (const std::vector<std::string> &ns,

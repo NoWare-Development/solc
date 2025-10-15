@@ -28,5 +28,7 @@ namespace solc::util
 {
 
 std::string string_lowercase (const std::string &str);
+size_t string_to_int (const std::string &str);
+double string_to_double (const std::string &str);
 
 }

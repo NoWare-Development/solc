@@ -69,6 +69,27 @@ SemanticAnalyzer::get_type_from_type_ast (const AST &type)
         if (type.children.size () > 1)
           {
             type_pos = 1;
+
+            const auto &expr = type.children.at (0);
+
+            auto is_comptime = is_expr_known_at_comptime (expr);
+            if (is_comptime.type != SAErrorType::NONE)
+              {
+                add_error (is_comptime);
+                return nullptr;
+              }
+
+            auto expr_type = get_type_from_expr_ast (expr);
+            if (expr_type == nullptr)
+              return nullptr;
+
+            if (!expr_type->is_integer ())
+              {
+                add_error (SAErrorType::NONINT_IN_ARRAY_DECL,
+                           expr.token_position,
+                           (std::vector<std::shared_ptr<Type>>){ expr_type });
+                return nullptr;
+              }
           }
 
         auto out = get_type_from_type_ast (type.children.at (type_pos));
@@ -77,8 +98,8 @@ SemanticAnalyzer::get_type_from_type_ast (const AST &type)
 
         if (type.children.size () > 1)
           {
-            out->array_sizes.push_back (
-                std::make_shared<AST> (type.children.at (0)));
+            auto array_size = get_expr_comptime_ivalue (type.children.at (0));
+            out->array_sizes.push_back (array_size);
           }
         return out;
       }
