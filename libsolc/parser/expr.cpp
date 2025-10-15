@@ -224,6 +224,23 @@ Parser::parse_expression_operand ()
 
     case TokenType::SYMBOL:
       {
+        if (cur.value.at (0) == '\\')
+          {
+            auto descriptor = cur.value.at (1);
+            switch (descriptor)
+              {
+              case '\\':
+              case 'n':
+              case 't':
+              case 'r':
+                break;
+
+              default:
+                add_error (ParserError::Type::UNEXPECTED, _pos++);
+                return {};
+              }
+          }
+
         out_operand = AST (_pos++, ASTType::EXPR_OPERAND_SYMBOL, cur.value);
         return out_operand;
       }
