@@ -41,7 +41,12 @@ SemanticAnalyzer::analyze_prog (const AST &prog)
 
   _current_symbol_scope = _global_symbol_scope;
   generate_symbol_scope_bindings (prog);
+  if (!_errors.empty ())
+    return;
+
   generate_aliases (prog);
+  if (!_errors.empty ())
+    return;
 
   populate_symbols ();
 
