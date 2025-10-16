@@ -101,10 +101,6 @@ Parser::parse_statement ()
           {
             return parse_if_statement ();
           }
-        else if (cur.value == "template")
-          {
-            return parse_template ();
-          }
         else if (is_modifier (cur.value))
           {
             return parse_decldef ();
@@ -140,14 +136,60 @@ Parser::parse_statement ()
       break;
     }
 
-  auto out_expression_statement = parse_expression_statement ();
+  // Can be expression statement or a generic function definition.
+  auto out = parse_expression_statement_or_generic_func ();
   if (_errored)
     {
       _pos++;
       return {};
     }
 
-  return out_expression_statement;
+  return out;
+}
+
+AST
+Parser::parse_expression_statement_or_generic_func ()
+{
+  auto pos = _pos;
+
+  VERIFY_POS (pos);
+  auto cur = _tokens.at (pos);
+  if (cur.type == TokenType::ID)
+    {
+      pos++;
+      if (peek (pos) == TokenType::LTHAN)
+        {
+          bool is_generic_func{};
+          while (pos < _tokens.size () && !is_generic_func)
+            {
+              const auto &tok = _tokens.at (pos);
+              switch (tok.type)
+                {
+                case TokenType::GTHAN:
+                  {
+                    pos++;
+                    if (peek (pos) == TokenType::DCOLON)
+                      {
+                        is_generic_func = true;
+                      }
+                  }
+                  break;
+
+                default:
+                  break;
+                }
+
+              pos++;
+            }
+
+          if (is_generic_func)
+            {
+              return parse_generic_function ();
+            }
+        }
+    }
+
+  return parse_expression_statement ();
 }
 
 }

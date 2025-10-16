@@ -77,7 +77,6 @@ asttype_to_string (ASTType type)
     "EXPR_ASSIGN_OPERATOR",
     "EXPR_PREFIX_OPERATOR",
     "EXPR_OPERAND",
-    "TEMPLATE",
     "VISIBILITY_MARKER",
     "INITLIST",
     "GENERIC",
@@ -88,10 +87,9 @@ asttype_to_string (ASTType type)
         // Groupless
         "ERR",
 
-        "PROG",      "EXPR",     "MODULE",      "IMPORT",  "TYPEDEF",
-        "EXPORT",    "MODIFIER", "NONE",        "LABEL",   "VARIADIC",
-        "TEMPLATE",  "STRUCT",   "UNION",       "ENUM",    "FUNC",
-        "NAMESPACE", "INITLIST", "PREFIX_EXPR", "GENERIC",
+        "PROG",     "EXPR", "MODULE",    "IMPORT",   "TYPEDEF",     "EXPORT",
+        "MODIFIER", "NONE", "LABEL",     "VARIADIC", "STRUCT",      "UNION",
+        "ENUM",     "FUNC", "NAMESPACE", "INITLIST", "PREFIX_EXPR", "GENERIC",
     },
     {
         // STMT
@@ -195,11 +193,6 @@ asttype_to_string (ASTType type)
         "ACCESS_MEMBER",
     },
     {
-        // TEMPLATE
-        "TYPE_LIST",
-        "TYPE",
-    },
-    {
         // VISIBILITY_MARKER
         "PUBLIC",
         "PRIVATE",
@@ -213,9 +206,11 @@ asttype_to_string (ASTType type)
     {
         // Generic
         "STRUCT",
-        "UNION",
         "FUNC",
+        "PLACEHOLDER_TYPE_LIST",
+        "PLACEHOLDER_TYPE",
         "TYPE_LIST",
+        "TYPE",
     },
   };
 

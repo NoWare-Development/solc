@@ -14,7 +14,7 @@ export enum TestEnum2 { // Exported enum definition
   TEST_ENUM2_ELEM_4
 }
 
-typedef *sometype[][][] newtype; // Type definition
+typedef *uint[][][] newtype; // Type definition
 
 id1: int;                // Variable declaration
 id2: int = 4;            // Variable definition
@@ -24,13 +24,11 @@ struct MyStruct {
   a: int;
 }
 
-template <T>
-struct GenericStruct {
+struct GenericStruct<T> {
   data: *T;
 }
 
-template <T>
-generic_test :: () -> T {
+generic_test<T> :: () -> T {
   return 0;
 }
 
@@ -102,8 +100,7 @@ testfunc :: () -> void {
     }
   }
 
-  template <T>
-  struct GenericStructInFunc {
+  struct GenericStructInFunc<T> {
     data: *T;
 
     createData :: (value: T) -> void {
@@ -131,7 +128,7 @@ testFunc :: () -> void {
 
 const funcPtrArray: (arg: int)[];
 
-testFunc :: () {
+testFunc2 :: () {
   module1::module2::symbol;
   module1::struct1.field;
 

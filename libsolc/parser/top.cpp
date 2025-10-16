@@ -34,10 +34,6 @@ Parser::parse_top (bool for_export)
           {
             return parse_union ();
           }
-        else if (cur.value == "template")
-          {
-            return parse_template ();
-          }
         else if (!for_export)
           {
             if (cur.value == "import")
@@ -47,6 +43,10 @@ Parser::parse_top (bool for_export)
             else if (cur.value == "export")
               {
                 return parse_export ();
+              }
+            else if (auto next = peek (_pos + 1); next == TokenType::LTHAN)
+              {
+                return parse_generic_function ();
               }
           }
 

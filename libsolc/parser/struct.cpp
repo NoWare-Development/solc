@@ -17,6 +17,15 @@ Parser::parse_struct ()
   _pos++;
   VERIFY_POS (_pos);
   cur = _tokens.at (_pos);
+
+  if (cur.type == TokenType::LTHAN)
+    {
+      auto typelist = parse_generic_placeholder_type_list ();
+      structure.append (typelist);
+      VERIFY_POS (_pos);
+      cur = _tokens.at (_pos);
+    }
+
   VERIFY_TOKEN (_pos, cur.type, TokenType::LBRACE);
 
   _pos++;
@@ -32,13 +41,7 @@ Parser::parse_struct ()
 
       if (cur.type == TokenType::ID)
         {
-          if (cur.value == "template")
-            {
-              auto template_ = parse_template ();
-              structure.append (template_);
-              continue;
-            }
-          else if (cur.value == "public" || cur.value == "private")
+          if (cur.value == "public" || cur.value == "private")
             {
               auto vismarker = parse_visibility_marker ();
               structure.append (vismarker);

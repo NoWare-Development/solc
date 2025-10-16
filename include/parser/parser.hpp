@@ -53,7 +53,6 @@ private:
   //   | <typedef>
   //   | <structdef>
   //   | <enumdef>
-  //   | <template>
   //   | <uniondef>
   //   !export
   //   :
@@ -128,6 +127,9 @@ private:
   //   : <id> :: (<funcargs>) [-> <type>] <stmtlist>
   //   ;
   AST parse_function ();
+  // <generic funcdef>
+  //   : <id> <placeholder types> (<funcargs>) [-> <type>] <stmtlist>
+  AST parse_generic_function ();
 
   // <funcarg>
   //   : <vardecl>
@@ -152,12 +154,13 @@ private:
   //   | <structdef>
   //   | <enumdef>
   //   | <uniondef>
-  //   | <template>
   //   | break;
   //   | continue;
   //   ;
   AST parse_statement ();
   AST parse_expression_statement (); // <exprstmt>: <expr>;
+
+  AST parse_expression_statement_or_generic_func ();
 
   // <stmtlist>
   //   : <stmt> <stmtlist>
@@ -227,24 +230,14 @@ private:
   AST parse_else_statement ();
 
   // <structdef>
-  //   : struct <id> { <decldefs> }
+  //   : struct <id> [< <generic types> >] { <decldefs> }
   //   ;
   AST parse_struct ();
 
   // <uniondef>
   //   : union <id> { <decldefs> }
-  //   : union { <decldefs> }
   //   ;
   AST parse_union ();
-
-  // <template>
-  //   : template <ids> <templated>
-  //   ;
-  // <templated>
-  //   : <structdef>
-  //   | <funcdef>
-  //   ;
-  AST parse_template ();
 
   // <vismarker>
   //   : public:
@@ -275,7 +268,8 @@ private:
   AST parse_break_statement ();    // break;
   AST parse_continue_statement (); // continue;
 
-  AST parse_generic_type_list (); // < <types> >
+  AST parse_generic_placeholder_type_list (); // < <placeholder types> >
+  AST parse_generic_type_list ();             // < <types> >
 
   // <expr>
   // NOTE: `toplevel` is passed only in expression statements.

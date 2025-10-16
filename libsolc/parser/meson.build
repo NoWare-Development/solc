@@ -28,7 +28,6 @@ libsolc_src += [
   'libsolc/parser/stmt.cpp',
   'libsolc/parser/struct.cpp',
   'libsolc/parser/switchstmt.cpp',
-  'libsolc/parser/template.cpp',
   'libsolc/parser/top.cpp',
   'libsolc/parser/type.cpp',
   'libsolc/parser/typedef.cpp',
