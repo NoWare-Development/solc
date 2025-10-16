@@ -157,34 +157,37 @@ Parser::parse_expression_statement_or_generic_func ()
   if (cur.type == TokenType::ID)
     {
       pos++;
-      if (peek (pos) == TokenType::LTHAN)
+      if (peek (pos++) == TokenType::LTHAN)
         {
-          bool is_generic_func{};
-          while (pos < _tokens.size () && !is_generic_func)
+          bool not_a_generic_func = false;
+          while (pos < _tokens.size () && !not_a_generic_func)
             {
               const auto &tok = _tokens.at (pos);
               switch (tok.type)
                 {
+                case TokenType::ID:
+                case TokenType::COMMA:
+                  break;
+
                 case TokenType::GTHAN:
                   {
-                    pos++;
-                    if (peek (pos) == TokenType::DCOLON)
+                    if (peek (pos + 1) == TokenType::DCOLON)
                       {
-                        is_generic_func = true;
+                        return parse_generic_function ();
+                      }
+                    else
+                      {
+                        not_a_generic_func = true;
                       }
                   }
                   break;
 
                 default:
+                  not_a_generic_func = true;
                   break;
                 }
 
               pos++;
-            }
-
-          if (is_generic_func)
-            {
-              return parse_generic_function ();
             }
         }
     }
