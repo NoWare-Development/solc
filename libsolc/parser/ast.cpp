@@ -80,6 +80,7 @@ asttype_to_string (ASTType type)
     "TEMPLATE",
     "VISIBILITY_MARKER",
     "INITLIST",
+    "GENERIC",
   };
 
   constexpr const char *ids[0x100][0x100] = {
