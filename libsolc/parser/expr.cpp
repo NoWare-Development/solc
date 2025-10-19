@@ -196,7 +196,8 @@ AST Parser::parse_expression_operand()
   }
 
   case TokenType::SYMBOL: {
-    if (!cur.value.empty() && cur.value.at(0) == '\\') {
+    if (!cur.value.empty() && cur.value.at(0) == '\\' &&
+        cur.value.length() > 1) {
       auto descriptor = cur.value.at(1);
       switch (descriptor) {
       case '\\':
