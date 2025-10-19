@@ -191,6 +191,7 @@ asttype_to_string (ASTType type)
         "STRING",
         "SYMBOL",
         "ACCESS_MEMBER",
+        "GENERIC_CALL",
     },
     {
         // VISIBILITY_MARKER

@@ -130,6 +130,7 @@ enum struct ASTType : uint16_t
   EXPR_OPERAND_STRING = __AST_DEF (ASTGroup::EXPR_OPERAND, 7),
   EXPR_OPERAND_SYMBOL = __AST_DEF (ASTGroup::EXPR_OPERAND, 8),
   EXPR_OPERAND_ACCESS_MEMBER = __AST_DEF (ASTGroup::EXPR_OPERAND, 9),
+  EXPR_OPERAND_GENERIC_CALL = __AST_DEF (ASTGroup::EXPR_OPERAND, 10),
 
   VISIBILITY_MARKER_PUBLIC = __AST_DEF (ASTGroup::VISIBILITY_MARKER, 0),
   VISIBILITY_MARKER_PRIVATE = __AST_DEF (ASTGroup::VISIBILITY_MARKER, 1),
@@ -174,7 +175,7 @@ struct AST
   std::string value;
   size_t token_position;
   std::vector<AST> children{};
-  ASTType type;
+  ASTType type{ ASTType::NONE };
 
   std::string to_string () const;
 
