@@ -4,31 +4,30 @@
 #include <cstdlib>
 #include <string>
 
-#define TODO(msg)                                                             \
-  {                                                                           \
-    std::printf ("(%s:%d) Not implemented yet: %s\n", __func__, __LINE__,     \
-                 msg);                                                        \
-    exit (-1);                                                                \
+#define TODO(msg)                                                              \
+  {                                                                            \
+    std::printf("(%s:%d) Not implemented yet: %s\n", __func__, __LINE__, msg); \
+    exit(-1);                                                                  \
   }
 
-#define NOREACH()                                                             \
-  {                                                                           \
-    std::printf ("(%s:%d) Reached point that should be never reached.\n",     \
-                 __func__, __LINE__);                                         \
-    exit (-1);                                                                \
+#define NOREACH()                                                        \
+  {                                                                      \
+    std::printf("(%s:%d) Reached point that should be never reached.\n", \
+                __func__, __LINE__);                                     \
+    exit(-1);                                                            \
   }
 
-#define ERROR(msg)                                                            \
-  {                                                                           \
-    std::printf ("(%s:%d) %s\n", __func__, __LINE__, msg);                    \
-    exit (-1);                                                                \
+#define ERROR(msg)                                        \
+  {                                                       \
+    std::printf("(%s:%d) %s\n", __func__, __LINE__, msg); \
+    exit(-1);                                             \
   }
 
 namespace solc::util
 {
 
-std::string string_lowercase (const std::string &str);
-size_t string_to_int (const std::string &str);
-double string_to_double (const std::string &str);
+std::string string_lowercase(const std::string &str);
+size_t string_to_int(const std::string &str);
+double string_to_double(const std::string &str);
 
 }

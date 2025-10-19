@@ -6,8 +6,7 @@
 namespace solc
 {
 
-enum class TokenType
-{
+enum class TokenType {
   ERR = 0,
 
   ID,
@@ -82,22 +81,25 @@ enum class TokenType
   HASH,
 };
 
-struct Token
-{
+struct Token {
   size_t line;
   size_t end;
   size_t len;
   TokenType type;
   std::string value;
 
-  Token (size_t line, size_t end, size_t len, TokenType type,
-         const std::string &value = "")
-      : line{ line }, end{ end }, len{ len }, type{ type }, value{ value }
+  Token(size_t line, size_t end, size_t len, TokenType type,
+        const std::string &value = "")
+    : line{ line }
+    , end{ end }
+    , len{ len }
+    , type{ type }
+    , value{ value }
   {
   }
-  Token () = default;
+  Token() = default;
 
-  std::string to_string () const;
+  std::string to_string() const;
 };
 
 }

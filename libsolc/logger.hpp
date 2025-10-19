@@ -11,31 +11,31 @@ namespace solc
 {
 
 #ifdef _DEBUG
-class Logger
-{
-public:
-  Logger () = default;
-  ~Logger () { std::cout << buf << '\n'; }
+class Logger {
+  public:
+  Logger() = default;
+  ~Logger()
+  {
+    std::cout << buf << '\n';
+  }
 
-  template <typename T>
-  Logger &
-  operator<< (const T &x)
+  template <typename T> Logger &operator<<(const T &x)
   {
     std::stringstream ss;
     ss << x;
-    buf += ss.str ();
+    buf += ss.str();
     return *this;
   }
 
-private:
+  private:
   std::string buf{};
 };
 
-#define info(...)                                                             \
-  {                                                                           \
-    solc::Logger __solc_logger_##__COUNTER__##__{};                           \
-    __solc_logger_##__COUNTER__##__ << '[' << __func__                        \
-                                    << "]: " << __VA_ARGS__;                  \
+#define info(...)                                            \
+  {                                                          \
+    solc::Logger __solc_logger_##__COUNTER__##__{};          \
+    __solc_logger_##__COUNTER__##__ << '[' << __func__       \
+                                    << "]: " << __VA_ARGS__; \
   }
 }
 #else

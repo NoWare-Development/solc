@@ -2,8 +2,7 @@
 
 #include <string>
 
-enum ESCColor
-{
+enum ESCColor {
   ESCCOLOR_BLACK,
   ESCCOLOR_RED,
   ESCCOLOR_GREEN,
@@ -15,8 +14,7 @@ enum ESCColor
   ESCCOLOR_DEFAULT,
 };
 
-enum ESCGraphics
-{
+enum ESCGraphics {
   ESCGRAPHICS_RESET,
   ESCGRAPHICS_BOLD,
   ESCGRAPHICS_DIM,
@@ -28,6 +26,6 @@ enum ESCGraphics
   ESCGRAPHICS_STRIKETHROUGH,
 };
 
-std::string escape_reset ();
-std::string escape_color (ESCColor col);
-std::string escape_graphics (ESCGraphics mode);
+std::string escape_reset();
+std::string escape_color(ESCColor col);
+std::string escape_graphics(ESCGraphics mode);

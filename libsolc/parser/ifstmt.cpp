@@ -4,53 +4,49 @@
 namespace solc
 {
 
-AST
-Parser::parse_if_statement ()
+AST Parser::parse_if_statement()
 {
-  AST ifstmt (_pos++, ASTType::STMT_IF);
+  AST ifstmt(_pos++, ASTType::STMT_IF);
 
-  VERIFY_POS (_pos);
-  auto cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::LPAREN);
+  VERIFY_POS(_pos);
+  auto cur = _tokens.at(_pos);
+  VERIFY_TOKEN(_pos, cur.type, TokenType::LPAREN);
   _pos++;
 
-  VERIFY_POS (_pos);
-  auto expr = parse_expression ();
-  ifstmt.append (expr);
+  VERIFY_POS(_pos);
+  auto expr = parse_expression();
+  ifstmt.append(expr);
 
-  VERIFY_POS (_pos);
-  cur = _tokens.at (_pos);
-  VERIFY_TOKEN (_pos, cur.type, TokenType::RPAREN);
+  VERIFY_POS(_pos);
+  cur = _tokens.at(_pos);
+  VERIFY_TOKEN(_pos, cur.type, TokenType::RPAREN);
   _pos++;
 
-  auto stmt = parse_statement ();
-  ifstmt.append (stmt);
+  auto stmt = parse_statement();
+  ifstmt.append(stmt);
 
-  auto next = peek (_pos);
-  if (next == TokenType::ID)
-    {
-      cur = _tokens.at (_pos);
-      if (cur.value == "else")
-        {
-          auto elsestmt = parse_else_statement ();
-          ifstmt.append (elsestmt);
-        }
+  auto next = peek(_pos);
+  if (next == TokenType::ID) {
+    cur = _tokens.at(_pos);
+    if (cur.value == "else") {
+      auto elsestmt = parse_else_statement();
+      ifstmt.append(elsestmt);
     }
+  }
 
   return ifstmt;
 }
 
-AST
-Parser::parse_else_statement ()
+AST Parser::parse_else_statement()
 {
-  AST elsestmt (_pos, ASTType::STMT_ELSE);
+  AST elsestmt(_pos, ASTType::STMT_ELSE);
 
   _pos++;
-  VERIFY_POS (_pos);
+  VERIFY_POS(_pos);
 
-  auto stmt = parse_statement ();
+  auto stmt = parse_statement();
 
-  elsestmt.append (stmt);
+  elsestmt.append(stmt);
 
   return elsestmt;
 }
