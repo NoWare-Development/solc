@@ -1,4 +1,3 @@
-#include "libsolc/logger.hpp"
 #include "libsolc/parser/macros.hpp"
 #include "parser/parser.hpp"
 
