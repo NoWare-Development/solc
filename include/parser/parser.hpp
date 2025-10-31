@@ -57,6 +57,7 @@ class Parser {
   //   | <uniondef>
   //   | <import>
   //   | <export>
+  //   | <extern>
   //   ;
   AST parse_top();
 
@@ -98,6 +99,11 @@ class Parser {
   //   : export <top(export)>
   //   ;
   AST parse_export();
+
+  // <extern>
+  //   : extern <funcproto>;
+  //   ;
+  AST parse_extern();
 
   // <module>
   //   : <id>.<module>

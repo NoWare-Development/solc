@@ -11,6 +11,7 @@ libsolc_src += [
   'libsolc/parser/enum.cpp',
   'libsolc/parser/export.cpp',
   'libsolc/parser/expr.cpp',
+  'libsolc/parser/extern.cpp',
   'libsolc/parser/func.cpp',
   'libsolc/parser/funcarg.cpp',
   'libsolc/parser/funcptrtype.cpp',

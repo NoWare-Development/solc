@@ -14,6 +14,14 @@ export exported_func :: () {
   // Your code...
 }
 
+// External function from C library (library must be linked with your
+// executable/library).
+extern func_from_c :: ();
+
+// You can also provide default values for those external functions.
+extern func_from_c_with_default_init_values
+    :: (a: int, b: int = 4, c: bool = false) -> *bool;
+
 typedef *uint[][][] newtype; // Type definition
 
 id1: int;                // Variable declaration

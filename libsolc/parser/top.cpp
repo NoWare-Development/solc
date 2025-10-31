@@ -26,6 +26,8 @@ AST Parser::parse_top()
       return parse_import();
     } else if (cur.value == "export") {
       return parse_export();
+    } else if (cur.value == "extern") {
+      return parse_extern();
     } else if (auto next = peek(_pos + 1); next == TokenType::LTHAN) {
       return parse_generic_function();
     }

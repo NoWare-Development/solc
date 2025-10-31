@@ -77,10 +77,10 @@ static std::string asttype_to_string(ASTType type)
       // Groupless
       "ERR",
 
-      "PROG",          "EXPR",        "MODULE",  "IMPORT", "TYPEDEF",
-      "EXPORTED_FUNC", "MODIFIER",    "NONE",    "LABEL",  "VARIADIC",
-      "STRUCT",        "UNION",       "ENUM",    "FUNC",   "NAMESPACE",
-      "INITLIST",      "PREFIX_EXPR", "GENERIC",
+      "PROG",          "EXPR",        "MODULE",      "IMPORT",  "TYPEDEF",
+      "EXPORTED_FUNC", "EXTERN_FUNC", "MODIFIER",    "NONE",    "LABEL",
+      "VARIADIC",      "STRUCT",      "UNION",       "ENUM",    "FUNC",
+      "NAMESPACE",     "INITLIST",    "PREFIX_EXPR", "GENERIC",
     },
     {
       // STMT
