@@ -55,12 +55,10 @@ class Parser {
   //   | <structdef>
   //   | <enumdef>
   //   | <uniondef>
-  //   !export
-  //   :
   //   | <import>
   //   | <export>
   //   ;
-  AST parse_top(bool for_export = false);
+  AST parse_top();
 
   // <typedef>
   //   : typedef <type> <id>;

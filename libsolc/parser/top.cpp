@@ -4,7 +4,7 @@
 namespace solc
 {
 
-AST Parser::parse_top(bool for_export)
+AST Parser::parse_top()
 {
   auto cur = _tokens.at(_pos);
   VERIFY_POS(_pos);
@@ -22,14 +22,12 @@ AST Parser::parse_top(bool for_export)
       return parse_struct();
     } else if (cur.value == "union") {
       return parse_union();
-    } else if (!for_export) {
-      if (cur.value == "import") {
-        return parse_import();
-      } else if (cur.value == "export") {
-        return parse_export();
-      } else if (auto next = peek(_pos + 1); next == TokenType::LTHAN) {
-        return parse_generic_function();
-      }
+    } else if (cur.value == "import") {
+      return parse_import();
+    } else if (cur.value == "export") {
+      return parse_export();
+    } else if (auto next = peek(_pos + 1); next == TokenType::LTHAN) {
+      return parse_generic_function();
     }
 
     return parse_decldef();
