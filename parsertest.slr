@@ -7,11 +7,11 @@ enum TestEnum1 { // Enum definition
   TEST_ENUM1_ELEM_4,
 }
 
-export enum TestEnum2 { // Exported enum definition
-  TEST_ENUM2_ELEM_1,
-  TEST_ENUM2_ELEM_2,
-  TEST_ENUM2_ELEM_3,
-  TEST_ENUM2_ELEM_4
+// Exported functions are not mangled, their names will not be hidden.
+// NOTE: generic functions cannot be exported, due to name changing in process
+// of generating them at compile time.
+export exported_func :: () {
+  // Your code...
 }
 
 typedef *uint[][][] newtype; // Type definition

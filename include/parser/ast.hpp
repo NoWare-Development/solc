@@ -34,7 +34,7 @@ enum struct ASTType : uint16_t {
   MODULE = __AST_DEF(ASTGroup::NONE, 3),
   IMPORT = __AST_DEF(ASTGroup::NONE, 4),
   TYPEDEF = __AST_DEF(ASTGroup::NONE, 5),
-  EXPORT = __AST_DEF(ASTGroup::NONE, 6),
+  EXPORTED_FUNC = __AST_DEF(ASTGroup::NONE, 6),
   MODIFIER = __AST_DEF(ASTGroup::NONE, 7),
   NONE = __AST_DEF(ASTGroup::NONE, 8),
   LABEL = __AST_DEF(ASTGroup::NONE, 9),

@@ -6,15 +6,13 @@ namespace solc
 
 AST Parser::parse_export()
 {
-  AST export_(_pos++, ASTType::EXPORT);
-
+  _pos++;
   VERIFY_POS(_pos);
 
-  auto top = parse_top(true);
+  auto exported_func = parse_function();
+  exported_func.type = ASTType::EXPORTED_FUNC;
 
-  export_.append(top);
-
-  return export_;
+  return exported_func;
 }
 
 }
