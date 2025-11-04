@@ -67,6 +67,8 @@ AST Parser::parse_statement()
       return parse_defer_statement();
     } else if (cur.value == "if") {
       return parse_if_statement();
+    } else if (cur.value == "typedef") {
+      return parse_typedef();
     } else if (is_modifier(cur.value)) {
       return parse_decldef();
     }
