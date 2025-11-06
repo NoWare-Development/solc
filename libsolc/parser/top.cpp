@@ -14,9 +14,8 @@ AST Parser::parse_top()
   }
 
   case TokenType::ID: {
-    if (_top_parse_funcs_based_on_id.find(cur.value) !=
-        _top_parse_funcs_based_on_id.end()) {
-      return (this->*_top_parse_funcs_based_on_id.at(cur.value))();
+    if (_top_parse_methods.find(cur.value) != _top_parse_methods.end()) {
+      return (this->*_top_parse_methods.at(cur.value))();
     } else if (auto next = peek(_pos + 1); next == TokenType::LTHAN) {
       return parse_generic_function();
     }

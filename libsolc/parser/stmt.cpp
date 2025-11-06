@@ -42,9 +42,8 @@ AST Parser::parse_statement()
 
   case TokenType::ID: {
     // What is this syntax, bro, I'm crying...
-    if (_stmt_parse_funcs_based_on_id.find(cur.value) !=
-        _stmt_parse_funcs_based_on_id.end()) {
-      return (this->*_stmt_parse_funcs_based_on_id.at(cur.value))();
+    if (_stmt_parse_methods.find(cur.value) != _stmt_parse_methods.end()) {
+      return (this->*_stmt_parse_methods.at(cur.value))();
     } else if (is_modifier(cur.value)) {
       return parse_decldef();
     }
