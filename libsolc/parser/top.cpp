@@ -14,20 +14,9 @@ AST Parser::parse_top()
   }
 
   case TokenType::ID: {
-    if (cur.value == "enum") {
-      return parse_enum_definition();
-    } else if (cur.value == "typedef") {
-      return parse_typedef();
-    } else if (cur.value == "struct") {
-      return parse_struct();
-    } else if (cur.value == "union") {
-      return parse_union();
-    } else if (cur.value == "import") {
-      return parse_import();
-    } else if (cur.value == "export") {
-      return parse_export();
-    } else if (cur.value == "extern") {
-      return parse_extern();
+    if (_top_parse_funcs_based_on_id.find(cur.value) !=
+        _top_parse_funcs_based_on_id.end()) {
+      return (this->*_top_parse_funcs_based_on_id.at(cur.value))();
     } else if (auto next = peek(_pos + 1); next == TokenType::LTHAN) {
       return parse_generic_function();
     }

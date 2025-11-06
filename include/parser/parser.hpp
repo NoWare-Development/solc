@@ -400,6 +400,17 @@ class Parser {
   };
 
   const std::unordered_map<std::string, AST (Parser::*)()>
+    _top_parse_funcs_based_on_id = {
+      { "enum", &Parser::parse_enum_definition },
+      { "typedef", &Parser::parse_typedef },
+      { "struct", &Parser::parse_struct },
+      { "union", &Parser::parse_union },
+      { "import", &Parser::parse_import },
+      { "export", &Parser::parse_export },
+      { "extern", &Parser::parse_extern },
+    };
+
+  const std::unordered_map<std::string, AST (Parser::*)()>
     _stmt_parse_funcs_based_on_id = {
       { "struct", &Parser::parse_struct },
       { "union", &Parser::parse_union },
