@@ -389,7 +389,7 @@ class Parser {
     { TokenType::BAND, ASTType::EXPR_PREFIX_OPERATOR_ADDRESS },
   };
 
-  const std::vector<TokenType> _numeric_tokens = {
+  const std::unordered_set<TokenType> _numeric_tokens = {
     TokenType::NUM,    TokenType::NUMHEX,   TokenType::NUMBIN,
     TokenType::NUMOCT, TokenType::NUMFLOAT,
   };

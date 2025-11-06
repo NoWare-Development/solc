@@ -251,11 +251,7 @@ bool Parser::is_operand(ASTType type) const
 
 bool Parser::is_numeric_token(TokenType type) const
 {
-  for (const auto &t : _numeric_tokens) {
-    if (t == type)
-      return true;
-  }
-  return false;
+  return _numeric_tokens.find(type) != _numeric_tokens.end();
 }
 
 void Parser::advance_to_terminator()
