@@ -173,12 +173,7 @@ TokenType Parser::peek(size_t pos) const
 
 bool Parser::is_modifier(const std::string &str) const
 {
-  for (const auto &mod : _modifiers) {
-    if (str == mod) {
-      return true;
-    }
-  }
-  return false;
+  return _modifiers.find(str) != _modifiers.end();
 }
 
 bool Parser::is_operator(TokenType type) const

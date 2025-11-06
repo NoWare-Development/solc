@@ -5,6 +5,7 @@
 #include <map>
 #include <parser/ast.hpp>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 namespace solc
@@ -393,7 +394,7 @@ class Parser {
     TokenType::NUMOCT, TokenType::NUMFLOAT,
   };
 
-  const std::vector<std::string> _modifiers = {
+  const std::unordered_set<std::string> _modifiers = {
     "const",
     "inline",
     "static",
