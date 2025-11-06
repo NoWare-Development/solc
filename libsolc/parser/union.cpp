@@ -26,20 +26,11 @@ AST Parser::parse_union()
       break;
     }
 
-    if (cur.type == TokenType::ID) {
-      if (cur.value == "struct") {
-        auto structdef = parse_struct();
-        uniondef.append(structdef);
-        continue;
-      } else if (cur.value == "union") {
-        auto uniondef2 = parse_union();
-        uniondef.append(uniondef2);
-        continue;
-      } else if (cur.value == "typedef") {
-        auto typedef_ = parse_typedef();
-        uniondef.append(typedef_);
-        continue;
-      }
+    if (cur.type == TokenType::ID &&
+        _union_parse_methods.find(cur.value) != _union_parse_methods.end()) {
+      auto ast = (this->*_union_parse_methods.at(cur.value))();
+      uniondef.append(ast);
+      continue;
     }
 
     auto decldef = parse_decldef();

@@ -436,6 +436,13 @@ class Parser {
       { "struct", &Parser::parse_struct },
       { "union", &Parser::parse_union },
     };
+
+  const std::unordered_map<std::string, AST (Parser::*)()>
+    _union_parse_methods = {
+      { "struct", &Parser::parse_struct },
+      { "union", &Parser::parse_union },
+      { "typedef", &Parser::parse_typedef },
+    };
 };
 
 }
