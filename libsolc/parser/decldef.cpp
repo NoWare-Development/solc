@@ -29,6 +29,10 @@ AST Parser::parse_decldef()
     return parse_function();
   }
 
+  case TokenType::LTHAN: {
+    return parse_generic_function();
+  }
+
   case TokenType::ERR: {
     add_error(ParserError::Type::EXPECTED, _pos++);
     return {};
