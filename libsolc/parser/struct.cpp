@@ -22,6 +22,8 @@ AST Parser::parse_struct()
     structure.append(typelist);
     VERIFY_POS(_pos);
     cur = _tokens.at(_pos);
+
+    structure.type = ASTType::GENERIC_STRUCT;
   }
 
   VERIFY_TOKEN(_pos, cur.type, TokenType::LBRACE);
