@@ -41,34 +41,10 @@ AST Parser::parse_statement()
   }
 
   case TokenType::ID: {
-    if (cur.value == "struct") {
-      return parse_struct();
-    } else if (cur.value == "union") {
-      return parse_union();
-    } else if (cur.value == "enum") {
-      return parse_enum_definition();
-    } else if (cur.value == "return") {
-      return parse_return_statement();
-    } else if (cur.value == "goto") {
-      return parse_goto_statement();
-    } else if (cur.value == "break") {
-      return parse_break_statement();
-    } else if (cur.value == "continue") {
-      return parse_continue_statement();
-    } else if (cur.value == "while") {
-      return parse_while_statement();
-    } else if (cur.value == "for") {
-      return parse_for_statement();
-    } else if (cur.value == "do") {
-      return parse_do_while_statement();
-    } else if (cur.value == "switch") {
-      return parse_switch_statement();
-    } else if (cur.value == "defer") {
-      return parse_defer_statement();
-    } else if (cur.value == "if") {
-      return parse_if_statement();
-    } else if (cur.value == "typedef") {
-      return parse_typedef();
+    // What is this syntax, bro, I'm crying...
+    if (_stmt_parse_funcs_based_on_id.find(cur.value) !=
+        _stmt_parse_funcs_based_on_id.end()) {
+      return (this->*_stmt_parse_funcs_based_on_id.at(cur.value))();
     } else if (is_modifier(cur.value)) {
       return parse_decldef();
     }

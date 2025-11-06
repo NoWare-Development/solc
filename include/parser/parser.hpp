@@ -4,6 +4,7 @@
 #include <lexer/token.hpp>
 #include <map>
 #include <parser/ast.hpp>
+#include <unordered_map>
 #include <vector>
 
 namespace solc
@@ -397,6 +398,24 @@ class Parser {
     "inline",
     "static",
   };
+
+  const std::unordered_map<std::string, AST (Parser::*)()>
+    _stmt_parse_funcs_based_on_id = {
+      { "struct", &Parser::parse_struct },
+      { "union", &Parser::parse_union },
+      { "enum", &Parser::parse_enum_definition },
+      { "return", &Parser::parse_return_statement },
+      { "goto", &Parser::parse_goto_statement },
+      { "break", &Parser::parse_break_statement },
+      { "continue", &Parser::parse_continue_statement },
+      { "while", &Parser::parse_while_statement },
+      { "for", &Parser::parse_for_statement },
+      { "do", &Parser::parse_do_while_statement },
+      { "switch", &Parser::parse_switch_statement },
+      { "defer", &Parser::parse_defer_statement },
+      { "if", &Parser::parse_if_statement },
+      { "typedef", &Parser::parse_typedef },
+    };
 };
 
 }
