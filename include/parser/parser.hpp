@@ -426,6 +426,16 @@ class Parser {
     { "if", &Parser::parse_if_statement },
     { "typedef", &Parser::parse_typedef },
   };
+
+  const std::unordered_map<std::string, AST (Parser::*)()>
+    _struct_parse_methods = {
+      { "public", &Parser::parse_visibility_marker },
+      { "private", &Parser::parse_visibility_marker },
+      { "typedef", &Parser::parse_typedef },
+      { "enum", &Parser::parse_enum_definition },
+      { "struct", &Parser::parse_struct },
+      { "union", &Parser::parse_union },
+    };
 };
 
 }

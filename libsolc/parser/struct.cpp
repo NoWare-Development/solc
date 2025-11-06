@@ -35,28 +35,11 @@ AST Parser::parse_struct()
       break;
     }
 
-    if (cur.type == TokenType::ID) {
-      if (cur.value == "public" || cur.value == "private") {
-        auto vismarker = parse_visibility_marker();
-        structure.append(vismarker);
-        continue;
-      } else if (cur.value == "typedef") {
-        auto typedef_ = parse_typedef();
-        structure.append(typedef_);
-        continue;
-      } else if (cur.value == "enum") {
-        auto enumdef = parse_enum_definition();
-        structure.append(enumdef);
-        continue;
-      } else if (cur.value == "struct") {
-        auto structdef = parse_struct();
-        structure.append(structdef);
-        continue;
-      } else if (cur.value == "union") {
-        auto uniondef = parse_union();
-        structure.append(uniondef);
-        continue;
-      }
+    if (cur.type == TokenType::ID &&
+        _struct_parse_methods.find(cur.value) != _struct_parse_methods.end()) {
+      auto ast = (this->*_struct_parse_methods.at(cur.value))();
+      structure.append(ast);
+      continue;
     }
 
     auto decldef = parse_decldef();
