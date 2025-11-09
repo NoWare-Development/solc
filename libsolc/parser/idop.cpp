@@ -5,7 +5,8 @@
 namespace solc
 {
 
-AST Parser::parse_identifier_operand(bool accept_modules, bool accept_functions)
+AST Parser::parse_identifier_operand(bool accept_namespaces,
+                                     bool accept_functions)
 {
   VERIFY_POS(_pos);
   auto cur = _tokens.at(_pos);
@@ -15,12 +16,21 @@ AST Parser::parse_identifier_operand(bool accept_modules, bool accept_functions)
 
   auto next = peek(_pos + 1);
 
-  if (next == TokenType::DCOLON && accept_modules) {
-    AST out(_pos, ASTType::NAMESPACE, cur.value);
-    _pos += 2;
-    auto symbol = parse_identifier_operand(accept_modules, accept_functions);
-    out.append(symbol);
-    return out;
+  if (accept_namespaces) {
+    if (next == TokenType::DCOLON) {
+      AST out(_pos, ASTType::NAMESPACE, cur.value);
+      _pos += 2;
+      auto symbol =
+        parse_identifier_operand(accept_namespaces, accept_functions);
+      out.append(symbol);
+      return out;
+    } else if (is_generic_namespace()) {
+      AST out = parse_generic_namespace();
+      auto symbol =
+        parse_identifier_operand(accept_namespaces, accept_functions);
+      out.append(symbol);
+      return out;
+    }
   }
 
   if (accept_functions) {

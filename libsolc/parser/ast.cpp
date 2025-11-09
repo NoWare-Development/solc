@@ -203,6 +203,7 @@ static std::string asttype_to_string(ASTType type)
       "PLACEHOLDER_TYPE",
       "TYPE_LIST",
       "TYPE",
+      "NAMESPACE",
     },
   };
 

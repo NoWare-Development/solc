@@ -17,6 +17,7 @@ libsolc_src += [
   'libsolc/parser/funcptrtype.cpp',
   'libsolc/parser/generic.cpp',
   'libsolc/parser/genericcallop.cpp',
+  'libsolc/parser/genericnamespace.cpp',
   'libsolc/parser/gotostmt.cpp',
   'libsolc/parser/idop.cpp',
   'libsolc/parser/ifstmt.cpp',

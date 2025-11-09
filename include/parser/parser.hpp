@@ -287,6 +287,8 @@ class Parser {
   AST parse_call_operand();
   bool is_generic_call_operand();
   AST parse_generic_call_operand();
+  bool is_generic_namespace();
+  AST parse_generic_namespace();
   AST parse_identifier_operand(bool accept_modules = true,
                                bool accept_functions = true);
   AST parse_array_element(AST array);

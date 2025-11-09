@@ -246,7 +246,7 @@ bool Parser::is_operand(ASTType type) const
 {
   return get_ast_group(type) == ASTGroup::EXPR_OPERAND ||
          type == ASTType::EXPR || type == ASTType::NAMESPACE ||
-         type == ASTType::PREFIX_EXPR;
+         type == ASTType::GENERIC_NAMESPACE || type == ASTType::PREFIX_EXPR;
 }
 
 bool Parser::is_numeric_token(TokenType type) const
