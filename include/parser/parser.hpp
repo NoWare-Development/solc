@@ -167,7 +167,7 @@ class Parser {
   AST parse_statement();
   AST parse_expression_statement(); // <exprstmt>: <expr>;
 
-  AST parse_expression_statement_or_generic_func();
+  AST parse_expression_statement_or_generic_func_or_namespace();
 
   // <stmtlist>
   //   : <stmt> <stmtlist>

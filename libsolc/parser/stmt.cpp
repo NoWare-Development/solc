@@ -75,8 +75,9 @@ AST Parser::parse_statement()
     break;
   }
 
-  // Can be expression statement or a generic function definition.
-  auto out = parse_expression_statement_or_generic_func();
+  // Can be expression statement, a generic function definition
+  // or a generic namespace.
+  auto out = parse_expression_statement_or_generic_func_or_namespace();
   if (_errored) {
     _pos++;
     return {};
@@ -85,7 +86,7 @@ AST Parser::parse_statement()
   return out;
 }
 
-AST Parser::parse_expression_statement_or_generic_func()
+AST Parser::parse_expression_statement_or_generic_func_or_namespace()
 {
   auto pos = _pos;
 
@@ -104,7 +105,21 @@ AST Parser::parse_expression_statement_or_generic_func()
 
         case TokenType::GTHAN: {
           if (peek(pos + 1) == TokenType::DCOLON) {
-            return parse_generic_function();
+            auto next = peek(pos + 2);
+            if (next == TokenType::LPAREN) {
+              return parse_generic_function();
+            } else if (next == TokenType::ID) {
+              auto generic_namespace = parse_generic_namespace();
+              auto symbol = parse_identifier_operand();
+              generic_namespace.append(symbol);
+              return generic_namespace;
+            } else if (next == TokenType::ERR) {
+              add_error(ParserError::Type::EXPECTED, _pos + 2);
+              return {};
+            } else {
+              add_error(ParserError::Type::UNEXPECTED, _pos + 2);
+              return {};
+            }
           } else {
             not_a_generic_func = true;
           }
