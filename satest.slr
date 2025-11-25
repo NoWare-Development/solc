@@ -1,6 +1,0 @@
-enum TestEnum {
-  TEST_ELEMENT,
-  TEST_ELEMENT2,
-  TEST_ELEMENT3 = 10,
-  TEST_ELEMENT4,
-}
