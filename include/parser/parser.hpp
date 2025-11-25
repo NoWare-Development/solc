@@ -11,6 +11,7 @@
 namespace solc
 {
 
+// Parser turns list of tokens into an AST.
 class Parser {
   public:
   Parser(const std::vector<Token> &tokens)
@@ -18,17 +19,18 @@ class Parser {
   {
   }
 
+  // Struct for errors that may be emitted by parser
   struct ParserError {
     enum class Type {
-      UNK,
-      EXPECTED,
-      UNEXPECTED,
-      INVALID_EXPR,
+      UNK, // Unknown error
+      EXPECTED, // Expected token but didn't get any
+      UNEXPECTED, // Expected other token
+      INVALID_EXPR, // Invalid expression
     };
 
-    Type type;
-    size_t pos;
-    size_t len;
+    Type type; // Error type
+    size_t pos; // Position in token list
+    size_t len; // Length (for multiple tokens)
 
     ParserError(Type type, size_t pos, size_t len = 1)
       : type{ type }
@@ -38,8 +40,10 @@ class Parser {
     }
   };
 
+  // Turn token list into an AST.
   AST parse();
 
+  // Returns list of parser errors.
   const std::vector<ParserError> &get_errors() const
   {
     return _errors;
