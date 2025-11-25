@@ -1,11 +1,8 @@
 #pragma once
 
-#include "types.hpp"
 #include "util/util.hpp"
 #include <lexer/token.hpp>
-#include <memory>
 #include <parser/parser.hpp>
-#include <sa/sa.hpp>
 #include <vector>
 
 class ErrorHandler {
@@ -18,11 +15,6 @@ class ErrorHandler {
   bool handle_tokens() const;
   bool handle_parser_errors() const;
   bool handle_invalid_expressions(const solc::AST &root) const;
-  void handle_sa_errors(
-    const std::vector<solc::SemanticAnalyzer::SAError> &errors) const;
-
-  std::string
-  get_sa_error_reason(const solc::SemanticAnalyzer::SAError &err) const;
 
   private:
   std::vector<solc::Token> _tokens{};

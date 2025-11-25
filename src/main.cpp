@@ -7,7 +7,6 @@
 #include <iostream>
 #include <lexer/lexer.hpp>
 #include <parser/parser.hpp>
-#include <sa/sa.hpp>
 #include <sstream>
 
 static void handle_arguments(ArgParser &argparser);
@@ -71,14 +70,6 @@ int main(int argc, char **argv)
       return -4;
     else if (!handler.handle_invalid_expressions(root))
       return -5;
-
-    solc::SemanticAnalyzer sa{};
-    sa.analyze(root);
-    auto sa_errors = sa.get_errors();
-    if (!sa_errors.empty()) {
-      handler.handle_sa_errors(sa_errors);
-      return -6;
-    }
   }
 
   return 0;
@@ -120,11 +111,6 @@ static void get_arch(ArgParser &argparser)
 
   auto arch_x86 = argparser.has_argument("mi386");
   if (arch_x86) {
-    if (arch_set) {
-      std::cout << "Argument -mi386 will override previously set target "
-                   "architecture option.\n";
-    }
-
     solc::Config::the().set_output_arch(solc::Config::OutputArch::ARCH_X86);
     arch_set = true;
   }

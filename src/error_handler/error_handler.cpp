@@ -82,30 +82,6 @@ bool ErrorHandler::handle_invalid_expressions(const solc::AST &root) const
   return true;
 }
 
-void ErrorHandler::handle_sa_errors(
-  const std::vector<solc::SemanticAnalyzer::SAError> &errors) const
-{
-  for (const auto &e : errors) {
-    if (e.token_positions.at(0) >= _tokens.size())
-      continue;
-
-    const auto &token = _tokens.at(e.token_positions.at(0));
-
-    std::string message =
-      get_message_start(token.line + 1, token.end - token.end + 1, "error",
-                        ESCColor::ESCCOLOR_RED, ESCGraphics::ESCGRAPHICS_BOLD);
-
-    message += get_sa_error_reason(e);
-
-    message += '\n';
-    message += get_highlighted_token(token, ESCColor::ESCCOLOR_RED,
-                                     ESCGraphics::ESCGRAPHICS_BOLD);
-    message += '\n';
-
-    std::cout << message;
-  }
-}
-
 void ErrorHandler::collect_invalid_expressions(const solc::AST &node,
                                                std::vector<solc::AST> &v) const
 {

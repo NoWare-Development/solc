@@ -1,7 +1,7 @@
+#include "libsolc/logger.hpp"
 #include "libsolc/parser/macros.hpp"
 #include "parser/ast.hpp"
 #include "parser/parser.hpp"
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -345,8 +345,8 @@ AST Parser::pratt_parse_expression(const std::vector<AST> &in, size_t *pos,
   while (*pos < in.size()) {
     const auto &op = in.at(*pos);
     if (!is_operator(op.type)) {
-      std::cout << "UNEXPECTED AST AT " << std::to_string(*pos) << ":\n";
-      std::cout << op.to_string() << " is not an operator\n\n";
+      dbglog("UNEXPECTED AST AST {}:\n{} is not an operator\n",
+             std::to_string(*pos), op.to_string());
       return {};
     }
 

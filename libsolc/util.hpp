@@ -3,23 +3,24 @@
 #include <cstdio>
 #include <cstdlib>
 #include <string>
+#include "logger.hpp"
 
 #define TODO(msg)                                                              \
   {                                                                            \
-    std::printf("(%s:%d) Not implemented yet: %s\n", __func__, __LINE__, msg); \
+    solc::println("({}:{}) Not implemented yet: {}", __func__, __LINE__, msg); \
     exit(-1);                                                                  \
   }
 
 #define NOREACH()                                                        \
   {                                                                      \
-    std::printf("(%s:%d) Reached point that should be never reached.\n", \
-                __func__, __LINE__);                                     \
+    solc::println("({}:{}) Reached point that should be never reached.", \
+                  __func__, __LINE__);                                   \
     exit(-1);                                                            \
   }
 
 #define ERROR(msg)                                        \
   {                                                       \
-    std::printf("(%s:%d) %s\n", __func__, __LINE__, msg); \
+    solc::println("({}:{}) {}", __func__, __LINE__, msg); \
     exit(-1);                                             \
   }
 

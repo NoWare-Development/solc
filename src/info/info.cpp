@@ -1,4 +1,5 @@
 #include "info.hpp"
+#include "libsolc/logger.hpp"
 #include <iostream>
 
 namespace info

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "libsolc/logger.hpp"
 #include <cctype>
 #include <cstddef>
 #include <cstdlib>

@@ -1,6 +1,5 @@
 #include "libsolc/parser/macros.hpp"
 #include "parser/parser.hpp"
-#include "sa/sa.hpp"
 
 namespace solc
 {
