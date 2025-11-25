@@ -7,86 +7,88 @@ namespace solc
 {
 
 enum class TokenType {
+  // Error token, used to notify that there's
+  // a not supported symbol in sources.
   ERR = 0,
 
-  ID,
+  ID, // Identifier: abc
 
-  NUM,
-  NUMHEX,
-  NUMBIN,
-  NUMOCT,
-  NUMFLOAT,
+  NUM, // Decimal number: 123
+  NUMHEX, // Hexadecimal number: 0xDEADBEEF123
+  NUMBIN, // Binary number: 0b10011
+  NUMOCT, // Octal number: 0761
+  NUMFLOAT, // Floating-point number: 3.14
 
-  STRING,
-  SYMBOL,
+  STRING, // String in double quotes: "lorem ipsum"
+  SYMBOL, // Character in single quotes: 'A'
 
-  LPAREN,
-  RPAREN,
-  LBRACK,
-  RBRACK,
-  LBRACE,
-  RBRACE,
+  LPAREN, // Left (open) parentheses: (
+  RPAREN, // Right (close) parentheses: )
+  LBRACK, // Left (open) bracket: [
+  RBRACK, // Right (close) bracket: ]
+  LBRACE, // Left (open) curly brace: {
+  RBRACE, // Right (close) curly brace: }
 
-  LARROW,
-  RARROW,
+  LARROW, // Left arrow: <-
+  RARROW, // Right arrow: ->
 
-  LTHAN,
-  GTHAN,
+  LTHAN, // Less than symbol: <
+  GTHAN, // Greater than symbol: >
 
-  COLON,
-  DCOLON,
+  COLON, // Colon: :
+  DCOLON, // Double colon: ::
 
-  SEMI,
+  SEMI, // Semicolon: ;
 
-  COMMA,
-  PERIOD,
+  COMMA, // Comma: ,
+  PERIOD, // Period: .
 
-  BAND,
-  BOR,
-  BXOR,
-  BNOT,
+  BAND, // Binary and: &
+  BOR, // Binary or: |
+  BXOR, // Binary xor: ^
+  BNOT, // Binary not: ~
 
-  AND,
-  OR,
-  NOT,
-  QUE,
+  AND, // Boolean and: &&
+  OR, // Boolean or: ||
+  NOT, // Boolean not: !
+  QUE, // Question mark: ?
 
-  LTHANEQ,
-  GTHANEQ,
-  NOTEQ,
+  LTHANEQ, // Less than or equal: <=
+  GTHANEQ, // Greater than or equal: >=
+  NOTEQ, // Not equal: !=
 
-  ADD,
-  SUB,
-  MUL,
-  DIV,
-  MOD,
-  SHL,
-  SHR,
+  ADD, // Addition: +
+  SUB, // Subtraction: -
+  MUL, // Multiplication: *
+  DIV, // Division: /
+  MOD, // Module: %
+  SHL, // Shift left: <<
+  SHR, // Shift right: >>
 
-  EQ,
-  ADDEQ,
-  SUBEQ,
-  MULEQ,
-  DIVEQ,
-  MODEQ,
-  BANDEQ,
-  BOREQ,
-  BXOREQ,
-  SHLEQ,
-  SHREQ,
+  EQ, // Assignment: =
+  ADDEQ, // Addition assignment: +=
+  SUBEQ, // Subtraction assignment: -=
+  MULEQ, // Multiplication assignment: *=
+  DIVEQ, // Division assignment: /=
+  MODEQ, // Module assignment: %=
+  BANDEQ, // Binary and assignment: &=
+  BOREQ, // Binary or assignment: |=
+  BXOREQ, // Binary xor assignment: ^=
+  SHLEQ, // Shift left assignment: <<=
+  SHREQ, // Shift right assignment: >>=
 
-  EQEQ,
+  EQEQ, // Comparison (double equal): ==
 
-  AT,
-  HASH,
+  AT, // At (label marker): @
+  HASH, // Hashtag: #
 };
 
 struct Token {
-  size_t line;
-  size_t end;
-  size_t len;
-  TokenType type;
-  std::string value;
+  size_t line; // Line at which token has occured
+  size_t end; // Absolute position of end of token
+  size_t len; // Length of token
+  TokenType type; // Token type
+  std::string value; // Token value
 
   Token(size_t line, size_t end, size_t len, TokenType type,
         const std::string &value = "")
@@ -99,6 +101,7 @@ struct Token {
   }
   Token() = default;
 
+  // Turn token into a string, used for debugging.
   std::string to_string() const;
 };
 
