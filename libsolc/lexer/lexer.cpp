@@ -7,17 +7,23 @@ namespace solc
 
 std::vector<Token> Lexer::tokenize(const std::string &src)
 {
+  // Reset class'es member fields.
   std::vector<Token> out{};
   _pos = 0;
   _src = src;
   _line = 0;
   _llp = 0;
 
-  while (_pos < _src.length()) {
+  // Loop through all symbols in sources.
+  const size_t src_len = _src.length();
+  while (_pos < src_len) {
     char c = _src.at(_pos);
 
+    // Skip whitespaces
     if (isspace(c)) {
       if (c == '\n') {
+        // If current character is a newline character,
+        // increment current line number by 1 and set last line position.
         _line++;
         _llp = _pos + 1;
       }
@@ -25,16 +31,19 @@ std::vector<Token> Lexer::tokenize(const std::string &src)
       continue;
     }
 
+    // Check for invalid symbols
     if (!is_processable(c)) {
       out.push_back(process_err());
       continue;
     }
 
+    // Check for identifiers
     if (is_start_of_id(c)) {
       out.push_back(process_id());
       continue;
     }
 
+    // Check for numbers
     if (isdigit(c)) {
       out.push_back(process_num());
       continue;
@@ -301,6 +310,8 @@ std::vector<Token> Lexer::tokenize(const std::string &src)
   return out;
 }
 
+// Consume all symbols that are valid for identifiers
+// and put them into an identifier token.
 Token Lexer::process_id()
 {
   std::string valbuf{};
@@ -316,11 +327,16 @@ Token Lexer::process_id()
   return gen_token(valbuf.length(), _pos - 1, TokenType::ID, valbuf);
 }
 
+// Consume all digit symbols
+// and put them into a number token (dec, hex, oct, bin).
 Token Lexer::process_num()
 {
   char c = _src.at(_pos);
+  // Check if first character is zero.
   if (c == '0') {
     char c2 = _src.at(_pos + 1);
+    // If next character is 'x' or 'b',
+    // it is a hexadecimal or a binary number respectively.
     switch (c2) {
     case 'x':
       return process_numhex();
@@ -328,8 +344,10 @@ Token Lexer::process_num()
       return process_numoct();
     default:
       if (isdigit(c2)) {
+        // It also can be an octal number if next character is just a digit.
         return process_numoct();
       } else if (c2 != '.') {
+        // If next character is not a period, it is just a zero.
         _pos++;
         return gen_token(1, _pos - 1, TokenType::NUM, "0");
       }
@@ -337,6 +355,7 @@ Token Lexer::process_num()
     }
   }
 
+  // Consume all symbols and put them into a buffer
   std::string buf{};
   bool has_dot = false;
   while (_pos < _src.length()) {
@@ -344,6 +363,7 @@ Token Lexer::process_num()
     if (!isdigit(c) && c != '.' && c != '\'' && c != '_') {
       break;
     }
+    // ' or _ can be used a separator inside numbers, so skip them.
     if (c == '\'' || c == '_') {
       _pos++;
       continue;
@@ -359,6 +379,7 @@ Token Lexer::process_num()
     _pos++;
   }
 
+  // If number contains dot, it is a floating-point number.
   return gen_token(buf.length(), _pos - 1,
                    has_dot ? TokenType::NUMFLOAT : TokenType::NUM, buf);
 }
@@ -506,11 +527,14 @@ void Lexer::skip_comments()
   }
 }
 
+// Checks if character is a start of identifier.
 bool Lexer::is_start_of_id(char c) const
 {
   return isalpha(c) || c == '$' || c == '_';
 }
 
+// Checks if character is an identifier character
+// (character in the middle (or in the end) of an identifier).
 bool Lexer::is_char_of_id(char c) const
 {
   return is_start_of_id(c) || isdigit(c);
