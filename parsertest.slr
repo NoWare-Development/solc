@@ -1,0 +1,158 @@
+import std::io; // Import
+
+enum TestEnum1 { // Enum definition
+  TEST_ENUM1_ELEM_1 = !1,
+  TEST_ENUM1_ELEM_2,
+  TEST_ENUM1_ELEM_3,
+  TEST_ENUM1_ELEM_4,
+}
+
+// Exported functions are not mangled, their names will not be hidden.
+// NOTE: generic functions cannot be exported, due to name changing in process
+// of generating them at compile time.
+export exported_func :: () {
+  // Your code...
+}
+
+// External function from C library (library must be linked with your
+// executable/library).
+extern func_from_c :: ();
+
+// You can also provide default values for those external functions.
+extern func_from_c_with_default_init_values
+    :: (a: int, b: int = 4, c: bool = false) -> *bool;
+
+typedef *uint[][][] newtype; // Type definition
+
+id1: int;                // Variable declaration
+id2: int = 4;            // Variable definition
+const id_const: int = 5; // Constant variable definition
+
+struct MyStruct {
+  a: int;
+}
+
+struct GenericStruct<T> {
+  data: *T;
+}
+
+generic_test<T> :: () -> T {
+  return 0;
+}
+
+// Function definition
+main :: (argc: int = 4*5, argv: char[][]) -> int {
+  return 69; // Return statement
+
+  goto @label; // Goto statement
+
+  @label: // Label statement
+
+  break;    // Break statement
+  continue; // Continue statement
+
+  { // Statement list
+    return 99;
+  }
+
+  while (false) continue;
+  while (5 == 4 + 1 * 4 << 1) {
+    break;
+  }
+
+  for (; 1 < 2; id = 4) break;
+
+  do { } while (0);
+
+  variable: float = 0.53f;
+
+  nestedfunc :: (argument: int) -> int {
+    return argument * 2;
+  }
+
+  for (i: size_t = 0; i < argc; i += 1) {
+    variable: int = nestedfunc(argc + i * cast(*int)(&argv[0].test));
+  }
+
+  call_to_func(123 + 4, id / 2.25f);
+
+  switch (id + 5) {
+    case 1 + 2: return 0;
+
+    default: {
+      id += 14;
+      break;
+    }
+  }
+
+  defer { println("TESTLINE", 123llu, 4.0f); }
+
+  someStruct: SomeStruct;
+  someStruct.int_field = 5;
+  someStruct.struct_field.float_field = 5.0f;
+
+  someValue = someModule::someSymbol;
+  someModule1::someModule2::someSymbol = 5;
+
+  variable: someModule::typeFromModule = 0;
+
+  initTest: someStruct = { .field = 5, 45.0f };
+}
+
+testfunc :: () -> void {
+  struct StructInFunc {
+    val: int;
+
+    setValue :: (value: int) -> void {
+      val = value;
+    }
+  }
+
+  struct GenericStructInFunc<T> {
+    data: *T;
+
+    createData :: (value: T) -> void {
+      data = alloc(sizeof(T));
+      *data = value;
+    }
+  }
+}
+
+struct StructWithMarkers {
+public:
+  public_field: int;
+
+private:
+  private_field: int;
+}
+
+testFunc :: () -> void {
+  if (array == nullptr) return 0;
+
+  if (array != nullptr) {
+    std::io::println("Hello");
+  } else return 10;
+}
+
+const funcPtrArray: (arg: int)[];
+
+testFunc2 :: () {
+  module1::module2::symbol;
+  module1::struct1.field;
+
+  enum EnumInFunc {
+    VAL1,
+    VAL2,
+  }
+
+  vector_var: Vector<int>;
+  vector_var.destroy();
+
+  return {};
+}
+
+union TestUnion {
+  var1: int;
+  var2: float;
+  var3: double;
+}

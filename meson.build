@@ -1,30 +1,38 @@
-project('nlc', 'cpp')
+project('solc', 'cpp')
 
-libnlc_src = []
-libnlc_dep = []
-libnlc_inc = include_directories('include')
-subdir('libnlc')
+flags = []
 
-libnlc_lib = shared_library(
-  'nlc',
-  libnlc_src,
-  dependencies: libnlc_dep,
-  include_directories: libnlc_inc,
+if get_option('buildtype') == 'debug'
+  flags += '-D_DEBUG'
+endif
+
+libsolc_src = []
+libsolc_dep = [ dependency('llvm') ]
+libsolc_inc = include_directories('include')
+subdir('libsolc')
+
+libsolc_lib = shared_library(
+  'solc',
+  libsolc_src,
+  dependencies: libsolc_dep,
+  include_directories: libsolc_inc,
+  cpp_args: [ flags ],
 )
 
-libnlc = declare_dependency(
-  link_with: libnlc_lib,
-  include_directories: libnlc_inc,
+libsolc = declare_dependency(
+  link_with: libsolc_lib,
+  include_directories: libsolc_inc,
 )
 
-nlc_src = []
-nlc_dep = []
-nlc_inc = include_directories('src')
+solc_src = []
+solc_dep = []
+solc_inc = include_directories('src')
 subdir('src')
 
-nlc_exe = executable(
-  'nlc',
-  nlc_src,
-  dependencies: libnlc,
-  include_directories: nlc_inc,
+solc_exe = executable(
+  'solc',
+  solc_src,
+  dependencies: libsolc,
+  include_directories: solc_inc,
+  cpp_args: [ flags ],
 )

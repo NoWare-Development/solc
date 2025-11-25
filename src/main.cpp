@@ -6,109 +6,128 @@
 #include <fstream>
 #include <iostream>
 #include <lexer/lexer.hpp>
-#include <map>
 #include <parser/parser.hpp>
 #include <sstream>
-#include <unordered_map>
 
-int
-main (int argc, char **argv)
+static void handle_arguments(ArgParser &argparser);
+static void get_arch(const ArgParser &argparser);
+
+int main(int argc, char **argv)
 {
-  ArgParser argparser (argc, argv);
-  if (argparser.has_argument ("help"))
-    {
-      info::display_help ();
-      return 0;
+  ArgParser argparser(argc, argv);
+  if (argparser.has_argument("help")) {
+    info::display_help();
+    return 0;
+  } else if (argparser.has_argument("version")) {
+    info::display_version();
+    return 0;
+  }
+
+  handle_arguments(argparser);
+
+  auto sources = argparser.get_dangling_arguments();
+  if (sources.empty()) {
+    std::cout << escape_graphics(ESCGraphics::ESCGRAPHICS_BOLD)
+              << "solc: " << escape_color(ESCColor::ESCCOLOR_RED)
+              << "fatal error: " << escape_reset()
+              << "no input files\ncompilation terminated.\n";
+    return -1;
+  }
+
+  for (const auto &srcfile : sources) {
+    std::ifstream file(srcfile);
+    if (!file.is_open()) {
+      std::cout << escape_graphics(ESCGraphics::ESCGRAPHICS_BOLD)
+                << "solc: " << escape_color(ESCColor::ESCCOLOR_RED)
+                << "fatal error: " << escape_reset() << "failed to open file \""
+                << srcfile << "\"\n";
+      return -2;
     }
-  else if (argparser.has_argument ("version"))
-    {
-      info::display_version ();
-      return 0;
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    std::string src = buffer.str();
+
+    ErrorHandler handler(srcfile, src);
+
+    solc::Lexer lexer{};
+    auto tokens = lexer.tokenize(src);
+
+    // TODO: remove me
+    for (size_t i = 0; i < tokens.size(); i++) {
+      std::cout << "(" << i << ") " << tokens.at(i).to_string() << '\n';
+    }
+    handler.add_tokens(tokens);
+    if (!handler.handle_tokens()) {
+      return -3;
     }
 
-  auto optlevel = argparser.get_argument_value<size_t> ("opt");
-  nlc::Config::get_instance ()->set_optimization_level (optlevel);
-
-  auto includes = argparser.get_argument_value_list<std::string> ("include");
-  nlc::Config::get_instance ()->set_include_paths (includes);
-
-  auto libpaths = argparser.get_argument_value_list<std::string> ("libpath");
-  nlc::Config::get_instance ()->set_link_lib_search_paths (libpaths);
-
-  auto libs = argparser.get_argument_value_list<std::string> ("linkwith");
-  nlc::Config::get_instance ()->set_link_libs (libs);
-
-  auto has_nostdlib = argparser.has_argument ("nostdlib");
-  if (has_nostdlib)
-    {
-      nlc::Config::get_instance ()->set_compiler_flag (
-          nlc::Config::CompilerFlag::COMPILER_FLAG_NOSTDLIB);
-    }
-
-  auto has_freestanding = argparser.has_argument ("freestanding");
-  if (has_freestanding)
-    {
-      nlc::Config::get_instance ()->set_compiler_flag (
-          nlc::Config::CompilerFlag::COMPILER_FLAG_FREESTANDING);
-    }
-
-  auto sources = argparser.get_dangling_arguments ();
-  if (sources.empty ())
-    {
-      std::cout << escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD)
-                << "nlc: " << escape_color (ESCColor::ESCCOLOR_RED)
-                << "fatal error: " << escape_reset ()
-                << "no input files\ncompilation terminated.\n";
-      return -1;
-    }
-
-  for (const auto &srcfile : sources)
-    {
-      std::ifstream file (srcfile);
-      if (!file.is_open ())
-        {
-          std::cout << escape_graphics (ESCGraphics::ESCGRAPHICS_BOLD)
-                    << "nlc: " << escape_color (ESCColor::ESCCOLOR_RED)
-                    << "fatal error: " << escape_reset ()
-                    << "failed to open file \"" << srcfile << "\"\n";
-          return -2;
-        }
-      std::stringstream buffer;
-      buffer << file.rdbuf ();
-      std::string src = buffer.str ();
-
-      ErrorHandler handler (srcfile, src);
-
-      nlc::Lexer lexer{};
-      auto tokens = lexer.tokenize (src);
-
-      // TODO: remove me
-      for (size_t i = 0; i < tokens.size (); i++)
-        {
-          std::cout << "(" << i << ") " << tokens.at (i).to_string () << '\n';
-        }
-      handler.add_tokens (tokens);
-      if (!handler.handle_tokens ())
-        {
-          return -3;
-        }
-
-      nlc::Parser parser (tokens);
-      auto root = parser.parse ();
-      auto errors = parser.get_errors ();
-      handler.add_parser_errors (errors);
-
-      // TODO: remove me
-      std::cout << root.to_string () << '\n';
-      if (!handler.handle_parser_errors ())
-        {
-          return -4;
-        }
-      if (!handler.handle_invalid_expressions (root))
-        {
-          return -5;
-        }
-    }
+    solc::Parser parser(tokens);
+    auto root = parser.parse();
+    std::cout << root.to_string() << '\n';
+    auto errors = parser.get_errors();
+    handler.add_parser_errors(errors);
+    if (!handler.handle_parser_errors())
+      return -4;
+    else if (!handler.handle_invalid_expressions(root))
+      return -5;
+  }
 
   return 0;
+}
+
+static void handle_arguments(ArgParser &argparser)
+{
+  auto cfg = &solc::Config::the();
+
+  auto optlevel = argparser.get_argument_value<size_t>("opt");
+  cfg->set_optimization_level(optlevel);
+
+  auto includes = argparser.get_argument_value_list<std::string>("include");
+  cfg->set_include_paths(includes);
+
+  auto libpaths = argparser.get_argument_value_list<std::string>("libpath");
+  cfg->set_link_lib_search_paths(libpaths);
+
+  auto libs = argparser.get_argument_value_list<std::string>("linkwith");
+  cfg->set_link_libs(libs);
+
+  // Get compiler flags
+  solc::Config::CompilerFlags flags = solc::Config::COMPILER_FLAG_NONE;
+
+  if (argparser.has_argument("nostdlib")) {
+    flags |= solc::Config::COMPILER_FLAG_NOSTDLIB;
+  }
+  if (argparser.has_argument("freestanding")) {
+    flags |= solc::Config::COMPILER_FLAG_FREESTANDING;
+  }
+
+  cfg->set_compiler_flags(flags);
+
+  get_arch(argparser);
+}
+
+static void get_arch(const ArgParser &argparser)
+{
+  bool arch_set = false;
+
+  if (argparser.has_argument("mi386")) {
+    solc::Config::the().set_machine_arch(solc::Config::MachineArch::ARCH_X86);
+    arch_set = true;
+  }
+  if (argparser.has_argument("mamd64")) {
+    if (arch_set) {
+      std::cout << "Argument -mamd64 will override previously set target "
+                   "architecture option.\n";
+    }
+    solc::Config::the().set_machine_arch(solc::Config::MachineArch::ARCH_AMD64);
+    arch_set = true;
+  }
+  if (argparser.has_argument("marm64")) {
+    if (arch_set) {
+      std::cout << "Argument -marm64 will override previously set target "
+                   "architecture option.\n";
+    }
+    solc::Config::the().set_machine_arch(solc::Config::MachineArch::ARCH_ARM64);
+    arch_set = true;
+  }
 }

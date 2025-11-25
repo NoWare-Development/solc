@@ -2,6 +2,6 @@ subdir('error_handler')
 subdir('info')
 subdir('util')
 
-nlc_src += [
+solc_src += [
   'src/main.cpp',
 ]

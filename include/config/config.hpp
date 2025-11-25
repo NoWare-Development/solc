@@ -2,61 +2,120 @@
 
 #include <cstddef>
 #include <cstdint>
-#include <memory>
 #include <string>
 #include <vector>
 
-namespace nlc
+namespace solc
 {
 
-class Config
-{
-public:
-  ~Config () = default;
+// Singleton class that stores compiler's configuration.
+class Config {
+  public:
+  ~Config() = default;
 
-  static Config *
-  get_instance ()
+  Config(const Config &) = delete;
+  Config(Config &&) = delete;
+  Config &operator=(const Config &) = delete;
+  Config &operator=(Config &&) = delete;
+
+  // Returns instance of Config class.
+  static Config &the()
   {
-    static Config *_instance = nullptr;
-    if (_instance == nullptr)
-      {
-        _instance = new Config ();
-      }
+    static Config _instance;
     return _instance;
   }
 
-  void set_include_paths (std::vector<std::string> paths);
-  const std::vector<std::string> get_include_paths () const;
+  // Sets include paths.
+  void set_include_paths(const std::vector<std::string> &paths);
 
-  void set_link_lib_search_paths (std::vector<std::string> paths);
-  const std::vector<std::string> get_link_lib_search_paths () const;
+  // Returns include paths.
+  const std::vector<std::string> &get_include_paths() const;
 
-  void set_link_libs (std::vector<std::string> libs);
-  const std::vector<std::string> get_link_libs () const;
+  // Sets the paths the compiler will search for libraries when linking
+  // with them.
+  void set_link_lib_search_paths(std::vector<std::string> paths);
 
-  void set_optimization_level (size_t level);
-  size_t get_optimization_level () const;
+  // Returns the paths the compiler will search for libraries when linking
+  // with them.
+  const std::vector<std::string> &get_link_lib_search_paths() const;
 
-  enum CompilerFlag
-  {
+  // Sets libraries that compiler will link executable with.
+  void set_link_libs(std::vector<std::string> libs);
+
+  // Returns libraries that compiler will link executable with.
+  const std::vector<std::string> get_link_libs() const;
+
+  // Sets optimization level.
+  void set_optimization_level(size_t level);
+
+  // Returns optimization levels.
+  size_t get_optimization_level() const;
+
+  enum CompilerFlagBits {
+    COMPILER_FLAG_NONE = 0,
+
+    // -fnostdlib: do not use standard library when compiling executable.
     COMPILER_FLAG_NOSTDLIB = 1 << 0,
+
+    // -ffreestanding: do not use C runtime.
     COMPILER_FLAG_FREESTANDING = 1 << 1,
   };
-  void set_compiler_flag (CompilerFlag flag);
-  uint32_t get_compiler_flags () const;
+  using CompilerFlags = uint32_t;
 
-  enum CompilerAction
-  {
-    COMPILER_ACTION_COMPILE_LINK,
-    COMPILER_ACTION_COMPILE,
-    COMPILER_ACTION_GET_IR,
-    COMPILER_ACTION_GET_ASSEMBLY,
+  // Sets compiler flags.
+  void set_compiler_flags(CompilerFlags flags);
+
+  // Returns compiler flags.
+  CompilerFlags get_compiler_flags() const;
+
+  enum class CompilerAction {
+    // default behaviour.
+    COMPILE_AND_LINK_EXECUTABLE,
+
+    // -shared: compile and link shared library.
+    COMPILE_AND_LINK_SHARED,
+
+    // -static: compile and link static library.
+    COMPILE_AND_LINK_STATIC,
+
+    // -C: compile to object file.
+    COMPILE,
+
+    // -ir: compile to LLVM's Intermediate Representation language.
+    GET_IR,
+
+    // -S: compile to GNU assembly.
+    GET_ASSEMBLY,
   };
-  void set_compiler_action (CompilerAction act);
-  CompilerAction get_compiler_action () const;
 
-private:
-  Config () = default;
+  // Sets compiler action.
+  void set_compiler_action(CompilerAction act);
+
+  // Returns compiler action.
+  CompilerAction get_compiler_action() const;
+
+  enum MachineArch {
+    // -m386: compile for x86 architecture.
+    ARCH_X86,
+
+    // -mamd64: compile for AMD64 (x86_64) architecture.
+    ARCH_AMD64,
+
+    // -marm64: compile for ARM64 architecture.
+    ARCH_ARM64,
+  };
+
+  // Sets machine architecture.
+  void set_machine_arch(MachineArch arch);
+
+  // Returns machine architecture.
+  MachineArch get_machine_arch() const;
+
+  // Returns machine architecture compiler was built for.
+  MachineArch get_default_machine_arch() const;
+
+  private:
+  Config() = default;
 
   std::vector<std::string> _include_paths{};
 
@@ -68,6 +127,7 @@ private:
   uint32_t _compiler_flags{};
 
   CompilerAction _compiler_action{};
+  MachineArch _machine_arch{ get_default_machine_arch() };
 };
 
 }

@@ -12,14 +12,12 @@ static const char *gmodes_[] = {
   "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
 };
 
-std::string
-escape_reset ()
+std::string escape_reset()
 {
   return "\033[0m";
 }
 
-std::string
-escape_color (ESCColor col)
+std::string escape_color(ESCColor col)
 {
   std::string out{};
   out += prefix_;
@@ -28,8 +26,7 @@ escape_color (ESCColor col)
   return out;
 }
 
-std::string
-escape_graphics (ESCGraphics mode)
+std::string escape_graphics(ESCGraphics mode)
 {
   std::string out{};
   out += prefix_;

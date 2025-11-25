@@ -3,101 +3,106 @@
 #include <cstddef>
 #include <string>
 
-namespace nlc
+namespace solc
 {
 
-enum TokenType
-{
-  TOKEN_ERR = 0,
+enum class TokenType {
+  // Error token, used to notify that there's
+  // a not supported symbol in sources.
+  ERR = 0,
 
-  TOKEN_ID,
+  ID, // Identifier: abc
 
-  TOKEN_NUM,
-  TOKEN_NUMHEX,
-  TOKEN_NUMBIN,
-  TOKEN_NUMOCT,
-  TOKEN_NUMFLOAT,
+  NUM, // Decimal number: 123
+  NUMHEX, // Hexadecimal number: 0xDEADBEEF123
+  NUMBIN, // Binary number: 0b10011
+  NUMOCT, // Octal number: 0761
+  NUMFLOAT, // Floating-point number: 3.14
 
-  TOKEN_STRING,
-  TOKEN_SYMBOL,
+  STRING, // String in double quotes: "lorem ipsum"
+  SYMBOL, // Character in single quotes: 'A'
 
-  TOKEN_LPAREN,
-  TOKEN_RPAREN,
-  TOKEN_LBRACK,
-  TOKEN_RBRACK,
-  TOKEN_LBRACE,
-  TOKEN_RBRACE,
+  LPAREN, // Left (open) parentheses: (
+  RPAREN, // Right (close) parentheses: )
+  LBRACK, // Left (open) bracket: [
+  RBRACK, // Right (close) bracket: ]
+  LBRACE, // Left (open) curly brace: {
+  RBRACE, // Right (close) curly brace: }
 
-  TOKEN_LARROW,
-  TOKEN_RARROW,
+  LARROW, // Left arrow: <-
+  RARROW, // Right arrow: ->
 
-  TOKEN_LTHAN,
-  TOKEN_GTHAN,
+  LTHAN, // Less than symbol: <
+  GTHAN, // Greater than symbol: >
 
-  TOKEN_COLON,
-  TOKEN_DCOLON,
+  COLON, // Colon: :
+  DCOLON, // Double colon: ::
 
-  TOKEN_SEMI,
+  SEMI, // Semicolon: ;
 
-  TOKEN_COMMA,
-  TOKEN_PERIOD,
+  COMMA, // Comma: ,
+  PERIOD, // Period: .
 
-  TOKEN_BAND,
-  TOKEN_BOR,
-  TOKEN_BXOR,
-  TOKEN_BNOT,
+  BAND, // Binary and: &
+  BOR, // Binary or: |
+  BXOR, // Binary xor: ^
+  BNOT, // Binary not: ~
 
-  TOKEN_AND,
-  TOKEN_OR,
-  TOKEN_NOT,
-  TOKEN_QUE,
+  AND, // Boolean and: &&
+  OR, // Boolean or: ||
+  NOT, // Boolean not: !
+  QUE, // Question mark: ?
 
-  TOKEN_LTHANEQ,
-  TOKEN_GTHANEQ,
-  TOKEN_NOTEQ,
+  LTHANEQ, // Less than or equal: <=
+  GTHANEQ, // Greater than or equal: >=
+  NOTEQ, // Not equal: !=
 
-  TOKEN_ADD,
-  TOKEN_SUB,
-  TOKEN_MUL,
-  TOKEN_DIV,
-  TOKEN_MOD,
-  TOKEN_SHL,
-  TOKEN_SHR,
+  ADD, // Addition: +
+  SUB, // Subtraction: -
+  MUL, // Multiplication: *
+  DIV, // Division: /
+  MOD, // Module: %
+  SHL, // Shift left: <<
+  SHR, // Shift right: >>
 
-  TOKEN_EQ,
-  TOKEN_ADDEQ,
-  TOKEN_SUBEQ,
-  TOKEN_MULEQ,
-  TOKEN_DIVEQ,
-  TOKEN_MODEQ,
-  TOKEN_BANDEQ,
-  TOKEN_BOREQ,
-  TOKEN_BXOREQ,
-  TOKEN_SHLEQ,
-  TOKEN_SHREQ,
+  EQ, // Assignment: =
+  ADDEQ, // Addition assignment: +=
+  SUBEQ, // Subtraction assignment: -=
+  MULEQ, // Multiplication assignment: *=
+  DIVEQ, // Division assignment: /=
+  MODEQ, // Module assignment: %=
+  BANDEQ, // Binary and assignment: &=
+  BOREQ, // Binary or assignment: |=
+  BXOREQ, // Binary xor assignment: ^=
+  SHLEQ, // Shift left assignment: <<=
+  SHREQ, // Shift right assignment: >>=
 
-  TOKEN_EQEQ,
+  EQEQ, // Comparison (double equal): ==
 
-  TOKEN_AT,
-  TOKEN_HASH,
+  AT, // At (label marker): @
+  HASH, // Hashtag: #
 };
 
-struct Token
-{
-  size_t line;
-  size_t end;
-  size_t len;
-  TokenType type;
-  std::string value;
+struct Token {
+  size_t line; // Line at which token has occured
+  size_t end; // Absolute position of end of token
+  size_t len; // Length of token
+  TokenType type; // Token type
+  std::string value; // Token value
 
-  Token (size_t line, size_t end, size_t len, TokenType type,
-         const std::string &value = "")
-      : line{ line }, end{ end }, len{ len }, type{ type }, value{ value }
+  Token(size_t line, size_t end, size_t len, TokenType type,
+        const std::string &value = "")
+    : line{ line }
+    , end{ end }
+    , len{ len }
+    , type{ type }
+    , value{ value }
   {
   }
-  Token () = default;
+  Token() = default;
 
-  std::string to_string () const;
+  // Turn token into a string, used for debugging.
+  std::string to_string() const;
 };
 
 }
