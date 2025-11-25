@@ -18,6 +18,11 @@ class Config {
     return _instance;
   }
 
+  Config(const Config &) = delete;
+  Config(Config &&) = delete;
+  Config &operator=(const Config &) = delete;
+  Config &operator=(Config &&) = delete;
+
   void set_include_paths(std::vector<std::string> paths);
   const std::vector<std::string> get_include_paths() const;
 
