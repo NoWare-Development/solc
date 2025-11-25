@@ -8,6 +8,8 @@ static std::string asttype_to_string(ASTType type);
 
 std::string AST::to_string() const
 {
+  // Recursively loop through all children in AST
+  // and format output accordingly.
   std::string out{};
 
   if (_depth > 0) {

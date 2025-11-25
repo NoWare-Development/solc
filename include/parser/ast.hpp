@@ -7,6 +7,7 @@
 namespace solc
 {
 
+// Helper enum that indicates in which group AST type sits in.
 enum class ASTGroup : uint8_t {
   NONE = 0,
   STMT,
@@ -26,6 +27,7 @@ enum class ASTGroup : uint8_t {
 };
 
 #define __AST_DEF(group, id) (((uint8_t)(group) & 0xFF) << 8) | ((id) & 0xFF)
+// AST types
 enum struct ASTType : uint16_t {
   ERR = __AST_DEF(ASTGroup::NONE, 0),
 
@@ -146,11 +148,13 @@ enum struct ASTType : uint16_t {
 };
 #undef __AST_DEF
 
+// Returns group in which AST type sits in.
 static constexpr ASTGroup get_ast_group(ASTType type)
 {
   return static_cast<ASTGroup>((static_cast<uint16_t>(type) >> 8) & 0xFF);
 }
 
+// Returns index in group in which AST type sits in.
 static constexpr size_t get_ast_index_in_group(ASTType type)
 {
   return static_cast<uint16_t>(type) & 0xFF;
@@ -174,14 +178,19 @@ struct AST {
   std::vector<AST> children{};
   ASTType type{ ASTType::NONE };
 
+  // Turns AST into a string
   std::string to_string() const;
 
+  // Checks if AST has no children.
   bool is_empty() const;
 
   private:
-  size_t _depth{};
+  size_t _depth{}; // AST's depth (used in `to_string' method)
 
+  // Sets AST's depth.
   void set_depth(size_t depth);
+
+  // Appends children to AST.
   AST *append(AST child);
 };
 
