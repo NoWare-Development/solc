@@ -3,12 +3,12 @@
 namespace solc
 {
 
-void Config::set_include_paths(std::vector<std::string> paths)
+void Config::set_include_paths(const std::vector<std::string> &paths)
 {
   _include_paths = std::move(paths);
 }
 
-const std::vector<std::string> Config::get_include_paths() const
+const std::vector<std::string> &Config::get_include_paths() const
 {
   return _include_paths;
 }
@@ -18,7 +18,7 @@ void Config::set_link_lib_search_paths(std::vector<std::string> paths)
   _link_lib_search_paths = std::move(paths);
 }
 
-const std::vector<std::string> Config::get_link_lib_search_paths() const
+const std::vector<std::string> &Config::get_link_lib_search_paths() const
 {
   return _link_lib_search_paths;
 }
@@ -43,12 +43,12 @@ size_t Config::get_optimization_level() const
   return _optimization_level;
 }
 
-void Config::set_compiler_flag(Config::CompilerFlag flag)
+void Config::set_compiler_flags(Config::CompilerFlags flags)
 {
-  _compiler_flags |= static_cast<uint32_t>(flag);
+  _compiler_flags = flags;
 }
 
-uint32_t Config::get_compiler_flags() const
+Config::CompilerFlags Config::get_compiler_flags() const
 {
   return _compiler_flags;
 }
@@ -63,19 +63,20 @@ Config::CompilerAction Config::get_compiler_action() const
   return _compiler_action;
 }
 
-void Config::set_output_arch(OutputArch arch)
+void Config::set_machine_arch(MachineArch arch)
 {
-  _output_arch = arch;
+  _machine_arch = arch;
 }
 
-Config::OutputArch Config::get_output_arch() const
+Config::MachineArch Config::get_machine_arch() const
 {
-  return _output_arch;
+  return _machine_arch;
 }
 
-Config::OutputArch Config::get_default_arch() const
+Config::MachineArch Config::get_default_machine_arch() const
 {
-  return OutputArch::ARCH_AMD64;
+  // TODO: other architectures
+  return MachineArch::ARCH_AMD64;
 }
 
 }

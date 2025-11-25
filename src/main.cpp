@@ -10,7 +10,7 @@
 #include <sstream>
 
 static void handle_arguments(ArgParser &argparser);
-static void get_arch(ArgParser &argparser);
+static void get_arch(const ArgParser &argparser);
 
 int main(int argc, char **argv)
 {
@@ -77,65 +77,57 @@ int main(int argc, char **argv)
 
 static void handle_arguments(ArgParser &argparser)
 {
+  auto cfg = &solc::Config::the();
+
   auto optlevel = argparser.get_argument_value<size_t>("opt");
-  solc::Config::the().set_optimization_level(optlevel);
+  cfg->set_optimization_level(optlevel);
 
   auto includes = argparser.get_argument_value_list<std::string>("include");
-  solc::Config::the().set_include_paths(includes);
+  cfg->set_include_paths(includes);
 
   auto libpaths = argparser.get_argument_value_list<std::string>("libpath");
-  solc::Config::the().set_link_lib_search_paths(libpaths);
+  cfg->set_link_lib_search_paths(libpaths);
 
   auto libs = argparser.get_argument_value_list<std::string>("linkwith");
-  solc::Config::the().set_link_libs(libs);
+  cfg->set_link_libs(libs);
 
-  auto has_nostdlib = argparser.has_argument("nostdlib");
-  if (has_nostdlib) {
-    solc::Config::the().set_compiler_flag(
-      solc::Config::CompilerFlag::COMPILER_FLAG_NOSTDLIB);
+  // Get compiler flags
+  solc::Config::CompilerFlags flags = solc::Config::COMPILER_FLAG_NONE;
+
+  if (argparser.has_argument("nostdlib")) {
+    flags |= solc::Config::COMPILER_FLAG_NOSTDLIB;
+  }
+  if (argparser.has_argument("freestanding")) {
+    flags |= solc::Config::COMPILER_FLAG_FREESTANDING;
   }
 
-  auto has_freestanding = argparser.has_argument("freestanding");
-  if (has_freestanding) {
-    solc::Config::the().set_compiler_flag(
-      solc::Config::CompilerFlag::COMPILER_FLAG_FREESTANDING);
-  }
+  cfg->set_compiler_flags(flags);
 
-  // Get arch
   get_arch(argparser);
 }
 
-static void get_arch(ArgParser &argparser)
+static void get_arch(const ArgParser &argparser)
 {
   bool arch_set = false;
 
-  auto arch_x86 = argparser.has_argument("mi386");
-  if (arch_x86) {
-    solc::Config::the().set_output_arch(solc::Config::OutputArch::ARCH_X86);
+  if (argparser.has_argument("mi386")) {
+    solc::Config::the().set_machine_arch(solc::Config::MachineArch::ARCH_X86);
     arch_set = true;
   }
-
-  auto arch_x64 = argparser.has_argument("mamd64");
-  if (arch_x64) {
+  if (argparser.has_argument("mamd64")) {
     if (arch_set) {
       std::cout << "Argument -mamd64 will override previously set target "
                    "architecture option.\n";
     }
-    solc::Config::the().set_output_arch(solc::Config::OutputArch::ARCH_AMD64);
+    solc::Config::the().set_machine_arch(solc::Config::MachineArch::ARCH_AMD64);
     arch_set = true;
   }
-
-  auto arch_arm64 = argparser.has_argument("marm64");
-  if (arch_arm64) {
+  if (argparser.has_argument("marm64")) {
     if (arch_set) {
       std::cout << "Argument -marm64 will override previously set target "
                    "architecture option.\n";
     }
-    solc::Config::the().set_output_arch(solc::Config::OutputArch::ARCH_ARM64);
+    solc::Config::the().set_machine_arch(solc::Config::MachineArch::ARCH_ARM64);
     arch_set = true;
-  }
-
-  if (!arch_set) {
-    solc::Config::the().set_output_arch(solc::Config::the().get_default_arch());
   }
 }
