@@ -404,6 +404,7 @@ class Parser {
     "const",
     "inline",
     "persist",
+    "local",
   };
 
   const std::unordered_map<std::string, AST (Parser::*)()> _top_parse_methods = {

@@ -136,7 +136,7 @@ testFunc :: () -> void {
 
 const funcPtrArray: (arg: int)[];
 
-testFunc2 :: () {
+local testFunc2 :: () {
   module1::module2::symbol;
   module1::struct1.field;
 
@@ -148,7 +148,7 @@ testFunc2 :: () {
   vector_var: Vector<int>;
   vector_var.destroy();
 
-  local persist x: int = 5;
+  persist x: int = 5;
 
   return {};
 }
