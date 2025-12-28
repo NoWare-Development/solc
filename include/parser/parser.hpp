@@ -403,7 +403,7 @@ class Parser {
   const std::unordered_set<std::string> _modifiers = {
     "const",
     "inline",
-    "static",
+    "persist",
   };
 
   const std::unordered_map<std::string, AST (Parser::*)()> _top_parse_methods = {

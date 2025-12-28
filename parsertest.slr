@@ -148,6 +148,8 @@ testFunc2 :: () {
   vector_var: Vector<int>;
   vector_var.destroy();
 
+  local persist x: int = 5;
+
   return {};
 }
 
