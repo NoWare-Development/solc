@@ -38,7 +38,7 @@ enum struct ASTType : uint16_t {
   TYPEDEF = __AST_DEF(ASTGroup::NONE, 5),
   EXPORTED_FUNC = __AST_DEF(ASTGroup::NONE, 6),
   EXTERN_FUNC = __AST_DEF(ASTGroup::NONE, 7),
-  MODIFIER = __AST_DEF(ASTGroup::NONE, 8),
+  QUALIFIER = __AST_DEF(ASTGroup::NONE, 8),
   NONE = __AST_DEF(ASTGroup::NONE, 9),
   LABEL = __AST_DEF(ASTGroup::NONE, 10),
   VARIADIC = __AST_DEF(ASTGroup::NONE, 11),

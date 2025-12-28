@@ -171,9 +171,9 @@ TokenType Parser::peek(size_t pos) const
   return _tokens.at(pos).type;
 }
 
-bool Parser::is_modifier(const std::string &str) const
+bool Parser::is_qualifier(const std::string &str) const
 {
-  return _modifiers.find(str) != _modifiers.end();
+  return _qualifiers.find(str) != _qualifiers.end();
 }
 
 bool Parser::is_operator(TokenType type) const

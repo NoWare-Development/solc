@@ -18,8 +18,8 @@ AST Parser::parse_function_argument()
     return out;
   }
 
-  if (cur.type == TokenType::ID && is_modifier(cur.value)) {
-    AST modifier_arg(_pos++, ASTType::MODIFIER, cur.value);
+  if (cur.type == TokenType::ID && is_qualifier(cur.value)) {
+    AST modifier_arg(_pos++, ASTType::QUALIFIER, cur.value);
     auto argument = parse_function_argument();
     modifier_arg.append(argument);
     return modifier_arg;
