@@ -318,7 +318,7 @@ class Parser {
 
   TokenType peek(size_t pos) const;
 
-  bool is_modifier(const std::string &str) const;
+  bool is_qualifier(const std::string &str) const;
 
   bool is_operator(TokenType type) const;
   bool is_binary_operator(TokenType type) const;
@@ -400,10 +400,11 @@ class Parser {
     TokenType::NUMOCT, TokenType::NUMFLOAT,
   };
 
-  const std::unordered_set<std::string> _modifiers = {
+  const std::unordered_set<std::string> _qualifiers = {
     "const",
     "inline",
-    "static",
+    "persist",
+    "local",
   };
 
   const std::unordered_map<std::string, AST (Parser::*)()> _top_parse_methods = {

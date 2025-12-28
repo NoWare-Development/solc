@@ -44,7 +44,7 @@ AST Parser::parse_statement()
     // What is this syntax, bro, I'm crying...
     if (_stmt_parse_methods.find(cur.value) != _stmt_parse_methods.end()) {
       return (this->*_stmt_parse_methods.at(cur.value))();
-    } else if (is_modifier(cur.value)) {
+    } else if (is_qualifier(cur.value)) {
       return parse_decldef();
     }
 

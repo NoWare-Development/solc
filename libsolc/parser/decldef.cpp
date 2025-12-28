@@ -8,8 +8,8 @@ namespace solc
 AST Parser::parse_decldef()
 {
   auto cur = _tokens.at(_pos);
-  if (cur.type == TokenType::ID && is_modifier(cur.value)) {
-    AST modifier_decldef(_pos++, ASTType::MODIFIER, cur.value);
+  if (cur.type == TokenType::ID && is_qualifier(cur.value)) {
+    AST modifier_decldef(_pos++, ASTType::QUALIFIER, cur.value);
     auto underlying_decldef = parse_decldef();
     modifier_decldef.append(underlying_decldef);
     return modifier_decldef;

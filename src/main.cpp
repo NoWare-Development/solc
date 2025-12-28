@@ -9,8 +9,9 @@
 #include <parser/parser.hpp>
 #include <sstream>
 
-static void handle_arguments(ArgParser &argparser);
+static void handle_arguments(const ArgParser &argparser);
 static void get_arch(const ArgParser &argparser);
+static void get_action(const ArgParser &argparser);
 
 int main(int argc, char **argv)
 {
@@ -75,7 +76,7 @@ int main(int argc, char **argv)
   return 0;
 }
 
-static void handle_arguments(ArgParser &argparser)
+static void handle_arguments(const ArgParser &argparser)
 {
   auto cfg = &solc::Config::the();
 
@@ -104,6 +105,7 @@ static void handle_arguments(ArgParser &argparser)
   cfg->set_compiler_flags(flags);
 
   get_arch(argparser);
+  get_action(argparser);
 }
 
 static void get_arch(const ArgParser &argparser)
@@ -129,5 +131,45 @@ static void get_arch(const ArgParser &argparser)
     }
     solc::Config::the().set_machine_arch(solc::Config::MachineArch::ARCH_ARM64);
     arch_set = true;
+  }
+}
+
+static void get_action(const ArgParser &argparser)
+{
+  auto selected_action =
+    solc::Config::CompilerAction::COMPILE_AND_LINK_EXECUTABLE;
+
+  bool selected = false;
+  if (argparser.has_argument("shared")) {
+    selected_action = solc::Config::CompilerAction::COMPILE_AND_LINK_SHARED;
+    selected = true;
+  }
+  if (argparser.has_argument("static")) {
+    selected_action = solc::Config::CompilerAction::COMPILE_AND_LINK_STATIC;
+    if (selected) {
+      std::cout << "Argument -static will override previous compiler action\n";
+    }
+    selected = true;
+  }
+  if (argparser.has_argument("C")) {
+    selected_action = solc::Config::CompilerAction::COMPILE;
+    if (selected) {
+      std::cout << "Argument -C will override previous compiler action\n";
+    }
+    selected = true;
+  }
+  if (argparser.has_argument("ir")) {
+    selected_action = solc::Config::CompilerAction::GET_IR;
+    if (selected) {
+      std::cout << "Argument -ir will override previous compiler action\n";
+    }
+    selected = true;
+  }
+  if (argparser.has_argument("S")) {
+    selected_action = solc::Config::CompilerAction::GET_ASSEMBLY;
+    if (selected) {
+      std::cout << "Argument -S will override previous compiler action\n";
+    }
+    selected = true;
   }
 }
