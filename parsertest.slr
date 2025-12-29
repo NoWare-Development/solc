@@ -150,6 +150,8 @@ local testFunc2 :: () {
 
   persist x: int = 5;
 
+  test: Vector<TestStruct<int>> = {};
+
   return {};
 }
 

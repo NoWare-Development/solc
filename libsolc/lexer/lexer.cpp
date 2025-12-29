@@ -88,133 +88,40 @@ std::vector<Token> Lexer::tokenize(const std::string &src)
     }
 
     case '<': {
-      char n1 = peek(_pos + 1);
-      if (n1 == '=') {
-        out.push_back(gen_token(2, _pos + 1, TokenType::LTHANEQ, "<="));
-        _pos += 2;
-        continue;
-      } else if (n1 == '<') {
-        char n2 = peek(_pos + 2);
-        if (n2 == '=') {
-          out.push_back(gen_token(3, _pos + 2, TokenType::SHLEQ, "<<="));
-          _pos += 3;
-          continue;
-        }
-        out.push_back(gen_token(2, _pos + 1, TokenType::SHL, "<<"));
-        _pos += 2;
-        continue;
-      } else if (n1 == '-') {
-        out.push_back(gen_token(2, _pos + 1, TokenType::LARROW, "<-"));
-        _pos += 2;
-        continue;
-      }
       out.push_back(gen_token(1, _pos, TokenType::LTHAN, "<"));
       break;
     }
     case '>': {
-      char n1 = peek(_pos + 1);
-      if (n1 == '=') {
-        out.push_back(gen_token(2, _pos + 1, TokenType::GTHANEQ, ">="));
-        _pos += 2;
-        continue;
-      } else if (n1 == '>') {
-        char n2 = peek(_pos + 2);
-        if (n2 == '=') {
-          out.push_back(gen_token(3, _pos + 2, TokenType::SHREQ, ">>="));
-          _pos += 3;
-          continue;
-        }
-        out.push_back(gen_token(2, _pos + 1, TokenType::SHR, ">>"));
-        _pos += 2;
-        continue;
-      }
       out.push_back(gen_token(1, _pos, TokenType::GTHAN, ">"));
       break;
     }
 
     case '+': {
-      char n1 = peek(_pos + 1);
-      if (n1 == '=') {
-        out.push_back(gen_token(2, _pos + 1, TokenType::ADDEQ, "+="));
-        _pos += 2;
-        continue;
-      }
       out.push_back(gen_token(1, _pos, TokenType::ADD, "+"));
       break;
     }
     case '-': {
-      char n1 = peek(_pos + 1);
-      if (n1 == '>') {
-        out.push_back(gen_token(2, _pos + 1, TokenType::RARROW, "->"));
-        _pos += 2;
-        continue;
-      } else if (n1 == '=') {
-        out.push_back(gen_token(2, _pos + 1, TokenType::SUBEQ, "-="));
-        _pos += 2;
-        continue;
-      }
       out.push_back(gen_token(1, _pos, TokenType::SUB, "-"));
       break;
     }
     case '*': {
-      char n1 = peek(_pos + 1);
-      if (n1 == '=') {
-        out.push_back(gen_token(2, _pos + 1, TokenType::MULEQ, "*="));
-        _pos += 2;
-        continue;
-      }
       out.push_back(gen_token(1, _pos, TokenType::MUL, "*"));
       break;
     }
     case '/': {
-      char n1 = peek(_pos + 1);
-      if (n1 == '/' || n1 == '*') {
-        skip_comments();
-        continue;
-      } else if (n1 == '=') {
-        out.push_back(gen_token(2, _pos + 1, TokenType::DIVEQ, "/="));
-        _pos += 2;
-        continue;
-      }
       out.push_back(gen_token(1, _pos, TokenType::DIV, "/"));
       break;
     }
     case '%': {
-      char n1 = peek(_pos + 1);
-      if (n1 == '=') {
-        out.push_back(gen_token(2, _pos + 1, TokenType::MODEQ, "%="));
-        _pos += 2;
-        continue;
-      }
       out.push_back(gen_token(1, _pos, TokenType::MOD, "%"));
       break;
     }
 
     case '&': {
-      char n1 = peek(_pos + 1);
-      if (n1 == '&') {
-        out.push_back(gen_token(2, _pos + 1, TokenType::AND, "&&"));
-        _pos += 2;
-        continue;
-      } else if (n1 == '=') {
-        out.push_back(gen_token(2, _pos + 1, TokenType::BANDEQ, "&="));
-        _pos += 2;
-        continue;
-      }
       out.push_back(gen_token(1, _pos, TokenType::BAND, "&"));
       break;
     }
     case '|': {
-      char n1 = peek(_pos + 1);
-      if (n1 == '|') {
-        out.push_back(gen_token(2, _pos + 1, TokenType::OR, "||"));
-        _pos += 2;
-        continue;
-      } else if (n1 == '=') {
-        out.push_back(gen_token(2, _pos + 1, TokenType::BOREQ, "|="));
-        _pos += 2;
-        continue;
-      }
       out.push_back(gen_token(1, _pos, TokenType::BOR, "|"));
       break;
     }
@@ -223,34 +130,16 @@ std::vector<Token> Lexer::tokenize(const std::string &src)
       break;
     }
     case '^': {
-      char n1 = peek(_pos + 1);
-      if (n1 == '=') {
-        out.push_back(gen_token(2, _pos + 1, TokenType::BXOREQ, "^="));
-        _pos += 2;
-        continue;
-      }
       out.push_back(gen_token(1, _pos, TokenType::BXOR, "^"));
       break;
     }
 
     case '=': {
-      char n1 = peek(_pos + 1);
-      if (n1 == '=') {
-        out.push_back(gen_token(2, _pos + 1, TokenType::EQEQ, "=="));
-        _pos += 2;
-        continue;
-      }
       out.push_back(gen_token(1, _pos, TokenType::EQ, "="));
       break;
     }
 
     case '!': {
-      char n1 = peek(_pos + 1);
-      if (n1 == '=') {
-        out.push_back(gen_token(2, _pos + 1, TokenType::NOTEQ, "!="));
-        _pos += 2;
-        continue;
-      }
       out.push_back(gen_token(1, _pos, TokenType::NOT, "!"));
       break;
     }
@@ -261,12 +150,6 @@ std::vector<Token> Lexer::tokenize(const std::string &src)
     }
 
     case ':': {
-      char n1 = peek(_pos + 1);
-      if (n1 == ':') {
-        out.push_back(gen_token(2, _pos + 1, TokenType::DCOLON, "::"));
-        _pos += 2;
-        continue;
-      }
       out.push_back(gen_token(1, _pos, TokenType::COLON, ":"));
       break;
     }
@@ -541,9 +424,18 @@ bool Lexer::is_char_of_id(char c) const
 }
 
 Token Lexer::gen_token(size_t len, size_t end, TokenType type,
+                       bool has_whitespace_after,
                        const std::string &value) const
 {
-  return Token(_line, end - _llp, len, type, value);
+  return Token(_line, end - _llp, len, type, has_whitespace_after, value);
+}
+
+Token Lexer::gen_token(size_t len, size_t end, TokenType type,
+                       const std::string &value) const
+{
+  bool has_whitespace_after = _src.length() <= _pos + 1 ||
+                              isspace(_src.at(_pos + 1));
+  return Token(_line, end - _llp, len, type, has_whitespace_after, value);
 }
 
 char Lexer::peek(size_t pos) const

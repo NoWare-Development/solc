@@ -1,6 +1,6 @@
 subdir('config')
 subdir('lexer')
-subdir('parser')
+#subdir('parser')
 
 libsolc_src += [
   'libsolc/util.cpp',

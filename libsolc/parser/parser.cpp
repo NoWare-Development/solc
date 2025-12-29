@@ -1,7 +1,9 @@
 #include "parser/parser.hpp"
+#include "lexer/token.hpp"
 #include "parser/ast.hpp"
 #include <algorithm>
 #include <cstdint>
+#include <iostream>
 #include <string>
 #include <utility>
 

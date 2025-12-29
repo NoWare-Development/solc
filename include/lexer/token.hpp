@@ -29,14 +29,10 @@ enum class TokenType {
   LBRACE, // Left (open) curly brace: {
   RBRACE, // Right (close) curly brace: }
 
-  LARROW, // Left arrow: <-
-  RARROW, // Right arrow: ->
-
   LTHAN, // Less than symbol: <
   GTHAN, // Greater than symbol: >
 
   COLON, // Colon: :
-  DCOLON, // Double colon: ::
 
   SEMI, // Semicolon: ;
 
@@ -48,55 +44,37 @@ enum class TokenType {
   BXOR, // Binary xor: ^
   BNOT, // Binary not: ~
 
-  AND, // Boolean and: &&
-  OR, // Boolean or: ||
   NOT, // Boolean not: !
   QUE, // Question mark: ?
-
-  LTHANEQ, // Less than or equal: <=
-  GTHANEQ, // Greater than or equal: >=
-  NOTEQ, // Not equal: !=
 
   ADD, // Addition: +
   SUB, // Subtraction: -
   MUL, // Multiplication: *
   DIV, // Division: /
   MOD, // Module: %
-  SHL, // Shift left: <<
-  SHR, // Shift right: >>
 
   EQ, // Assignment: =
-  ADDEQ, // Addition assignment: +=
-  SUBEQ, // Subtraction assignment: -=
-  MULEQ, // Multiplication assignment: *=
-  DIVEQ, // Division assignment: /=
-  MODEQ, // Module assignment: %=
-  BANDEQ, // Binary and assignment: &=
-  BOREQ, // Binary or assignment: |=
-  BXOREQ, // Binary xor assignment: ^=
-  SHLEQ, // Shift left assignment: <<=
-  SHREQ, // Shift right assignment: >>=
-
-  EQEQ, // Comparison (double equal): ==
 
   AT, // At (label marker): @
   HASH, // Hashtag: #
 };
 
 struct Token {
+  std::string value; // Token value
   size_t line; // Line at which token has occured
   size_t end; // Absolute position of end of token
   size_t len; // Length of token
   TokenType type; // Token type
-  std::string value; // Token value
+  bool has_whitespace_after;
 
   Token(size_t line, size_t end, size_t len, TokenType type,
-        const std::string &value = "")
-    : line{ line }
+        bool has_whitespace_after, const std::string &value = "")
+    : value{ value }
+    , line{ line }
     , end{ end }
     , len{ len }
     , type{ type }
-    , value{ value }
+    , has_whitespace_after(has_whitespace_after)
   {
   }
   Token() = default;

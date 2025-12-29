@@ -38,6 +38,9 @@ class Lexer {
 
   // Generates token.
   Token gen_token(size_t len, size_t end, TokenType type,
+                  bool has_whitespace_after,
+                  const std::string &value = "") const;
+  Token gen_token(size_t len, size_t end, TokenType type,
                   const std::string &value = "") const;
 
   // Peeks into a position in sources.
