@@ -109,6 +109,11 @@ std::vector<Token> Lexer::tokenize(const std::string &src)
       break;
     }
     case '/': {
+      if (char next = peek(_pos + 1); next == '/' || next == '*') {
+        skip_comments();
+        continue;
+      }
+
       out.push_back(gen_token(1, _pos, TokenType::DIV, "/"));
       break;
     }
@@ -424,17 +429,10 @@ bool Lexer::is_char_of_id(char c) const
 }
 
 Token Lexer::gen_token(size_t len, size_t end, TokenType type,
-                       bool has_whitespace_after,
                        const std::string &value) const
 {
-  return Token(_line, end - _llp, len, type, has_whitespace_after, value);
-}
-
-Token Lexer::gen_token(size_t len, size_t end, TokenType type,
-                       const std::string &value) const
-{
-  bool has_whitespace_after = _src.length() <= _pos + 1 ||
-                              isspace(_src.at(_pos + 1));
+  bool has_whitespace_after = end + 1 >= _src.length() ||
+                              isspace(_src.at(end + 1));
   return Token(_line, end - _llp, len, type, has_whitespace_after, value);
 }
 
