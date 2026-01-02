@@ -50,16 +50,22 @@ AST Parser::parse_statement()
 
     auto next = peek(_pos + 1);
     switch (next) {
-    case TokenType::DCOLON:
-      // Check if statement is function declaration/definition.
-      // If not, it is access from other module and should be treated as
-      // expression statement.
-      next = peek(_pos + 2);
-      if (next != TokenType::LPAREN) {
-        break;
+    case TokenType::COLON: {
+      auto peeked_tok = peek_token(_pos + 2);
+      if (!cur.has_whitespace_after && peeked_tok != nullptr &&
+          peeked_tok->type == TokenType::COLON) {
+        // Check if statement is function declaration/definition.
+        // If not, it is access from other module and should be treated as
+        // expression statement.
+        next = peek(_pos + 3);
+        if (next != TokenType::LPAREN) {
+          break;
+        }
+      } else {
+        return parse_decldef();
       }
-    case TokenType::COLON:
-      return parse_decldef();
+    } break;
+
     default:
       break;
     }
@@ -104,8 +110,12 @@ AST Parser::parse_expression_statement_or_generic_func_or_namespace()
           break;
 
         case TokenType::GTHAN: {
-          if (peek(pos + 1) == TokenType::DCOLON) {
-            auto next = peek(pos + 2);
+          auto peeked_1 = peek_token(pos + 1);
+          auto peeked_2 = peek(pos + 2);
+
+          if (peeked_1 != nullptr && peeked_1->type == TokenType::COLON &&
+              !peeked_1->has_whitespace_after && peeked_2 == TokenType::COLON) {
+            auto next = peek(pos + 3);
             if (next == TokenType::LPAREN) {
               return parse_generic_function();
             } else if (next == TokenType::ID) {
@@ -114,10 +124,10 @@ AST Parser::parse_expression_statement_or_generic_func_or_namespace()
               generic_namespace.append(symbol);
               return generic_namespace;
             } else if (next == TokenType::ERR) {
-              add_error(ParserError::Type::EXPECTED, _pos + 2);
+              add_error(ParserError::Type::EXPECTED, _pos + 3);
               return {};
             } else {
-              add_error(ParserError::Type::UNEXPECTED, _pos + 2);
+              add_error(ParserError::Type::UNEXPECTED, _pos + 3);
               return {};
             }
           } else {

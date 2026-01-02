@@ -30,6 +30,15 @@
       return {};                                        \
     }                                                   \
   }
+
+#define VERIFY_WHITESPACE(pos, got, expected, expected_after)     \
+  {                                                               \
+    if (!verify_whitespace(pos, got, expected, expected_after)) { \
+      dbglog("ERROR <UNEXPECTED(whitespace)> {}", __LINE__);      \
+      return {};                                                  \
+    }                                                             \
+  }
+
 #else
 #define VERIFY_POS(pos)     \
   {                         \

@@ -45,56 +45,235 @@ AST Parser::parse_expression_tree(bool toplevel)
 {
   AST expr_tree(_pos, ASTType::EXPR);
 
-  TokenType prev{ TokenType::ERR };
+  ASTType prev{ ASTType::ERR };
   while (_pos < _tokens.size()) {
-    auto cur = peek(_pos);
+    auto cur = _tokens.at(_pos);
+
+    ASTType cur_ast;
 
     // Prefix operators
-    if ((prev == TokenType::ERR || is_operator(prev)) &&
-        is_prefix_operator(cur)) {
-      expr_tree.append(AST(_pos++, _prefix_operators.at(cur)));
-      prev = cur;
+    if ((prev == ASTType::ERR || is_operator(prev)) &&
+        is_prefix_operator(cur.type)) {
+      cur_ast = _prefix_operators.at(cur.type);
+      expr_tree.append(AST(_pos++, cur_ast));
+      prev = cur_ast;
       continue;
     }
 
     // Operators
-    else if (!is_operator(prev) && prev != TokenType::ERR) {
-      // Binary operators
-      if (is_binary_operator(cur)) {
-        expr_tree.append(AST(_pos++, _binary_operators.at(cur)));
-        prev = cur;
+    else if (!is_operator(prev) && prev != ASTType::ERR) {
+      if (!cur.has_whitespace_after) {
+        // == != >= <=
+        // += -= *= /= %= &= |= ^=
+        if (peek(_pos + 1) == TokenType::EQ) {
+          switch (cur.type) {
+          // Compare operators (except < and >)
+          case TokenType::NOT: { // !=
+            cur_ast = ASTType::EXPR_COMPARE_OPERATOR_NOTEQ;
+            expr_tree.append(AST(_pos, cur_ast));
+            _pos += 2;
+            prev = cur_ast;
+            continue;
+          }
+          case TokenType::EQ: { // ==
+            cur_ast = ASTType::EXPR_COMPARE_OPERATOR_EQ;
+            expr_tree.append(AST(_pos, cur_ast));
+            _pos += 2;
+            prev = cur_ast;
+            continue;
+          }
+          case TokenType::GTHAN: { // >=
+            cur_ast = ASTType::EXPR_COMPARE_OPERATOR_GTHANEQ;
+            expr_tree.append(AST(_pos, cur_ast));
+            _pos += 2;
+            prev = cur_ast;
+            continue;
+          }
+          case TokenType::LTHAN: { // <=
+            cur_ast = ASTType::EXPR_COMPARE_OPERATOR_LTHANEQ;
+            expr_tree.append(AST(_pos, cur_ast));
+            _pos += 2;
+            prev = cur_ast;
+            continue;
+          }
+
+          // Assign operators (except =, >>= and <<=)
+          case TokenType::ADD: { // +=
+            cur_ast = ASTType::EXPR_ASSIGN_OPERATOR_ADDEQ;
+            expr_tree.append(AST(_pos, cur_ast));
+            _pos += 2;
+            prev = cur_ast;
+            continue;
+          }
+          case TokenType::SUB: { // -=
+            cur_ast = ASTType::EXPR_ASSIGN_OPERATOR_SUBEQ;
+            expr_tree.append(AST(_pos, cur_ast));
+            _pos += 2;
+            prev = cur_ast;
+            continue;
+          }
+          case TokenType::MUL: { // *=
+            cur_ast = ASTType::EXPR_ASSIGN_OPERATOR_MULEQ;
+            expr_tree.append(AST(_pos, cur_ast));
+            _pos += 2;
+            prev = cur_ast;
+            continue;
+          }
+          case TokenType::DIV: { // /=
+            cur_ast = ASTType::EXPR_ASSIGN_OPERATOR_DIVEQ;
+            expr_tree.append(AST(_pos, cur_ast));
+            _pos += 2;
+            prev = cur_ast;
+            continue;
+          }
+          case TokenType::MOD: { // %=
+            cur_ast = ASTType::EXPR_ASSIGN_OPERATOR_MODEQ;
+            expr_tree.append(AST(_pos, cur_ast));
+            _pos += 2;
+            prev = cur_ast;
+            continue;
+          }
+          case TokenType::BAND: { // &=
+            cur_ast = ASTType::EXPR_ASSIGN_OPERATOR_ANDEQ;
+            expr_tree.append(AST(_pos, cur_ast));
+            _pos += 2;
+            prev = cur_ast;
+            continue;
+          }
+          case TokenType::BOR: { // |=
+            cur_ast = ASTType::EXPR_ASSIGN_OPERATOR_OREQ;
+            expr_tree.append(AST(_pos, cur_ast));
+            _pos += 2;
+            prev = cur_ast;
+            continue;
+          }
+          case TokenType::BXOR: { // ^=
+            cur_ast = ASTType::EXPR_ASSIGN_OPERATOR_XOREQ;
+            expr_tree.append(AST(_pos, cur_ast));
+            _pos += 2;
+            prev = cur_ast;
+            continue;
+          }
+
+          // Neither of those
+          default:
+            break;
+          }
+        }
+
+        auto peeked_token = peek_token(_pos + 1);
+        if (peeked_token != nullptr && peeked_token->type == cur.type) {
+          // >>= <<=
+          if (!peeked_token->has_whitespace_after) {
+            switch (cur.type) {
+            case TokenType::GTHAN: { // >>=
+              cur_ast = ASTType::EXPR_ASSIGN_OPERATOR_SHREQ;
+              expr_tree.append(AST(_pos, cur_ast));
+              _pos += 3;
+              prev = cur_ast;
+              continue;
+            }
+            case TokenType::LTHAN: { // <<=
+              cur_ast = ASTType::EXPR_ASSIGN_OPERATOR_SHLEQ;
+              expr_tree.append(AST(_pos, cur_ast));
+              _pos += 3;
+              prev = cur_ast;
+              continue;
+            }
+
+            default:
+              break;
+            }
+          }
+
+          // && || << >>
+          switch (cur.type) {
+            // Compare operators
+          case TokenType::BAND: { // &&
+            cur_ast = ASTType::EXPR_BOOLEAN_OPERATOR_AND;
+            expr_tree.append(AST(_pos, cur_ast));
+            _pos += 2;
+            prev = cur_ast;
+            continue;
+          }
+          case TokenType::BOR: { // ||
+            cur_ast = ASTType::EXPR_BOOLEAN_OPERATOR_OR;
+            expr_tree.append(AST(_pos, cur_ast));
+            _pos += 2;
+            prev = cur_ast;
+            continue;
+          }
+
+          // Binary operators (<< >>)
+          case TokenType::LTHAN: { // <<
+            cur_ast = ASTType::EXPR_BINARY_OPERATOR_SHL;
+            expr_tree.append(AST(_pos, cur_ast));
+            _pos += 2;
+            prev = cur_ast;
+            continue;
+          }
+          case TokenType::GTHAN: { // >>
+            cur_ast = ASTType::EXPR_BINARY_OPERATOR_SHR;
+            expr_tree.append(AST(_pos, cur_ast));
+            _pos += 2;
+            prev = cur_ast;
+            continue;
+          }
+
+          default:
+            break;
+          }
+        }
+      }
+
+      switch (cur.type) {
+      // Remaining compare operators
+      case TokenType::LTHAN: { // <
+        cur_ast = ASTType::EXPR_COMPARE_OPERATOR_LTHAN;
+        expr_tree.append(AST(_pos, cur_ast));
+        _pos += 1;
+        prev = cur_ast;
+        continue;
+      }
+      case TokenType::GTHAN: { // >
+        cur_ast = ASTType::EXPR_COMPARE_OPERATOR_GTHAN;
+        expr_tree.append(AST(_pos, cur_ast));
+        _pos += 1;
+        prev = cur_ast;
         continue;
       }
 
-      // Compare operators
-      else if (is_compare_operator(cur)) {
-        expr_tree.append(AST(_pos++, _compare_operators.at(cur)));
-        prev = cur;
+        // Eq
+      case TokenType::EQ: { // =
+        cur_ast = ASTType::EXPR_ASSIGN_OPERATOR_EQ;
+        expr_tree.append(AST(_pos, cur_ast));
+        _pos += 1;
+        prev = cur_ast;
         continue;
       }
 
-      else if (is_boolean_operator(cur)) {
-        expr_tree.append(AST(_pos++, _boolean_operators.at(cur)));
-        prev = cur;
-        continue;
+      default:
+        break;
       }
 
-      // Assignment operators
-      else if (is_assign_operator(cur) && toplevel) {
-        expr_tree.append(AST(_pos++, _assign_operators.at(cur)));
-        prev = cur;
+      // Remaining binary operators
+      if (is_binary_operator(cur.type)) {
+        cur_ast = _binary_operators.at(cur.type);
+        expr_tree.append(AST(_pos, cur_ast));
+        _pos += 1;
+        prev = cur_ast;
         continue;
       }
     }
 
-    else if (is_operator(prev) || prev == TokenType::ERR) {
-      if (cur == TokenType::ID // Identifier
-          || cur == TokenType::LPAREN // Nested expression
-          || cur == TokenType::STRING || cur == TokenType::SYMBOL ||
-          is_numeric_token(cur)) {
+    else if (is_operator(prev) || prev == ASTType::ERR) {
+      if (cur.type == TokenType::ID // Identifier
+          || cur.type == TokenType::LPAREN // Nested expression
+          || cur.type == TokenType::STRING || cur.type == TokenType::SYMBOL ||
+          is_numeric_token(cur.type)) {
         auto operand = parse_expression_operand();
         expr_tree.append(operand);
-        prev = peek(_pos - 1);
+        prev = ASTType::EXPR_OPERAND_VOID;
         continue;
       }
     }
@@ -428,5 +607,4 @@ void Parser::get_binding_power(ASTType op_type, int &l_bp, int &r_bp) const
   l_bp = 0;
   r_bp = 0;
 }
-
 }
