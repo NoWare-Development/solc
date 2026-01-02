@@ -7,7 +7,7 @@ namespace info
 
 // TODO: move me into something like `solcinfo.hpp.in` and preprocess it with
 // meson.
-#define NLC_VERSION "1.0.0"
+#define SOLC_VERSION "1.0.0"
 #define COPYRIGHT_YEAR "2025"
 
 static const char *help_message =
@@ -32,18 +32,18 @@ static const char *help_message =
 
   ;
 
-static const char *version_message = "solc (NLC) " NLC_VERSION "\n"
+static const char *version_message = "solc (SOLC) " SOLC_VERSION "\n"
                                      "Copyright (C) " COPYRIGHT_YEAR
-                                     " NoWare-Development\n";
+                                     " NoWare.Development\n";
 
 void display_help()
 {
-  std::cout << help_message << '\n';
+  std::cout << help_message;
 }
 
 void display_version()
 {
-  std::cout << version_message << '\n';
+  std::cout << version_message;
 }
 
 }
