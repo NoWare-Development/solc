@@ -21,6 +21,14 @@ static const char *help_message =
   "  -linkwith=[libs]  Add libraries to link with\n"
   "  -nostdlib         Disable standard library\n"
   "  -freestanding     Disable runtime\n"
+  "  -mi386            Set target machine architecture to i386 (x86)\n"
+  "  -mamd64           Set target machine architecture to AMD64 (x86_64)\n"
+  "  -marm64           Set target machine architecture to ARM64\n"
+  "  -shared           Compile to shared library\n"
+  "  -static           Compile to static library\n"
+  "  -C                Compile to object file\n"
+  "  -S                Get assembly output\n"
+  "  -ir               Get LLVM-IR\n"
 
   ;
 
