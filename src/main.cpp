@@ -6,7 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include <lexer/lexer.hpp>
-//#include <parser/parser.hpp>
+#include <parser/parser.hpp>
 #include <sstream>
 
 static void handle_arguments(const ArgParser &argparser);
@@ -62,15 +62,14 @@ int main(int argc, char **argv)
       return -3;
     }
 
-    //solc::Parser parser(tokens);
-    //auto root = parser.parse();
-    //std::cout << root.to_string() << '\n';
-    //auto errors = parser.get_errors();
-    //handler.add_parser_errors(errors);
-    //if (!handler.handle_parser_errors())
-    //  return -4;
-    //else if (!handler.handle_invalid_expressions(root))
-    //  return -5;
+    solc::Parser parser(tokens);
+    auto root = parser.parse();
+    std::cout << root.to_string() << '\n';
+    auto errors = parser.get_errors();
+    handler.add_parser_errors(errors);
+    if (!handler.handle_parser_errors() ||
+        !handler.handle_invalid_expressions(root))
+      return -4;
   }
 
   return 0;

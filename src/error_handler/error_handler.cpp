@@ -1,7 +1,7 @@
 #include "error_handler.hpp"
 #include "../util/util.hpp"
 #include "lexer/token.hpp"
-//#include "parser/parser.hpp"
+#include "parser/parser.hpp"
 #include <iostream>
 #include <string>
 
@@ -24,11 +24,11 @@ void ErrorHandler::add_tokens(const std::vector<solc::Token> &tokens)
   _tokens = tokens;
 }
 
-//void ErrorHandler::add_parser_errors(
-//  const std::vector<solc::Parser::ParserError> &errors)
-//{
-//  _parser_errors = errors;
-//}
+void ErrorHandler::add_parser_errors(
+  const std::vector<solc::Parser::ParserError> &errors)
+{
+  _parser_errors = errors;
+}
 
 bool ErrorHandler::handle_tokens() const
 {
@@ -39,64 +39,64 @@ bool ErrorHandler::handle_tokens() const
   return true;
 }
 
-//bool ErrorHandler::handle_parser_errors() const
-//{
-//  if (has_parser_errors()) {
-//    print_parser_errors();
-//    return false;
-//  }
-//
-//  return true;
-//}
+bool ErrorHandler::handle_parser_errors() const
+{
+  if (has_parser_errors()) {
+    print_parser_errors();
+    return false;
+  }
 
-//bool ErrorHandler::handle_invalid_expressions(const solc::AST &root) const
-//{
-//  std::vector<solc::AST> errored_asts{};
-//  collect_invalid_expressions(root, errored_asts);
-//
-//  if (!errored_asts.empty()) {
-//    for (const auto &e : errored_asts) {
-//      if (e.token_position >= _tokens.size())
-//        continue;
-//
-//      const auto &token = _tokens.at(e.token_position);
-//
-//      std::string message = get_message_start(token.line + 1,
-//                                              token.end - token.len + 1,
-//                                              "error", ESCColor::ESCCOLOR_RED,
-//                                              ESCGraphics::ESCGRAPHICS_BOLD);
-//
-//      message += "Expression error: ";
-//      message += e.value;
-//      message += '\n';
-//
-//      message += get_highlighted_token(token, ESCColor::ESCCOLOR_RED,
-//                                       ESCGraphics::ESCGRAPHICS_BOLD);
-//      message += '\n';
-//
-//      std::cout << message;
-//    }
-//    return false;
-//  }
-//
-//  return true;
-//}
+  return true;
+}
 
-//void ErrorHandler::collect_invalid_expressions(const solc::AST &node,
-//                                               std::vector<solc::AST> &v) const
-//{
-//  for (const auto &c : node.children) {
-//    if (c.type == solc::ASTType::EXPR) {
-//      for (const auto &ec : c.children) {
-//        if (ec.type == solc::ASTType::ERR) {
-//          v.push_back(ec);
-//        }
-//      }
-//    }
-//
-//    collect_invalid_expressions(c, v);
-//  }
-//}
+bool ErrorHandler::handle_invalid_expressions(const solc::AST &root) const
+{
+  std::vector<solc::AST> errored_asts{};
+  collect_invalid_expressions(root, errored_asts);
+
+  if (!errored_asts.empty()) {
+    for (const auto &e : errored_asts) {
+      if (e.token_position >= _tokens.size())
+        continue;
+
+      const auto &token = _tokens.at(e.token_position);
+
+      std::string message = get_message_start(token.line + 1,
+                                              token.end - token.len + 1,
+                                              "error", ESCColor::ESCCOLOR_RED,
+                                              ESCGraphics::ESCGRAPHICS_BOLD);
+
+      message += "Expression error: ";
+      message += e.value;
+      message += '\n';
+
+      message += get_highlighted_token(token, ESCColor::ESCCOLOR_RED,
+                                       ESCGraphics::ESCGRAPHICS_BOLD);
+      message += '\n';
+
+      std::cout << message;
+    }
+    return false;
+  }
+
+  return true;
+}
+
+void ErrorHandler::collect_invalid_expressions(const solc::AST &node,
+                                               std::vector<solc::AST> &v) const
+{
+  for (const auto &c : node.children) {
+    if (c.type == solc::ASTType::EXPR) {
+      for (const auto &ec : c.children) {
+        if (ec.type == solc::ASTType::ERR) {
+          v.push_back(ec);
+        }
+      }
+    }
+
+    collect_invalid_expressions(c, v);
+  }
+}
 
 void ErrorHandler::print_errored_tokens() const
 {
@@ -119,12 +119,12 @@ void ErrorHandler::print_errored_tokens() const
   }
 }
 
-//void ErrorHandler::print_parser_errors() const
-//{
-//  for (auto &err : _parser_errors) {
-//    std::cout << get_parser_error(err) << '\n';
-//  }
-//}
+void ErrorHandler::print_parser_errors() const
+{
+  for (auto &err : _parser_errors) {
+    std::cout << get_parser_error(err) << '\n';
+  }
+}
 
 std::string ErrorHandler::get_token_error(const solc::Token &tok) const
 {
@@ -145,33 +145,33 @@ std::string ErrorHandler::get_token_error(const solc::Token &tok) const
   return error_string;
 }
 
-//std::string
-//ErrorHandler::get_parser_error(const solc::Parser::ParserError &err) const
-//{
-//  const std::string error_reason = get_parser_error_reason(err);
-//  std::string error_string{};
-//
-//  if (err.type != solc::Parser::ParserError::Type::UNEXPECTED) {
-//    error_string += get_message_start(_nol, last_line().length(), "error",
-//                                      ESCColor::ESCCOLOR_RED,
-//                                      ESCGraphics::ESCGRAPHICS_BOLD);
-//  } else {
-//    const auto &token = _tokens.at(err.pos);
-//    error_string += get_message_start(token.line + 1, token.end - token.len + 1,
-//                                      "error", ESCColor::ESCCOLOR_RED,
-//                                      ESCGraphics::ESCGRAPHICS_BOLD);
-//  }
-//  error_string += error_reason;
-//
-//  const auto &token = err.type == solc::Parser::ParserError::Type::UNEXPECTED ?
-//                        _tokens.at(err.pos) :
-//                        *(_tokens.end() - 1);
-//  error_string += '\n';
-//  error_string += get_highlighted_token(token, ESCColor::ESCCOLOR_RED,
-//                                        ESCGraphics::ESCGRAPHICS_BOLD);
-//
-//  return error_string;
-//}
+std::string
+ErrorHandler::get_parser_error(const solc::Parser::ParserError &err) const
+{
+  const std::string error_reason = get_parser_error_reason(err);
+  std::string error_string{};
+
+  if (err.type != solc::Parser::ParserError::Type::UNEXPECTED) {
+    error_string += get_message_start(_nol, last_line().length(), "error",
+                                      ESCColor::ESCCOLOR_RED,
+                                      ESCGraphics::ESCGRAPHICS_BOLD);
+  } else {
+    const auto &token = _tokens.at(err.pos);
+    error_string += get_message_start(token.line + 1, token.end - token.len + 1,
+                                      "error", ESCColor::ESCCOLOR_RED,
+                                      ESCGraphics::ESCGRAPHICS_BOLD);
+  }
+  error_string += error_reason;
+
+  const auto &token = err.type == solc::Parser::ParserError::Type::UNEXPECTED ?
+                        _tokens.at(err.pos) :
+                        *(_tokens.end() - 1);
+  error_string += '\n';
+  error_string += get_highlighted_token(token, ESCColor::ESCCOLOR_RED,
+                                        ESCGraphics::ESCGRAPHICS_BOLD);
+
+  return error_string;
+}
 
 std::string ErrorHandler::get_message_start(size_t line, size_t start,
                                             const std::string &msg,
@@ -244,38 +244,45 @@ std::string ErrorHandler::get_highlighted_token(const solc::Token &tok,
   return out;
 }
 
-//std::string ErrorHandler::get_parser_error_reason(
-//  const solc::Parser::ParserError &err) const
-//{
-//  using namespace solc;
-//
-//  switch (err.type) {
-//  case Parser::ParserError::Type::UNK:
-//    return "<Unknown error>";
-//
-//  case Parser::ParserError::Type::EXPECTED: {
-//    std::string out{};
-//    out += "expected token";
-//    return out;
-//  }
-//
-//  case Parser::ParserError::Type::UNEXPECTED: {
-//    std::string out{};
-//    out += "unexpected token \"" + _tokens.at(err.pos).value + "\"";
-//    return out;
-//  }
-//
-//  case Parser::ParserError::Type::INVALID_EXPR: {
-//    std::string out{};
-//    out += "invalid expression at line " +
-//           std::to_string(_tokens.at(err.pos).line + 1);
-//    return out;
-//  }
-//
-//  default:
-//    return {};
-//  }
-//}
+std::string ErrorHandler::get_parser_error_reason(
+  const solc::Parser::ParserError &err) const
+{
+  using namespace solc;
+
+  switch (err.type) {
+  case Parser::ParserError::Type::UNK:
+    return "<Unknown error>";
+
+  case Parser::ParserError::Type::EXPECTED: {
+    std::string out{};
+    out += "expected token";
+    return out;
+  }
+
+  case Parser::ParserError::Type::UNEXPECTED: {
+    std::string out{};
+    out += "unexpected token \"" + _tokens.at(err.pos).value + "\"";
+    return out;
+  }
+
+  case Parser::ParserError::Type::INVALID_EXPR: {
+    std::string out{};
+    out += "invalid expression at line " +
+           std::to_string(_tokens.at(err.pos).line + 1);
+    return out;
+  }
+
+  case Parser::ParserError::Type::UNEXPECTED_WHITESPACE: {
+    std::string out{};
+    out += "unexpected whitespace after " +
+           std::to_string(_tokens.at(err.pos).line + 1);
+    return out;
+  }
+
+  default:
+    return {};
+  }
+}
 
 bool ErrorHandler::has_invalid_tokens() const
 {
@@ -287,10 +294,10 @@ bool ErrorHandler::has_invalid_tokens() const
   return false;
 }
 
-//bool ErrorHandler::has_parser_errors() const
-//{
-//  return !_parser_errors.empty();
-//}
+bool ErrorHandler::has_parser_errors() const
+{
+  return !_parser_errors.empty();
+}
 
 std::string ErrorHandler::get_line(size_t linenum) const
 {

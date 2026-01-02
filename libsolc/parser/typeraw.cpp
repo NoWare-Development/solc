@@ -20,18 +20,18 @@ AST Parser::parse_type_raw()
   }
 
   VERIFY_TOKEN(_pos, cur.type, TokenType::ID);
-  auto next = peek(_pos + 1);
-  if (next == TokenType::DCOLON) {
+  auto next = peek_token(_pos + 1);
+  if (next != nullptr && next->type == TokenType::COLON &&
+      !next->has_whitespace_after && peek(_pos + 2) == TokenType::COLON) {
     AST out(_pos, ASTType::NAMESPACE, cur.value);
-    _pos += 2;
+    _pos += 3;
     auto member_type = parse_type_raw();
     out.append(member_type);
     return out;
   }
 
   AST out(_pos++, ASTType::TYPE_PLAIN, cur.value);
-  next = peek(_pos);
-  if (next == TokenType::LTHAN) {
+  if (peek(_pos) == TokenType::LTHAN) {
     auto generic_type_list = parse_generic_type_list();
     out.append(generic_type_list);
   }
