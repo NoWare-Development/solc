@@ -171,4 +171,6 @@ static void get_action(const ArgParser &argparser)
     }
     selected = true;
   }
+
+  solc::Config::the().set_compiler_action(selected_action);
 }
