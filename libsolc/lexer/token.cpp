@@ -31,6 +31,9 @@ std::string Token::to_string() const
     out += ", value: \"" + value + "\"";
   }
 
+  out += ", has_whitespace_after: " +
+         std::string(has_whitespace_after ? "true" : "false");
+
   out += " }";
 
   return out;
@@ -74,11 +77,6 @@ constexpr const char *tokentype_to_string(TokenType type)
   case TokenType::RBRACE:
     return "RBRACE";
 
-  case TokenType::LARROW:
-    return "LARROW";
-  case TokenType::RARROW:
-    return "RARROW";
-
   case TokenType::LTHAN:
     return "LTHAN";
   case TokenType::GTHAN:
@@ -86,8 +84,6 @@ constexpr const char *tokentype_to_string(TokenType type)
 
   case TokenType::COLON:
     return "COLON";
-  case TokenType::DCOLON:
-    return "DCOLON";
 
   case TokenType::SEMI:
     return "SEMI";
@@ -106,21 +102,10 @@ constexpr const char *tokentype_to_string(TokenType type)
   case TokenType::BNOT:
     return "BNOT";
 
-  case TokenType::AND:
-    return "AND";
-  case TokenType::OR:
-    return "OR";
   case TokenType::NOT:
     return "NOT";
   case TokenType::QUE:
     return "QUE";
-
-  case TokenType::LTHANEQ:
-    return "LTHANEQ";
-  case TokenType::GTHANEQ:
-    return "GTHANEQ";
-  case TokenType::NOTEQ:
-    return "NOTEQ";
 
   case TokenType::ADD:
     return "ADD";
@@ -132,36 +117,9 @@ constexpr const char *tokentype_to_string(TokenType type)
     return "DIV";
   case TokenType::MOD:
     return "MOD";
-  case TokenType::SHL:
-    return "SHL";
-  case TokenType::SHR:
-    return "SHR";
 
   case TokenType::EQ:
     return "EQ";
-  case TokenType::ADDEQ:
-    return "ADDEQ";
-  case TokenType::SUBEQ:
-    return "SUBEQ";
-  case TokenType::MULEQ:
-    return "MULEQ";
-  case TokenType::DIVEQ:
-    return "DIVEQ";
-  case TokenType::MODEQ:
-    return "MODEQ";
-  case TokenType::BANDEQ:
-    return "BANDEQ";
-  case TokenType::BOREQ:
-    return "BOREQ";
-  case TokenType::BXOREQ:
-    return "BXOREQ";
-  case TokenType::SHLEQ:
-    return "SHLEQ";
-  case TokenType::SHREQ:
-    return "SHREQ";
-
-  case TokenType::EQEQ:
-    return "EQEQ";
 
   case TokenType::AT:
     return "AT";

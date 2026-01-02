@@ -80,7 +80,7 @@ static std::string asttype_to_string(ASTType type)
       "ERR",
 
       "PROG",          "EXPR",        "MODULE",      "IMPORT",  "TYPEDEF",
-      "EXPORTED_FUNC", "EXTERN_FUNC", "MODIFIER",    "NONE",    "LABEL",
+      "EXPORTED_FUNC", "EXTERN_FUNC", "QUALIFIER",   "NONE",    "LABEL",
       "VARIADIC",      "STRUCT",      "UNION",       "ENUM",    "FUNC",
       "NAMESPACE",     "INITLIST",    "PREFIX_EXPR", "GENERIC",
     },
@@ -174,6 +174,7 @@ static std::string asttype_to_string(ASTType type)
     },
     {
       // EXPR_OPERAND
+      "VOID",
       "IDENTIFIER",
       "NUM",
       "NUMFLOAT",
@@ -220,4 +221,5 @@ static std::string asttype_to_string(ASTType type)
 
   return out;
 }
+
 }

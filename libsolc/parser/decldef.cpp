@@ -8,16 +8,25 @@ namespace solc
 AST Parser::parse_decldef()
 {
   auto cur = _tokens.at(_pos);
-  if (cur.type == TokenType::ID && is_modifier(cur.value)) {
-    AST modifier_decldef(_pos++, ASTType::MODIFIER, cur.value);
+  if (is_qualifier(cur.value)) {
+    AST modifier_decldef(_pos++, ASTType::QUALIFIER, cur.value);
     auto underlying_decldef = parse_decldef();
     modifier_decldef.append(underlying_decldef);
     return modifier_decldef;
   }
 
-  auto next = peek(_pos + 1);
-  switch (next) {
+  auto next = peek_token(_pos + 1);
+  if (next == nullptr) {
+    add_error(ParserError::Type::EXPECTED, _pos++);
+    return {};
+  }
+
+  switch (next->type) {
   case TokenType::COLON: {
+    if (!next->has_whitespace_after && peek(_pos + 2) == TokenType::COLON) {
+      return parse_function();
+    }
+
     auto var_decldef = parse_variable_decldef();
     VERIFY_POS(_pos);
     VERIFY_TOKEN(_pos, _tokens.at(_pos).type, TokenType::SEMI);
@@ -25,18 +34,9 @@ AST Parser::parse_decldef()
     return var_decldef;
   }
 
-  case TokenType::DCOLON: {
-    return parse_function();
-  }
-
   case TokenType::LTHAN: {
     return parse_generic_function();
-  }
-
-  case TokenType::ERR: {
-    add_error(ParserError::Type::EXPECTED, _pos++);
-    return {};
-  }
+  } break;
 
   default:
     break;
@@ -45,5 +45,4 @@ AST Parser::parse_decldef()
   add_error(ParserError::Type::UNEXPECTED, _pos++);
   return {};
 }
-
 }

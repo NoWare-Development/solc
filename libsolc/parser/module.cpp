@@ -11,9 +11,10 @@ AST Parser::parse_module()
 
   AST module(_pos++, ASTType::MODULE, cur.value);
 
-  auto next = peek(_pos);
-  if (next == TokenType::DCOLON) {
-    _pos++;
+  auto next_tok = peek_token(_pos);
+  if (next_tok != nullptr && next_tok->type == TokenType::COLON &&
+      !next_tok->has_whitespace_after && peek(_pos + 1) == TokenType::COLON) {
+    _pos += 2;
     VERIFY_POS(_pos);
     auto submodule = parse_module();
     module.append(submodule);

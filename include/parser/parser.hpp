@@ -26,6 +26,7 @@ class Parser {
       EXPECTED, // Expected token but didn't get any
       UNEXPECTED, // Expected other token
       INVALID_EXPR, // Invalid expression
+      UNEXPECTED_WHITESPACE,
     };
 
     Type type; // Error type
@@ -315,16 +316,18 @@ class Parser {
   bool verify_token(size_t pos, TokenType got, TokenType expected);
   bool verify_value(size_t pos, const std::string &got,
                     const std::string &expected);
+  bool verify_whitespace(size_t pos, bool got, bool expected,
+                         TokenType expected_after);
 
   TokenType peek(size_t pos) const;
+  const Token *peek_token(size_t pos) const;
 
-  bool is_modifier(const std::string &str) const;
+  bool is_qualifier(const std::string &str) const;
 
   bool is_operator(TokenType type) const;
   bool is_binary_operator(TokenType type) const;
   bool is_assign_operator(TokenType type) const;
   bool is_compare_operator(TokenType type) const;
-  bool is_boolean_operator(TokenType type) const;
   bool is_prefix_operator(TokenType type) const;
   bool is_numeric_token(TokenType type) const;
 
@@ -352,39 +355,18 @@ class Parser {
     { TokenType::MUL, ASTType::EXPR_BINARY_OPERATOR_MUL },
     { TokenType::DIV, ASTType::EXPR_BINARY_OPERATOR_DIV },
     { TokenType::MOD, ASTType::EXPR_BINARY_OPERATOR_MOD },
-    { TokenType::SHL, ASTType::EXPR_BINARY_OPERATOR_SHL },
-    { TokenType::SHR, ASTType::EXPR_BINARY_OPERATOR_SHR },
     { TokenType::BAND, ASTType::EXPR_BINARY_OPERATOR_AND },
     { TokenType::BOR, ASTType::EXPR_BINARY_OPERATOR_OR },
     { TokenType::BXOR, ASTType::EXPR_BINARY_OPERATOR_XOR },
   };
 
   const std::map<TokenType, ASTType> _compare_operators = {
-    { TokenType::EQEQ, ASTType::EXPR_COMPARE_OPERATOR_EQ },
-    { TokenType::NOTEQ, ASTType::EXPR_COMPARE_OPERATOR_NOTEQ },
     { TokenType::LTHAN, ASTType::EXPR_COMPARE_OPERATOR_LTHAN },
     { TokenType::GTHAN, ASTType::EXPR_COMPARE_OPERATOR_GTHAN },
-    { TokenType::LTHANEQ, ASTType::EXPR_COMPARE_OPERATOR_LTHANEQ },
-    { TokenType::GTHANEQ, ASTType::EXPR_COMPARE_OPERATOR_GTHANEQ },
-  };
-
-  const std::map<TokenType, ASTType> _boolean_operators = {
-    { TokenType::AND, ASTType::EXPR_BOOLEAN_OPERATOR_AND },
-    { TokenType::OR, ASTType::EXPR_BOOLEAN_OPERATOR_OR },
   };
 
   const std::map<TokenType, ASTType> _assign_operators = {
     { TokenType::EQ, ASTType::EXPR_ASSIGN_OPERATOR_EQ },
-    { TokenType::ADDEQ, ASTType::EXPR_ASSIGN_OPERATOR_ADDEQ },
-    { TokenType::SUBEQ, ASTType::EXPR_ASSIGN_OPERATOR_SUBEQ },
-    { TokenType::MULEQ, ASTType::EXPR_ASSIGN_OPERATOR_MULEQ },
-    { TokenType::DIVEQ, ASTType::EXPR_ASSIGN_OPERATOR_DIVEQ },
-    { TokenType::MODEQ, ASTType::EXPR_ASSIGN_OPERATOR_MODEQ },
-    { TokenType::SHLEQ, ASTType::EXPR_ASSIGN_OPERATOR_SHLEQ },
-    { TokenType::SHREQ, ASTType::EXPR_ASSIGN_OPERATOR_SHREQ },
-    { TokenType::BANDEQ, ASTType::EXPR_ASSIGN_OPERATOR_ANDEQ },
-    { TokenType::BOREQ, ASTType::EXPR_ASSIGN_OPERATOR_OREQ },
-    { TokenType::BXOREQ, ASTType::EXPR_ASSIGN_OPERATOR_XOREQ },
   };
 
   const std::map<TokenType, ASTType> _prefix_operators = {
@@ -400,10 +382,11 @@ class Parser {
     TokenType::NUMOCT, TokenType::NUMFLOAT,
   };
 
-  const std::unordered_set<std::string> _modifiers = {
+  const std::unordered_set<std::string> _qualifiers = {
     "const",
     "inline",
-    "static",
+    "persist",
+    "local",
   };
 
   const std::unordered_map<std::string, AST (Parser::*)()> _top_parse_methods = {

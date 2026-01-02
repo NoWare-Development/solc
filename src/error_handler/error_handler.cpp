@@ -272,6 +272,13 @@ std::string ErrorHandler::get_parser_error_reason(
     return out;
   }
 
+  case Parser::ParserError::Type::UNEXPECTED_WHITESPACE: {
+    std::string out{};
+    out += "unexpected whitespace after " +
+           std::to_string(_tokens.at(err.pos).line + 1);
+    return out;
+  }
+
   default:
     return {};
   }
