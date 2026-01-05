@@ -174,6 +174,7 @@ static std::string asttype_to_string(ASTType type)
     },
     {
       // EXPR_OPERAND
+      "VOID",
       "IDENTIFIER",
       "NUM",
       "NUMFLOAT",

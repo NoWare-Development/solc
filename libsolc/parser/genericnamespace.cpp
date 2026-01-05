@@ -1,3 +1,4 @@
+#include "lexer/token.hpp"
 #include "libsolc/parser/macros.hpp"
 #include "parser/parser.hpp"
 
@@ -36,13 +37,17 @@ bool Parser::is_generic_namespace()
     }
   }
 
-  if (maybe_generic && peek(_pos) == TokenType::DCOLON &&
-      peek(_pos + 1) == TokenType::ID) {
-    _errors.erase(_errors.begin() + old_len, _errors.end());
-    _errored = errored_prev;
-    _pos = old_pos;
+  {
+    auto peeked_1 = peek_token(_pos);
+    if (maybe_generic && peeked_1 != nullptr &&
+        peeked_1->type == TokenType::COLON && !peeked_1->has_whitespace_after &&
+        peek(_pos + 1) == TokenType::COLON && peek(_pos + 2) == TokenType::ID) {
+      _errors.erase(_errors.begin() + old_len, _errors.end());
+      _errored = errored_prev;
+      _pos = old_pos;
 
-    return true;
+      return true;
+    }
   }
 
   _errors.erase(_errors.begin() + old_len, _errors.end());
@@ -70,7 +75,17 @@ AST Parser::parse_generic_namespace()
 
   VERIFY_POS(_pos);
   cur = _tokens.at(_pos);
-  VERIFY_TOKEN(_pos, cur.type, TokenType::DCOLON);
+
+  VERIFY_TOKEN(_pos, cur.type, TokenType::COLON);
+  if (cur.has_whitespace_after) {
+    add_error(ParserError::Type::UNEXPECTED_WHITESPACE, _pos);
+    return {};
+  }
+  _pos++;
+  VERIFY_POS(_pos);
+  cur = _tokens.at(_pos);
+  VERIFY_TOKEN(_pos, cur.type, TokenType::COLON);
+
   _pos++;
 
   return out;

@@ -1,7 +1,9 @@
 #include "parser/parser.hpp"
+#include "lexer/token.hpp"
 #include "parser/ast.hpp"
 #include <algorithm>
 #include <cstdint>
+#include <iostream>
 #include <string>
 #include <utility>
 
@@ -163,12 +165,32 @@ bool Parser::verify_value(size_t pos, const std::string &got,
   return true;
 }
 
+bool Parser::verify_whitespace(size_t pos, bool got, bool expected,
+                               TokenType expected_after)
+{
+  // TODO: use expected_after to indicate
+  // which type of token was expected after.
+  if (got != expected) {
+    add_error(ParserError::Type::UNEXPECTED_WHITESPACE, pos);
+    return false;
+  }
+  return true;
+}
+
 TokenType Parser::peek(size_t pos) const
 {
   if (pos >= _tokens.size()) {
     return TokenType::ERR;
   }
   return _tokens.at(pos).type;
+}
+
+const Token *Parser::peek_token(size_t pos) const
+{
+  if (pos >= _tokens.size()) {
+    return nullptr;
+  }
+  return &_tokens.at(pos);
 }
 
 bool Parser::is_qualifier(const std::string &str) const
@@ -179,8 +201,7 @@ bool Parser::is_qualifier(const std::string &str) const
 bool Parser::is_operator(TokenType type) const
 {
   return is_binary_operator(type) || is_assign_operator(type) ||
-         is_compare_operator(type) || is_boolean_operator(type) ||
-         is_prefix_operator(type);
+         is_compare_operator(type) || is_prefix_operator(type);
 }
 
 #define IS_IN_MAP(map, val) (map).find((val)) != (map).end()
@@ -198,11 +219,6 @@ bool Parser::is_assign_operator(TokenType type) const
 bool Parser::is_compare_operator(TokenType type) const
 {
   return IS_IN_MAP(_compare_operators, type);
-}
-
-bool Parser::is_boolean_operator(TokenType type) const
-{
-  return IS_IN_MAP(_boolean_operators, type);
 }
 
 bool Parser::is_prefix_operator(TokenType type) const

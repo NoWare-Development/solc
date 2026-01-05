@@ -14,12 +14,13 @@ AST Parser::parse_identifier_operand(bool accept_namespaces,
 
   AST out_operand;
 
-  auto next = peek(_pos + 1);
+  auto next = peek_token(_pos + 1);
 
   if (accept_namespaces) {
-    if (next == TokenType::DCOLON) {
+    if (next != nullptr && next->type == TokenType::COLON &&
+        !next->has_whitespace_after && peek(_pos + 2) == TokenType::COLON) {
       AST out(_pos, ASTType::NAMESPACE, cur.value);
-      _pos += 2;
+      _pos += 3;
       auto symbol =
         parse_identifier_operand(accept_namespaces, accept_functions);
       out.append(symbol);
@@ -34,7 +35,7 @@ AST Parser::parse_identifier_operand(bool accept_namespaces,
   }
 
   if (accept_functions) {
-    if (next == TokenType::LPAREN)
+    if (next->type == TokenType::LPAREN)
       out_operand = parse_call_operand();
     else if (is_generic_call_operand())
       out_operand = parse_generic_call_operand();
@@ -43,8 +44,8 @@ AST Parser::parse_identifier_operand(bool accept_namespaces,
   if (out_operand.type == ASTType::NONE)
     out_operand = AST(_pos++, ASTType::EXPR_OPERAND_IDENTIFIER, cur.value);
 
-  next = peek(_pos);
-  if (next == TokenType::PERIOD) {
+  auto next_tok_type = peek(_pos);
+  if (next_tok_type == TokenType::PERIOD) {
     _pos++;
     VERIFY_POS(_pos);
     auto symbol = parse_identifier_operand(false, accept_functions);
