@@ -113,6 +113,7 @@ static std::string asttype_to_string(ASTType type)
       "ARRAY",
       "POINTER",
       "FUNCPTR",
+      "TYPEOF",
     },
     {
       // VAR
@@ -186,6 +187,7 @@ static std::string asttype_to_string(ASTType type)
       "SYMBOL",
       "ACCESS_MEMBER",
       "GENERIC_CALL",
+      "SIZEOF",
     },
     {
       // VISIBILITY_MARKER

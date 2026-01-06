@@ -330,6 +330,24 @@ AST Parser::parse_expression_operand()
 
       cast.append(cast_expr);
       return cast;
+    } else if (cur.value == "sizeof") {
+      AST sizeof_operand(_pos, ASTType::EXPR_OPERAND_SIZEOF);
+
+      _pos++;
+      VERIFY_POS(_pos);
+      VERIFY_TOKEN(_pos, _tokens.at(_pos).type, TokenType::LPAREN);
+
+      _pos++;
+      VERIFY_POS(_pos);
+
+      auto type = parse_type();
+
+      VERIFY_POS(_pos);
+      VERIFY_TOKEN(_pos, _tokens.at(_pos).type, TokenType::RPAREN);
+      _pos++;
+
+      sizeof_operand.append(type);
+      return sizeof_operand;
     }
 
     out_operand = parse_identifier_operand();

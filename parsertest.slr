@@ -148,7 +148,7 @@ local testFunc2 :: () {
   vector_var: Vector<int>;
   vector_var.destroy();
 
-  persist x: int = 5;
+  persist x: int = sizeof(Vector<int>);
 
   test: Vector<TestStruct<int>> = {};
 
@@ -160,3 +160,5 @@ union TestUnion {
   var2: float;
   var3: double;
 }
+
+a: typeof(x + 3);
