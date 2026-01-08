@@ -163,8 +163,9 @@ AST Parser::parse_expression_tree(bool toplevel)
 
         auto peeked_token = peek_token(_pos + 1);
         if (peeked_token != nullptr && peeked_token->type == cur.type) {
-          // >>= <<=
-          if (!peeked_token->has_whitespace_after) {
+          if (peek(_pos + 2) == TokenType::EQ &&
+              !peeked_token->has_whitespace_after) {
+            // >>= <<=
             switch (cur.type) {
             case TokenType::GTHAN: { // >>=
               cur_ast = ASTType::EXPR_ASSIGN_OPERATOR_SHREQ;
@@ -243,7 +244,6 @@ AST Parser::parse_expression_tree(bool toplevel)
         continue;
       }
 
-        // Eq
       case TokenType::EQ: { // =
         cur_ast = ASTType::EXPR_ASSIGN_OPERATOR_EQ;
         expr_tree.append(AST(_pos, cur_ast));
