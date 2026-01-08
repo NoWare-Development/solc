@@ -17,6 +17,23 @@ AST Parser::parse_type_raw()
   } else if (cur.type == TokenType::LPAREN) {
     auto funcptrtype = parse_function_pointer_type();
     return funcptrtype;
+  } else if (cur.type == TokenType::ID && cur.value == "typeof") {
+    AST type_typeof(_pos, ASTType::TYPE_TYPEOF);
+
+    _pos++;
+    VERIFY_POS(_pos);
+    VERIFY_TOKEN(_pos, _tokens.at(_pos).type, TokenType::LPAREN);
+
+    _pos++;
+    VERIFY_POS(_pos);
+    auto expr = parse_expression();
+
+    VERIFY_POS(_pos);
+    VERIFY_TOKEN(_pos, _tokens.at(_pos).type, TokenType::RPAREN);
+    _pos++;
+
+    type_typeof.append(expr);
+    return type_typeof;
   }
 
   VERIFY_TOKEN(_pos, cur.type, TokenType::ID);
