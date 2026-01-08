@@ -50,14 +50,16 @@ AST Parser::parse_for_statement()
   AST for_statement(_pos++, ASTType::STMT_FOR);
 
   VERIFY_POS(_pos);
-  auto cur = _tokens.at(_pos);
-  VERIFY_TOKEN(_pos, cur.type, TokenType::LPAREN);
+  VERIFY_TOKEN(_pos, _tokens.at(_pos).type, TokenType::LPAREN);
   _pos++;
-  auto statement = parse_statement();
+  auto statement = parse_variable_decldef();
+  VERIFY_POS(_pos);
+  VERIFY_TOKEN(_pos, _tokens.at(_pos).type, TokenType::SEMI);
+  _pos++;
   for_statement.append(statement);
   VERIFY_POS(_pos);
 
-  cur = _tokens.at(_pos);
+  auto cur = _tokens.at(_pos);
   if (cur.type == TokenType::SEMI) {
     for_statement.append(AST(0, ASTType::EXPR_OPERAND_NUM, "1"));
   } else {
