@@ -193,11 +193,6 @@ struct AST {
   bool is_empty() const;
 
   private:
-  size_t _depth{}; // AST's depth (used in `to_string' method)
-
-  // Sets AST's depth.
-  void set_depth(size_t depth);
-
   // Appends children to AST.
   AST *append(AST child);
 };

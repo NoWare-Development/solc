@@ -6,28 +6,56 @@ namespace solc
 
 static std::string asttype_to_string(ASTType type);
 
+static std::vector<std::string> build_tree(const AST &ast, size_t depth)
+{
+  std::vector<std::string> out{};
+  if (depth == 0) {
+    out.emplace_back("[ROOT] " + asttype_to_string(ast.type) + " \"" +
+                     ast.value + "\"");
+  } else {
+    out.emplace_back("(" + std::to_string(depth) + ") " +
+                     asttype_to_string(ast.type) + " \"" + ast.value + "\"");
+  }
+
+  std::vector<std::vector<std::string> > newvs{};
+  for (auto &c : ast.children) {
+    newvs.emplace_back(build_tree(c, depth + 1));
+  }
+
+  size_t newvs_len = newvs.size();
+  for (size_t i = 0; i < newvs_len; i++) {
+    auto &newv = newvs.at(i);
+
+    auto newv_len = newv.size();
+    for (size_t j = 0; j < newv_len; j++) {
+      if (j == 0) {
+        if (i == newvs_len - 1) {
+          newv[j] = " ╰" + newv[j];
+        } else {
+          newv[j] = " ├" + newv[j];
+        }
+      } else if (i < newvs_len - 1) {
+        newv[j] = " │" + newv[j];
+      } else {
+        newv[j] = "  " + newv[j];
+      }
+    }
+  }
+
+  for (auto &newv : newvs) {
+    out.insert(out.end(), newv.begin(), newv.end());
+  }
+
+  return out;
+}
+
 std::string AST::to_string() const
 {
-  // Recursively loop through all children in AST
-  // and format output accordingly.
+  auto vs = build_tree(*this, 0);
   std::string out{};
-
-  if (_depth > 0) {
-    for (size_t i = 0; i < _depth; i++) {
-      out += "  ";
-    }
-
-    out += "(" + std::to_string(_depth) + ") ";
+  for (auto &s : vs) {
+    out += s + '\n';
   }
-
-  out += asttype_to_string(type) + " \"" + value + "\"";
-
-  if (!children.empty()) {
-    for (auto &child : children) {
-      out += '\n' + child.to_string();
-    }
-  }
-
   return out;
 }
 
@@ -36,17 +64,8 @@ bool AST::is_empty() const
   return children.empty();
 }
 
-void AST::set_depth(size_t depth)
-{
-  _depth = depth;
-  for (auto &child : children) {
-    child.set_depth(depth + 1);
-  }
-}
-
 AST *AST::append(AST child)
 {
-  child.set_depth(_depth + 1);
   children.push_back(child);
   return &children.at(children.size() - 1);
 }
