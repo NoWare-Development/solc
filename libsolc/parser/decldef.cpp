@@ -15,6 +15,24 @@ AST Parser::parse_decldef()
     return modifier_decldef;
   }
 
+  if (cur.type == TokenType::ID && cur.value == "func") {
+    AST explicit_func;
+
+    _pos++;
+    VERIFY_POS(_pos);
+    VERIFY_TOKEN(_pos, _tokens.at(_pos).type, TokenType::ID);
+
+    if (peek(_pos + 1) == TokenType::LTHAN) {
+      explicit_func = parse_generic_function();
+      explicit_func.type = ASTType::GENERIC_FUNC_EXPLICIT;
+    } else {
+      explicit_func = parse_function();
+      explicit_func.type = ASTType::FUNC_EXPLICIT;
+    }
+
+    return explicit_func;
+  }
+
   auto next = peek_token(_pos + 1);
   if (next == nullptr) {
     add_error(ParserError::Type::EXPECTED, _pos++);

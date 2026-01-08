@@ -50,6 +50,7 @@ enum struct ASTType : uint16_t {
   INITLIST = __AST_DEF(ASTGroup::NONE, 17),
   PREFIX_EXPR = __AST_DEF(ASTGroup::NONE, 18),
   GENERIC = __AST_DEF(ASTGroup::NONE, 19),
+  FUNC_EXPLICIT = __AST_DEF(ASTGroup::NONE, 20),
 
   STMT_LIST = __AST_DEF(ASTGroup::STMT, 0),
   STMT_RETURN = __AST_DEF(ASTGroup::STMT, 1),
@@ -151,6 +152,7 @@ enum struct ASTType : uint16_t {
   GENERIC_TYPE_LIST = __AST_DEF(ASTGroup::GENERIC, 4),
   GENERIC_TYPE = __AST_DEF(ASTGroup::GENERIC, 5),
   GENERIC_NAMESPACE = __AST_DEF(ASTGroup::GENERIC, 6),
+  GENERIC_FUNC_EXPLICIT = __AST_DEF(ASTGroup::GENERIC, 7),
 };
 #undef __AST_DEF
 

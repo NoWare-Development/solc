@@ -82,7 +82,7 @@ static std::string asttype_to_string(ASTType type)
       "PROG",          "EXPR",        "MODULE",      "IMPORT",  "TYPEDEF",
       "EXPORTED_FUNC", "EXTERN_FUNC", "QUALIFIER",   "NONE",    "LABEL",
       "VARIADIC",      "STRUCT",      "UNION",       "ENUM",    "FUNC",
-      "NAMESPACE",     "INITLIST",    "PREFIX_EXPR", "GENERIC",
+      "NAMESPACE",     "INITLIST",    "PREFIX_EXPR", "GENERIC", "FUNC_EXPLICIT",
     },
     {
       // STMT
@@ -209,6 +209,7 @@ static std::string asttype_to_string(ASTType type)
       "TYPE_LIST",
       "TYPE",
       "NAMESPACE",
+      "FUNC_EXPLICIT",
     },
   };
 

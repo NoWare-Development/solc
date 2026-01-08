@@ -161,4 +161,7 @@ union TestUnion {
   var3: double;
 }
 
-a: typeof(x + 3);
+struct Test {
+  func hihi :: () {}
+  func haha<T> :: (a: T) {}
+}
