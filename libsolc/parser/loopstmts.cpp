@@ -52,11 +52,15 @@ AST Parser::parse_for_statement()
   VERIFY_POS(_pos);
   VERIFY_TOKEN(_pos, _tokens.at(_pos).type, TokenType::LPAREN);
   _pos++;
-  auto statement = parse_variable_decldef();
+  if (_tokens.at(_pos).type == TokenType::SEMI) {
+    for_statement.append(AST(_pos, ASTType::NONE));
+  } else {
+    auto statement = parse_variable_decldef();
+    for_statement.append(statement);
+  }
   VERIFY_POS(_pos);
   VERIFY_TOKEN(_pos, _tokens.at(_pos).type, TokenType::SEMI);
   _pos++;
-  for_statement.append(statement);
   VERIFY_POS(_pos);
 
   auto cur = _tokens.at(_pos);
