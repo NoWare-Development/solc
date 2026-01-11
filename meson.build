@@ -1,4 +1,4 @@
-project('solc', 'cpp')
+project('solc', 'c')
 
 flags = []
 
@@ -7,15 +7,16 @@ if get_option('buildtype') == 'debug'
 endif
 
 libsolc_src = []
-libsolc_dep = [ dependency('llvm') ]
+libsolc_dep = []
 libsolc_inc = include_directories('include')
-subdir('libsolc')
+libsolc_dir = 'libsolc'
+subdir(libsolc_dir)
 
 libsolc_lib = shared_library(
   'solc',
   libsolc_src,
   dependencies: libsolc_dep,
-  include_directories: libsolc_inc,
+  include_directories: [ libsolc_inc, include_directories(libsolc_dir) ],
   cpp_args: [ flags ],
 )
 
