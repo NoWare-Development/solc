@@ -2,6 +2,8 @@
 #define __SOLC_DEFS_H__
 
 #include <stddef.h>
+#include <stdio.h>
+#include <stdint.h>
 
 typedef unsigned char u8;
 typedef unsigned short u16;
@@ -17,11 +19,11 @@ typedef float f32;
 typedef double f64;
 
 #ifdef __cplusplus__
-#define CPP_GUARD_TOP() extern "C" {
-#define CPP_GUARD_BOTTOM() }
+#define __SOLC_CPP_GUARD_TOP() extern "C" {
+#define __SOLC_CPP_GUARD_BOTTOM() }
 #else
-#define CPP_GUARD_TOP()
-#define CPP_GUARD_BOTTOM()
+#define __SOLC_CPP_GUARD_TOP()
+#define __SOLC_CPP_GUARD_BOTTOM()
 #endif
 
 #ifdef __cplusplus__
@@ -35,9 +37,80 @@ typedef int b32;
 
 typedef size_t sz;
 
-#define MIN(a, b) ((a) < (b) ? (a) : (b))
-#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#define SOLC_MIN(a, b) ((a) < (b) ? (a) : (b))
+#define SOLC_MAX(a, b) ((a) > (b) ? (a) : (b))
 
 #define nullptr (void *)0
+
+#define __SOLC_CONCAT_IMPL(x, y) x##y
+#define __SOLC_CONCAT(x, y) __SOLC_CONCAT_IMPL(x, y)
+
+#define __SOLC_QUOTE(name) #name
+#define __SOLC_MACRO_STR(macro) __SOLC_QUOTE(macro)
+
+#define __SOLC_UNIQUE_ID() __COUNTER__
+
+#ifdef _MSC_VER
+#include <intrin.h>
+#define __solc_trap() __debugbreak()
+#define __solc_noreach() __assume(0)
+#define __solc_assume(expr) __assume((expr))
+#elif defined(__GNUC__) || defined(__clang__)
+#define __solc_trap() __builtin_trap()
+#define __solc_noreach() __builtin_unreachable()
+#define __solc_assume(expr) __attribute__((assume((expr))))
+#else
+#include <stdlib.h>
+#define __solc_trap() exit(-1)
+#define __solc_noreach() exit(-1)
+#define __solc_assume(expr)
+#endif
+
+#define SOLC_TODO(msg)                                                    \
+  {                                                                       \
+    printf("(%s:%i) Not implemented yet: %s\n", __FILE__, __LINE__, msg); \
+    __solc_trap();                                                        \
+  }
+
+#ifdef _DEBUG
+#define SOLC_NOREACH() __solc_noreach()
+#else
+#define SOLC_NOREACH()                                                        \
+  {                                                                           \
+    printf("(%s:%i) Reached point that should never be reached.\n", __FILE__, \
+           __LINE__);                                                         \
+    __solc_trap();                                                            \
+  }
+#endif
+
+#ifdef _DEBUG
+#define SOLC_ASSUME(expr)                                              \
+  if (!(expr)) {                                                       \
+    printf("(%s:%i) Assumption \"" #expr "\" is not met.\n", __FILE__, \
+           __LINE__);                                                  \
+    __solc_trap();                                                     \
+  }
+#else
+#define SOLC_ASSUME(expr) __solc_assume(expr)
+#endif
+
+#if defined(__clang__)
+#define SOLC_LIKELY(expr) ((expr)) [[clang::likely]]
+#define SOLC_UNLIKELY(expr) ((expr)) [[clang::unlikely]]
+#elif defined(__GNUC__)
+#define SOLC_LIKELY(expr) (__builtin_expect(!!(expr), 1))
+#define SOLC_UNLIKELY(expr) (__builtin_expect(!!(expr), 0))
+#else
+#define SOLC_LIKELY ((expr))
+#define SOLC_UNLIKELY ((expr))
+#endif
+
+#if INTPTR_MAX == INT32_MAX
+#define IS_64BIT 0
+#elif INTPTR_MAX == INT64_MAX
+#define IS_64BIT 1
+#else
+#error "SOLC supports only 64 and 32-bit architectures."
+#endif
 
 #endif // __SOLC_DEFS_H__
