@@ -65,8 +65,12 @@ typedef struct __solc_token_t {
   b8 has_whitespace_after;
 } solc_token_t;
 
+__SOLC_CPP_GUARD_TOP()
+
 void solc_token_destroy(solc_token_t *token);
 
 void solc_token_to_string(char *buf, sz n, const solc_token_t *token);
+
+__SOLC_CPP_GUARD_BOTTOM()
 
 #endif // __SOLC_TOKEN_H__

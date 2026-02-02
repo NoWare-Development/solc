@@ -8,10 +8,14 @@ typedef struct {
   void *data;
 } solc_lexer_t;
 
+__SOLC_CPP_GUARD_TOP()
+
 solc_lexer_t solc_lexer_create(const char *src);
 void solc_lexer_destroy(solc_lexer_t *lexer);
 
 // Returned array must be freed with `free()' later.
 solc_token_t *solc_lexer_tokenize(solc_lexer_t *lexer, sz *out_token_num);
+
+__SOLC_CPP_GUARD_BOTTOM()
 
 #endif // __SOLC_LEXER_H__

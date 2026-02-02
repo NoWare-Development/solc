@@ -1,6 +1,6 @@
 project('solc', 'c')
 
-flags = []
+flags = [ '-std=c11' ]
 
 if get_option('buildtype') == 'debug'
   flags += '-D_DEBUG'
@@ -17,7 +17,7 @@ libsolc_lib = shared_library(
   libsolc_src,
   dependencies: libsolc_dep,
   include_directories: [ libsolc_inc, include_directories(libsolc_dir) ],
-  cpp_args: [ flags ],
+  c_args: [ flags ],
 )
 
 libsolc = declare_dependency(
@@ -35,5 +35,5 @@ solc_exe = executable(
   solc_src,
   dependencies: libsolc,
   include_directories: solc_inc,
-  cpp_args: [ flags ],
+  c_args: [ flags ],
 )
