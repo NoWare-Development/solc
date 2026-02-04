@@ -100,7 +100,7 @@ void hashtable_destroy(hashtable_t *table)
 {
   SOLC_ASSUME(table != nullptr);
 
-  if (table->key_size_policy == SIZE_POLICY_VARIABLE &&
+  if (table->key_size_policy == SIZE_POLICY_VARIABLE ||
       table->value_size_policy == SIZE_POLICY_VARIABLE) {
     for (sz i = 0; i < table->size; i++) {
       if (ht_ctrl_flag_is_present(table->ctrl[i]))
