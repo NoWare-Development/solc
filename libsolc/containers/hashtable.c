@@ -61,6 +61,8 @@ hashtable_t *__hashtable_create_impl(
   get_size_function_t get_value_size_function,
   compare_function_t key_compare_function)
 {
+  SOLC_ASSUME(hash_function != nullptr);
+
   hashtable_t *out_table = malloc(sizeof(hashtable_t));
 
   if (key_size_policy == SIZE_POLICY_VARIABLE) {
@@ -73,8 +75,7 @@ hashtable_t *__hashtable_create_impl(
   void *block = malloc(FULL_BLOCK_SIZE(key_size, value_size, HT_INITIAL_SIZE));
 
   out_table->ctrl = block;
-  memset(out_table->ctrl, HT_CTRL_FLAG_EMPTY,
-         HT_INITIAL_SIZE * sizeof(ht_ctrl_t));
+  memset(out_table->ctrl, HT_CTRL_FLAG_EMPTY, CTRL_BLOCK_SIZE(HT_INITIAL_SIZE));
 
   out_table->slots = (char *)block + CTRL_BLOCK_SIZE(HT_INITIAL_SIZE);
   memset(out_table->slots, 0,
@@ -270,17 +271,20 @@ void hashtable_remove(hashtable_t *table, const void *key)
 
 b8 hashtable_is_empty(hashtable_t *table)
 {
+  SOLC_ASSUME(table != nullptr);
   return table->filled != 0;
 }
 
 sz hashtable_get_size(hashtable_t *table)
 {
+  SOLC_ASSUME(table != nullptr);
   return table->filled;
 }
 
 void hashtable_foreach(hashtable_t *table,
                        hashtable_foreach_function_t foreach_function)
 {
+  SOLC_ASSUME(table != nullptr && foreach_function != nullptr);
   for (sz i = 0; i < table->size; i++) {
     if (ht_ctrl_flag_is_present(table->ctrl[i]))
       continue;
@@ -316,6 +320,8 @@ static inline b8 ht_ctrl_flag_is_present(ht_ctrl_t ctrl)
 
 static void ht_resize_and_rehash(hashtable_t *table)
 {
+  SOLC_ASSUME(table != nullptr);
+
   sz new_size = table->size * HT_RESIZE_FACTOR;
 
   sz new_memreq = FULL_BLOCK_SIZE(table->key_size, table->value_size, new_size);
@@ -360,17 +366,20 @@ static void ht_resize_and_rehash(hashtable_t *table)
 
 static inline void *ht_get_key_slot_addr(hashtable_t *table, sz pos)
 {
+  SOLC_ASSUME(table != nullptr);
   return (char *)table->slots + (table->key_size * pos);
 }
 
 static inline void *ht_get_value_slot_addr(hashtable_t *table, sz pos)
 {
+  SOLC_ASSUME(table != nullptr);
   return (char *)table->slots + (KEY_BLOCK_SIZE(table->key_size, table->size) +
                                  (table->value_size * pos));
 }
 
 static void ht_set_key(hashtable_t *table, sz pos, const void *key)
 {
+  SOLC_ASSUME(table != nullptr && key != nullptr);
   void *key_slot = ht_get_key_slot_addr(table, pos);
 
   if (table->key_size_policy == SIZE_POLICY_VARIABLE) {
@@ -390,6 +399,7 @@ static void ht_set_key(hashtable_t *table, sz pos, const void *key)
 
 static void ht_set_value(hashtable_t *table, sz pos, const void *value)
 {
+  SOLC_ASSUME(table != nullptr && value != nullptr);
   void *value_slot = ht_get_value_slot_addr(table, pos);
 
   if (table->value_size_policy == SIZE_POLICY_VARIABLE) {
@@ -409,11 +419,13 @@ static void ht_set_value(hashtable_t *table, sz pos, const void *value)
 
 b8 hashtable_key_compare_function_cstr(const void *key1, const void *key2)
 {
+  SOLC_ASSUME(key1 != nullptr && key2 != nullptr);
   return strcmp(key1, key2) == 0;
 }
 
 sz hashtable_get_size_function_cstr(const void *x)
 {
+  SOLC_ASSUME(x != nullptr);
   return strlen(x) + 1;
 }
 
