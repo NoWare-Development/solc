@@ -413,20 +413,3 @@ static void ht_set_value(hashtable_t *table, sz pos, const void *value)
 
   memcpy(value_slot, value, table->value_size);
 }
-
-b8 hashtable_key_compare_function_cstr(const void *key1, const void *key2)
-{
-  SOLC_ASSUME(key1 != nullptr && key2 != nullptr);
-  return strcmp(key1, key2) == 0;
-}
-
-sz hashtable_get_size_function_cstr(const void *x)
-{
-  SOLC_ASSUME(x != nullptr);
-  return strlen(x) + 1;
-}
-
-hash_t hash_function_UNDEFINED(const void *x)
-{
-  SOLC_NOREACH();
-}

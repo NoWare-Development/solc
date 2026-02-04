@@ -50,3 +50,8 @@ hash_t hash_function_i64(const void *key)
   key_64 ^= key_64 >> 31;
   return key_64;
 }
+
+hash_t hash_function_UNDEFINED(const void *x)
+{
+  SOLC_NOREACH();
+}
