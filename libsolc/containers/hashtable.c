@@ -137,8 +137,7 @@ void __hashtable_put_impl(hashtable_t *table, const void *key,
     if (h2 == table->ctrl[pos]) {
       void *slot_key = ht_get_key_slot_addr(table, pos);
       if (table->key_size_policy == SIZE_POLICY_VARIABLE) {
-        if SOLC_UNLIKELY (table->key_compare_function == nullptr)
-          SOLC_NOREACH();
+        SOLC_ASSUME(table->key_compare_function != nullptr);
 
         slot_key = *(void **)slot_key;
         SOLC_ASSUME(slot_key != nullptr);
@@ -184,8 +183,7 @@ const void *__hashtable_get_impl(hashtable_t *table, const void *key)
     if (h2 == table->ctrl[pos]) {
       void *slot_key = ht_get_key_slot_addr(table, pos);
       if (table->key_size_policy == SIZE_POLICY_VARIABLE) {
-        if SOLC_UNLIKELY (table->key_compare_function == nullptr)
-          SOLC_NOREACH();
+        SOLC_ASSUME(table->key_compare_function != nullptr);
 
         slot_key = *(void **)slot_key;
         SOLC_ASSUME(slot_key != nullptr);
@@ -217,15 +215,14 @@ void hashtable_remove(hashtable_t *table, const void *key)
 
   hash_t hash = table->hash_function(key);
   sz pos = ht_h1(hash) % table->size;
+  ht_ctrl_t h2 = ht_h2(hash);
 
   while (1) {
-    if (ht_h2(hash) == table->ctrl[pos]) {
+    if (h2 == table->ctrl[pos]) {
       void *slot_key = ht_get_key_slot_addr(table, pos);
       if (table->key_size_policy == SIZE_POLICY_VARIABLE) {
-        if SOLC_UNLIKELY (table->key_compare_function == nullptr)
-          SOLC_NOREACH();
-
-        if SOLC_LIKELY (table->key_compare_function == nullptr) {
+        SOLC_ASSUME(table->key_compare_function != nullptr);
+        if SOLC_LIKELY (table->key_compare_function(key, *(void **)slot_key)) {
           void **key_slot_ptr = slot_key;
           void **value_slot_ptr = ht_get_value_slot_addr(table, pos);
 
