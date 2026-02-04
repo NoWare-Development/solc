@@ -209,7 +209,7 @@ const void *__hashtable_get_impl(hashtable_t *table, const void *key)
   }
 }
 
-void hashtable_remove(hashtable_t *table, const void *key)
+void __hashtable_remove_impl(hashtable_t *table, const void *key)
 {
   SOLC_ASSUME(table != nullptr && key != nullptr);
 

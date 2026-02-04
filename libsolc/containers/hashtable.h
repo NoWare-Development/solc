@@ -49,8 +49,13 @@ typedef void (*hashtable_foreach_function_t)(const void *key,
 
 #define hashtable_get_raw(_table, _key) __hashtable_get_impl((_table), (_key))
 
+#define hashtable_remove(_table, _key) \
+  __hashtable_remove_impl((_table), __hashtable_arg_macro((_key)))
+
+#define hashtable_remove_raw(_table, _key) \
+  __hashtable_remove_impl((_table), (_key))
+
 void hashtable_destroy(hashtable_t *table);
-void hashtable_remove(hashtable_t *table, const void *key);
 b8 hashtable_is_empty(hashtable_t *table);
 sz hashtable_get_size(hashtable_t *table);
 void hashtable_foreach(hashtable_t *table,
@@ -70,6 +75,7 @@ hashtable_t *__hashtable_create_impl(
 void __hashtable_put_impl(hashtable_t *table, const void *key,
                           const void *value);
 const void *__hashtable_get_impl(hashtable_t *table, const void *key);
+void __hashtable_remove_impl(hashtable_t *table, const void *key);
 
 #define __hashtable_get_default_get_size_function(_X) \
   _Generic((_X),                                      \
