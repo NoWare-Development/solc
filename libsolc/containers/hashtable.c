@@ -34,8 +34,8 @@ typedef struct __hashtable_t {
   sz value_size;
 
   hash_function_t hash_function;
-  hashtable_get_size_function_t get_key_size_function, get_value_size_function;
-  hashtable_key_compare_function_t key_compare_function;
+  get_size_function_t get_key_size_function, get_value_size_function;
+  compare_function_t key_compare_function;
 
   size_policy_t key_size_policy : 1;
   size_policy_t value_size_policy : 1;
@@ -57,9 +57,9 @@ static void ht_set_value(hashtable_t *table, sz pos, const void *value);
 hashtable_t *__hashtable_create_impl(
   sz key_size, sz value_size, hash_function_t hash_function,
   size_policy_t key_size_policy, size_policy_t value_size_policy,
-  hashtable_get_size_function_t get_key_size_function,
-  hashtable_get_size_function_t get_value_size_function,
-  hashtable_key_compare_function_t key_compare_function)
+  get_size_function_t get_key_size_function,
+  get_size_function_t get_value_size_function,
+  compare_function_t key_compare_function)
 {
   hashtable_t *out_table = malloc(sizeof(hashtable_t));
 
