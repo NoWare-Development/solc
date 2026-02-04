@@ -37,8 +37,8 @@ typedef struct __hashtable_t {
   hashtable_get_size_function_t get_key_size_function, get_value_size_function;
   hashtable_key_compare_function_t key_compare_function;
 
-  hashtable_size_policy_t key_size_policy : 1;
-  hashtable_size_policy_t value_size_policy : 1;
+  size_policy_t key_size_policy : 1;
+  size_policy_t value_size_policy : 1;
 } hashtable_t;
 
 static inline hash_t ht_h1(hash_t hash);
@@ -54,21 +54,19 @@ static inline void *ht_get_value_slot_addr(hashtable_t *table, sz pos);
 static void ht_set_key(hashtable_t *table, sz pos, const void *key);
 static void ht_set_value(hashtable_t *table, sz pos, const void *value);
 
-hashtable_t *
-__hashtable_create_impl(sz key_size, sz value_size,
-                        hash_function_t hash_function,
-                        hashtable_size_policy_t key_size_policy,
-                        hashtable_size_policy_t value_size_policy,
-                        hashtable_get_size_function_t get_key_size_function,
-                        hashtable_get_size_function_t get_value_size_function,
-                        hashtable_key_compare_function_t key_compare_function)
+hashtable_t *__hashtable_create_impl(
+  sz key_size, sz value_size, hash_function_t hash_function,
+  size_policy_t key_size_policy, size_policy_t value_size_policy,
+  hashtable_get_size_function_t get_key_size_function,
+  hashtable_get_size_function_t get_value_size_function,
+  hashtable_key_compare_function_t key_compare_function)
 {
   hashtable_t *out_table = malloc(sizeof(hashtable_t));
 
-  if (key_size_policy == HASHTABLE_SIZE_POLICY_VARIABLE) {
+  if (key_size_policy == SIZE_POLICY_VARIABLE) {
     key_size = sizeof(void *);
   }
-  if (value_size_policy == HASHTABLE_SIZE_POLICY_VARIABLE) {
+  if (value_size_policy == SIZE_POLICY_VARIABLE) {
     value_size = sizeof(void *);
   }
 
@@ -101,19 +99,19 @@ void hashtable_destroy(hashtable_t *table)
 {
   SOLC_ASSUME(table != nullptr);
 
-  if (table->key_size_policy == HASHTABLE_SIZE_POLICY_VARIABLE &&
-      table->value_size_policy == HASHTABLE_SIZE_POLICY_VARIABLE) {
+  if (table->key_size_policy == SIZE_POLICY_VARIABLE &&
+      table->value_size_policy == SIZE_POLICY_VARIABLE) {
     for (sz i = 0; i < table->size; i++) {
       if (ht_ctrl_flag_is_present(table->ctrl[i]))
         continue;
 
-      if (table->key_size_policy == HASHTABLE_SIZE_POLICY_VARIABLE) {
+      if (table->key_size_policy == SIZE_POLICY_VARIABLE) {
         void *key = ht_get_key_slot_addr(table, i);
         key = *(void **)key;
         free(key);
       }
 
-      if (table->value_size_policy == HASHTABLE_SIZE_POLICY_VARIABLE) {
+      if (table->value_size_policy == SIZE_POLICY_VARIABLE) {
         void *value = ht_get_value_slot_addr(table, i);
         value = *(void **)value;
         free(value);
@@ -137,7 +135,7 @@ void __hashtable_put_impl(hashtable_t *table, const void *key,
   while (1) {
     if (h2 == table->ctrl[pos]) {
       void *slot_key = ht_get_key_slot_addr(table, pos);
-      if (table->key_size_policy == HASHTABLE_SIZE_POLICY_VARIABLE) {
+      if (table->key_size_policy == SIZE_POLICY_VARIABLE) {
         if SOLC_UNLIKELY (table->key_compare_function == nullptr)
           SOLC_NOREACH();
 
@@ -184,7 +182,7 @@ const void *__hashtable_get_impl(hashtable_t *table, const void *key)
   while (1) {
     if (h2 == table->ctrl[pos]) {
       void *slot_key = ht_get_key_slot_addr(table, pos);
-      if (table->key_size_policy == HASHTABLE_SIZE_POLICY_VARIABLE) {
+      if (table->key_size_policy == SIZE_POLICY_VARIABLE) {
         if SOLC_UNLIKELY (table->key_compare_function == nullptr)
           SOLC_NOREACH();
 
@@ -193,13 +191,13 @@ const void *__hashtable_get_impl(hashtable_t *table, const void *key)
 
         if SOLC_LIKELY (table->key_compare_function(key, slot_key)) {
           void *value = ht_get_value_slot_addr(table, pos);
-          return table->value_size_policy == HASHTABLE_SIZE_POLICY_VARIABLE ?
+          return table->value_size_policy == SIZE_POLICY_VARIABLE ?
                    *(void **)value :
                    value;
         }
       } else if SOLC_LIKELY (memcmp(key, slot_key, table->key_size) == 0) {
         void *value = ht_get_value_slot_addr(table, pos);
-        return table->value_size_policy == HASHTABLE_SIZE_POLICY_VARIABLE ?
+        return table->value_size_policy == SIZE_POLICY_VARIABLE ?
                  *(void **)value :
                  value;
       }
@@ -222,7 +220,7 @@ void hashtable_remove(hashtable_t *table, const void *key)
   while (1) {
     if (ht_h2(hash) == table->ctrl[pos]) {
       void *slot_key = ht_get_key_slot_addr(table, pos);
-      if (table->key_size_policy == HASHTABLE_SIZE_POLICY_VARIABLE) {
+      if (table->key_size_policy == SIZE_POLICY_VARIABLE) {
         if SOLC_UNLIKELY (table->key_compare_function == nullptr)
           SOLC_NOREACH();
 
@@ -235,7 +233,7 @@ void hashtable_remove(hashtable_t *table, const void *key)
           free(*key_slot_ptr);
           *key_slot_ptr = 0;
 
-          if (table->value_size_policy == HASHTABLE_SIZE_POLICY_VARIABLE) {
+          if (table->value_size_policy == SIZE_POLICY_VARIABLE) {
             free(*value_slot_ptr);
             *value_slot_ptr = 0;
           } else {
@@ -250,7 +248,7 @@ void hashtable_remove(hashtable_t *table, const void *key)
         memset(slot_key, 0, table->key_size);
 
         void **value_slot_ptr = ht_get_value_slot_addr(table, pos);
-        if (table->value_size_policy == HASHTABLE_SIZE_POLICY_VARIABLE) {
+        if (table->value_size_policy == SIZE_POLICY_VARIABLE) {
           free(*value_slot_ptr);
           *value_slot_ptr = 0;
         } else {
@@ -290,10 +288,10 @@ void hashtable_foreach(hashtable_t *table,
     void *key_slot = ht_get_key_slot_addr(table, i);
     void *value_slot = ht_get_value_slot_addr(table, i);
 
-    key_slot = table->key_size_policy == HASHTABLE_SIZE_POLICY_VARIABLE ?
+    key_slot = table->key_size_policy == SIZE_POLICY_VARIABLE ?
                  *(void **)key_slot :
                  key_slot;
-    value_slot = table->value_size_policy == HASHTABLE_SIZE_POLICY_VARIABLE ?
+    value_slot = table->value_size_policy == SIZE_POLICY_VARIABLE ?
                    *(void **)value_slot :
                    value_slot;
 
@@ -347,10 +345,10 @@ static void ht_resize_and_rehash(hashtable_t *table)
     void *key = ht_get_key_slot_addr(table, i);
     void *value = ht_get_value_slot_addr(table, i);
 
-    if (table->key_size_policy == HASHTABLE_SIZE_POLICY_VARIABLE)
+    if (table->key_size_policy == SIZE_POLICY_VARIABLE)
       key = *(void **)key;
 
-    if (table->value_size_policy == HASHTABLE_SIZE_POLICY_VARIABLE)
+    if (table->value_size_policy == SIZE_POLICY_VARIABLE)
       value = *(void **)value;
 
     __hashtable_put_impl(&new_table, key, value);
@@ -375,7 +373,7 @@ static void ht_set_key(hashtable_t *table, sz pos, const void *key)
 {
   void *key_slot = ht_get_key_slot_addr(table, pos);
 
-  if (table->key_size_policy == HASHTABLE_SIZE_POLICY_VARIABLE) {
+  if (table->key_size_policy == SIZE_POLICY_VARIABLE) {
     void **key_ptr = key_slot;
     if (*key_ptr != 0)
       free(*key_ptr);
@@ -394,7 +392,7 @@ static void ht_set_value(hashtable_t *table, sz pos, const void *value)
 {
   void *value_slot = ht_get_value_slot_addr(table, pos);
 
-  if (table->value_size_policy == HASHTABLE_SIZE_POLICY_VARIABLE) {
+  if (table->value_size_policy == SIZE_POLICY_VARIABLE) {
     void **value_ptr = value_slot;
     if (*value_ptr != 0)
       free(*value_ptr);
