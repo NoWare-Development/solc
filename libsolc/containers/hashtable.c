@@ -334,12 +334,12 @@ static void ht_resize_and_rehash(hashtable_t *table)
          KEY_BLOCK_SIZE(table->key_size, new_size) +
            VALUE_BLOCK_SIZE(table->value_size, new_size));
 
-  hashtable_t new_table;
-  memcpy(&new_table, table, sizeof(hashtable_t));
-  new_table.ctrl = new_ctrl;
-  new_table.slots = new_slots;
-  new_table.size = new_size;
-  new_table.filled = 0;
+  hashtable_t *new_table = malloc(sizeof(hashtable_t));
+  memcpy(new_table, table, sizeof(hashtable_t));
+  new_table->ctrl = new_ctrl;
+  new_table->slots = new_slots;
+  new_table->size = new_size;
+  new_table->filled = 0;
 
   for (sz i = 0; i < table->size; i++) {
     if (ht_ctrl_flag_is_present(table->ctrl[i]))
@@ -354,11 +354,11 @@ static void ht_resize_and_rehash(hashtable_t *table)
     if (table->value_size_policy == SIZE_POLICY_VARIABLE)
       value = *(void **)value;
 
-    __hashtable_put_impl(&new_table, key, value);
+    __hashtable_put_impl(new_table, key, value);
   }
 
-  free(table->ctrl);
-  memcpy(table, &new_table, sizeof(hashtable_t));
+  hashtable_destroy(table);
+  table = new_table;
 }
 
 static inline void *ht_get_key_slot_addr(hashtable_t *table, sz pos)
