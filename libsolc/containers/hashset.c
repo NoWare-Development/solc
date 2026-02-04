@@ -138,7 +138,7 @@ void __hashset_set_impl(hashset_t *set, const void *key)
   }
 }
 
-b8 __hashset_is_set(hashset_t *set, const void *key)
+b8 __hashset_is_set_impl(hashset_t *set, const void *key)
 {
   SOLC_ASSUME(set != nullptr && key != nullptr);
 
