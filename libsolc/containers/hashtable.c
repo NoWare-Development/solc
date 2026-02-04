@@ -381,7 +381,7 @@ static void ht_set_key(hashtable_t *table, sz pos, const void *key)
 
   if (table->key_size_policy == SIZE_POLICY_VARIABLE) {
     void **key_ptr = key_slot;
-    if (*key_ptr != 0)
+    if (*key_ptr != nullptr)
       free(*key_ptr);
 
     sz key_size = table->get_key_size_function(key);
