@@ -1,4 +1,5 @@
 subdir('lexer')
+subdir('parser')
 
 subdir('containers')
 

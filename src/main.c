@@ -1,8 +1,9 @@
-#include "solc/lexer/lexer.h"
-#include "solc/lexer/token.h"
+#include <solc/lexer/lexer.h>
+#include <solc/lexer/token.h>
 #include <solc/defs.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <solc/parser/ast.h>
 
 s32 main(s32 argc, char **argv)
 {

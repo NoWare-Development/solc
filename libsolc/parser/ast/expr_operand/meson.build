@@ -1,0 +1,13 @@
+libsolc_src += [
+  'libsolc/parser/ast/expr_operand/ast_expr_operand_access_member.c',
+  'libsolc/parser/ast/expr_operand/ast_expr_operand_call.c',
+  'libsolc/parser/ast/expr_operand/ast_expr_operand_cast.c',
+  'libsolc/parser/ast/expr_operand/ast_expr_operand_generic_call.c',
+  'libsolc/parser/ast/expr_operand/ast_expr_operand_identifier.c',
+  'libsolc/parser/ast/expr_operand/ast_expr_operand_num.c',
+  'libsolc/parser/ast/expr_operand/ast_expr_operand_numfloat.c',
+  'libsolc/parser/ast/expr_operand/ast_expr_operand_sizeof.c',
+  'libsolc/parser/ast/expr_operand/ast_expr_operand_string.c',
+  'libsolc/parser/ast/expr_operand/ast_expr_operand_symbol.c',
+  'libsolc/parser/ast/expr_operand/ast_expr_operand_void.c',
+]
