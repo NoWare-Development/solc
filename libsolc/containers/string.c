@@ -62,6 +62,28 @@ void string_append(string_t *dst, string_t *src)
   dst->size += src->size - 1;
 }
 
+void string_append_cstr(string_t *dst, const char *c_str)
+{
+  const sz c_str_len = strlen(c_str);
+  char *new_data = malloc(sizeof(char) * (dst->size + c_str_len));
+  memcpy(new_data, dst->data, sizeof(char) * (dst->size - 1));
+  memcpy(new_data + (dst->size - 1), c_str, c_str_len + 1);
+  free(dst->data);
+  dst->data = new_data;
+  dst->size += c_str_len;
+}
+
+void string_append_char(string_t *dst, char c)
+{
+  char *new_data = malloc(sizeof(char) * (dst->size + 1));
+  memcpy(new_data, dst->data, sizeof(char) * (dst->size - 1));
+  new_data[dst->size - 1] = c;
+  new_data[dst->size] = 0;
+  free(dst->data);
+  dst->data = new_data;
+  dst->size++;
+}
+
 sz string_length(const string_t *str)
 {
   SOLC_ASSUME(str != nullptr && str->size > 0);

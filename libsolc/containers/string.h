@@ -14,6 +14,8 @@ string_t string_copy(const string_t *str);
 void string_destroy(string_t *str);
 char string_at(string_t *str, sz pos);
 void string_append(string_t *dst, string_t *src);
+void string_append_cstr(string_t *dst, const char *c_str);
+void string_append_char(string_t *dst, char c);
 sz string_length(const string_t *str);
 
 #endif // __SOLC_CONTAINER_STRING_H__
