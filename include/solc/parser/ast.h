@@ -130,10 +130,9 @@ typedef struct {
 } solc_ast_t;
 
 typedef void (*solc_ast_destroy_func_t)(solc_ast_t *ast);
-typedef sz (*solc_ast_to_string_func_t)(char *buf, sz n, solc_ast_t *ast);
 
 solc_ast_destroy_func_t solc_ast_get_destroy_func(solc_ast_type_t ast_type);
-solc_ast_to_string_func_t solc_ast_get_to_string_func(solc_ast_type_t ast_type);
+void solc_ast_to_string(solc_ast_t *ast);
 
 #define solc_ast_destroy(ast) \
   solc_ast_get_destroy_func(((solc_ast_t *)(ast))->type)((solc_ast_t *)(ast))
