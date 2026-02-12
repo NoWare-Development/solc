@@ -35,7 +35,7 @@ typedef struct __hashset_t {
 static inline hash_t hs_h1(hash_t hash);
 static inline hash_t hs_h2(hash_t hash);
 static inline b8 hs_ctrl_flag_is_present(hs_ctrl_t ctrl);
-static void hs_resize_and_rehash(hashset_t *set);
+static hashset_t *hs_resize_and_rehash(hashset_t *set);
 static inline void *hs_get_key_slot_addr(hashset_t *set, sz pos);
 static void hs_set_key(hashset_t *set, sz pos, const void *key);
 
@@ -94,7 +94,7 @@ void hashset_destroy(hashset_t *set)
   free(set);
 }
 
-void __hashset_set_impl(hashset_t *set, const void *key)
+hashset_t *__hashset_set_impl(hashset_t *set, const void *key)
 {
   SOLC_ASSUME(set != nullptr && key != nullptr);
 
@@ -113,10 +113,10 @@ void __hashset_set_impl(hashset_t *set, const void *key)
         SOLC_ASSUME(slot_key != nullptr);
 
         if SOLC_LIKELY (set->key_compare_function(key, slot_key)) {
-          return;
+          return set;
         }
       } else if SOLC_LIKELY (memcmp(key, slot_key, set->key_size) == 0) {
-        return;
+        return set;
       }
     }
 
@@ -128,10 +128,10 @@ void __hashset_set_impl(hashset_t *set, const void *key)
 
       float load_factor = (float)set->filled / set->size;
       if SOLC_UNLIKELY (load_factor > HS_MAX_LOAD_FACTOR) {
-        hs_resize_and_rehash(set);
+        set = hs_resize_and_rehash(set);
       }
 
-      return;
+      return set;
     }
 
     pos = (pos + 1) % set->size;
@@ -235,7 +235,7 @@ static inline b8 hs_ctrl_flag_is_present(hs_ctrl_t ctrl)
   return (ctrl & 0b10000000) != 0;
 }
 
-static void hs_resize_and_rehash(hashset_t *set)
+static hashset_t *hs_resize_and_rehash(hashset_t *set)
 {
   SOLC_ASSUME(set != nullptr);
 
@@ -271,8 +271,7 @@ static void hs_resize_and_rehash(hashset_t *set)
     __hashset_set_impl(new_set, key);
   }
 
-  hashset_destroy(set);
-  set = new_set;
+  return new_set;
 }
 
 static inline void *hs_get_key_slot_addr(hashset_t *set, sz pos)

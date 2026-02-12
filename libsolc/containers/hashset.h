@@ -23,9 +23,14 @@ typedef struct __hashset_t hashset_t;
                         (_key_size_policy), (_get_key_size_function),     \
                         (_key_compare_function))
 
-#define hashset_set(_set, _key) \
-  __hashset_set_impl((_set), __hashset_arg_macro((_key)))
-#define hashset_set_raw(_set, _key) __hashset_set_impl((_set), (_key))
+#define hashset_set(_set, _key)                                       \
+  {                                                                   \
+    (_set) = __hashset_set_impl((_set), __hashset_arg_macro((_key))); \
+  }
+#define hashset_set_raw(_set, _key)              \
+  {                                              \
+    (_set) = __hashset_set_impl((_set), (_key)); \
+  }
 
 #define hashset_is_set(_set, _key) \
   __hashset_is_set_impl((_set), __hashset_arg_macro((_key)))
@@ -40,7 +45,7 @@ hashset_t *__hashset_create_impl(sz key_size, hash_function_t hash_function,
                                  get_size_function_t get_key_size_function,
                                  compare_function_t key_compare_function);
 void hashset_destroy(hashset_t *set);
-void __hashset_set_impl(hashset_t *set, const void *key);
+hashset_t *__hashset_set_impl(hashset_t *set, const void *key);
 b8 __hashset_is_set_impl(hashset_t *set, const void *key);
 void __hashset_unset_impl(hashset_t *set, const void *key);
 
