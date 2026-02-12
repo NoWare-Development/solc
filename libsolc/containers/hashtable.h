@@ -36,12 +36,16 @@ typedef void (*hashtable_foreach_function_t)(const void *key,
                    (_get_value_size_function_ptr),                       \
                    (_key_compare_function_ptr))
 
-#define hashtable_put(_table, _key, _value)                     \
-  __hashtable_put_impl((_table), __hashtable_arg_macro((_key)), \
-                       __hashtable_arg_macro((_value)))
+#define hashtable_put(_table, _key, _value)                                  \
+  {                                                                          \
+    (_table) = __hashtable_put_impl((_table), __hashtable_arg_macro((_key)), \
+                                    __hashtable_arg_macro((_value)));        \
+  }
 
-#define hashtable_put_raw(_table, _key, _value) \
-  __hashtable_put_impl((_table), (_key), (_value))
+#define hashtable_put_raw(_table, _key, _value)                  \
+  {                                                              \
+    (_table) = __hashtable_put_impl((_table), (_key), (_value)); \
+  }
 
 #define hashtable_get(_table, _key) \
   __hashtable_get_impl((_table), __hashtable_arg_macro((_key)))
@@ -66,8 +70,8 @@ hashtable_t *__hashtable_create_impl(
   get_size_function_t get_key_size_function,
   get_size_function_t get_value_size_function,
   compare_function_t key_compare_function);
-void __hashtable_put_impl(hashtable_t *table, const void *key,
-                          const void *value);
+hashtable_t *__hashtable_put_impl(hashtable_t *table, const void *key,
+                                  const void *value);
 const void *__hashtable_get_impl(hashtable_t *table, const void *key);
 void __hashtable_remove_impl(hashtable_t *table, const void *key);
 

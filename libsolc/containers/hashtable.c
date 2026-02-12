@@ -46,7 +46,7 @@ static inline ht_ctrl_t ht_h2(hash_t hash);
 
 static inline b8 ht_ctrl_flag_is_present(ht_ctrl_t ctrl);
 
-static void ht_resize_and_rehash(hashtable_t *table);
+static hashtable_t *ht_resize_and_rehash(hashtable_t *table);
 
 static inline void *ht_get_key_slot_addr(hashtable_t *table, sz pos);
 static inline void *ht_get_value_slot_addr(hashtable_t *table, sz pos);
@@ -124,8 +124,8 @@ void hashtable_destroy(hashtable_t *table)
   free(table);
 }
 
-void __hashtable_put_impl(hashtable_t *table, const void *key,
-                          const void *value)
+hashtable_t *__hashtable_put_impl(hashtable_t *table, const void *key,
+                                  const void *value)
 {
   SOLC_ASSUME(table != nullptr && key != nullptr && value != nullptr);
 
@@ -144,11 +144,11 @@ void __hashtable_put_impl(hashtable_t *table, const void *key,
 
         if SOLC_LIKELY (table->key_compare_function(key, slot_key)) {
           ht_set_value(table, pos, value);
-          return;
+          return table;
         }
       } else if SOLC_LIKELY (memcmp(key, slot_key, table->key_size) == 0) {
         ht_set_value(table, pos, value);
-        return;
+        return table;
       }
     }
 
@@ -161,10 +161,10 @@ void __hashtable_put_impl(hashtable_t *table, const void *key,
 
       float load_factor = (float)table->filled / table->size;
       if SOLC_UNLIKELY (load_factor > HT_MAX_LOAD_FACTOR) {
-        ht_resize_and_rehash(table);
+        table = ht_resize_and_rehash(table);
       }
 
-      return;
+      return table;
     }
 
     pos = (pos + 1) % table->size;
@@ -315,7 +315,7 @@ static inline b8 ht_ctrl_flag_is_present(ht_ctrl_t ctrl)
   return (ctrl & 0b10000000) != 0;
 }
 
-static void ht_resize_and_rehash(hashtable_t *table)
+static hashtable_t *ht_resize_and_rehash(hashtable_t *table)
 {
   SOLC_ASSUME(table != nullptr);
 
@@ -357,8 +357,7 @@ static void ht_resize_and_rehash(hashtable_t *table)
     __hashtable_put_impl(new_table, key, value);
   }
 
-  hashtable_destroy(table);
-  table = new_table;
+  return new_table;
 }
 
 static inline void *ht_get_key_slot_addr(hashtable_t *table, sz pos)
