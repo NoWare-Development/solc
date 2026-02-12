@@ -55,7 +55,9 @@ char string_at(string_t *str, sz pos)
 void string_append(string_t *dst, string_t *src)
 {
   char *new_data = malloc(sizeof(char) * (dst->size - 1 + src->size));
-  memcpy(new_data, dst->data, sizeof(char) * (dst->size - 1));
+  if (dst->size > 1) {
+    memcpy(new_data, dst->data, sizeof(char) * (dst->size - 1));
+  }
   memcpy(new_data + (dst->size - 1), src->data, src->size);
   free(dst->data);
   dst->data = new_data;
