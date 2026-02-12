@@ -72,7 +72,7 @@ sz vector_get_length(const void *v)
 
 void vector_clear(void *v)
 {
-  vector_header_t *header = v;
+  vector_header_t *header = get_vector_header(v);
   header->len = 0;
 }
 
