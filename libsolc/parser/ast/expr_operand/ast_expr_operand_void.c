@@ -1,3 +1,4 @@
+#include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/defs.h"
 #include "solc/parser/ast.h"
@@ -18,11 +19,12 @@ void solc_ast_expr_operand_void_destroy(solc_ast_t *void_expr_operand_ast)
   free(void_expr_operand_ast);
 }
 
-sz solc_ast_expr_operand_void_to_string(char *buf, sz n,
-                                        solc_ast_t *void_expr_operand_ast)
+string_t *
+solc_ast_expr_operand_void_build_tree(solc_ast_t *void_expr_operand_ast)
 {
-  SOLC_ASSUME(buf != nullptr && void_expr_operand_ast != nullptr &&
+  SOLC_ASSUME(void_expr_operand_ast != nullptr &&
               void_expr_operand_ast->type == SOLC_AST_TYPE_EXPR_OPERAND_VOID);
-
-  return snprintf(buf, n, "EXPR_OPERAND_VOID");
+  string_t *out_v = vector_reserve(string_t, 1);
+  vector_push(out_v, string_create_from("EXPR_OPERAND_VOID"));
+  return out_v;
 }

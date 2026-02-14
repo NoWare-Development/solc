@@ -1,3 +1,5 @@
+#include "containers/string.h"
+#include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/parser/ast.h"
 #include <stdio.h>
@@ -27,11 +29,16 @@ void solc_ast_stmt_goto_destroy(solc_ast_t *goto_ast)
   free(goto_ast);
 }
 
-sz solc_ast_stmt_goto_to_string(char *buf, sz n, solc_ast_t *goto_ast)
+string_t *solc_ast_stmt_goto_build_tree(solc_ast_t *goto_ast)
 {
-  SOLC_ASSUME(buf != nullptr && goto_ast != nullptr &&
-              goto_ast->type == SOLC_AST_TYPE_STMT_GOTO);
+  SOLC_ASSUME(goto_ast != nullptr && goto_ast->type == SOLC_AST_TYPE_STMT_GOTO);
   SOLC_AST_CAST(goto_data, goto_ast, ast_goto_stmt_t);
   SOLC_ASSUME(goto_data->label_name != nullptr);
-  return snprintf(buf, n, "STMT_GOTO { name: \"%s\" }", goto_data->label_name);
+
+  string_t header = string_create_from("STMT_GOTO { label_name: \"");
+  string_append_cstr(&header, goto_data->label_name);
+  string_append_cstr(&header, "\" }");
+  string_t *out_v = vector_reserve(string_t, 1);
+  vector_push(out_v, header);
+  return out_v;
 }

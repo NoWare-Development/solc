@@ -1,3 +1,5 @@
+#include "containers/string.h"
+#include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/parser/ast.h"
 #include <stdlib.h>
@@ -27,12 +29,16 @@ void solc_ast_type_typeof_destroy(solc_ast_t *typeof_type_ast)
   free(typeof_type_ast);
 }
 
-sz solc_ast_type_typeof_to_string(char *buf, sz n, solc_ast_t *typeof_type_ast)
+string_t *solc_ast_type_typeof_build_tree(solc_ast_t *typeof_type_ast)
 {
-  SOLC_ASSUME(buf != nullptr && typeof_type_ast != nullptr &&
+  SOLC_ASSUME(typeof_type_ast != nullptr &&
               typeof_type_ast->type == SOLC_AST_TYPE_TYPE_TYPEOF);
-
-  SOLC_TODO("Type typeof to string.");
-
-  return 0;
+  SOLC_AST_CAST(typeof_type_data, typeof_type_ast, ast_typeof_type_t);
+  SOLC_ASSUME(typeof_type_data->expr_ast != nullptr);
+  string_t **children_vs_v = vector_create(string_t *);
+  vector_push(children_vs_v,
+              ast_get_build_tree_func(typeof_type_data->expr_ast->type)(
+                typeof_type_data->expr_ast));
+  string_t header = string_create_from("TYPE_TYPEOF");
+  return ast_build_tree(&header, children_vs_v);
 }

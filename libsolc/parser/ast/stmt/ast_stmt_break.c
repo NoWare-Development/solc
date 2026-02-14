@@ -1,3 +1,5 @@
+#include "containers/string.h"
+#include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/parser/ast.h"
 #include <stdio.h>
@@ -18,9 +20,11 @@ void solc_ast_stmt_break_destroy(solc_ast_t *break_ast)
   free(break_ast);
 }
 
-sz solc_ast_stmt_break_to_string(char *buf, sz n, solc_ast_t *break_ast)
+string_t *solc_ast_stmt_break_build_tree(solc_ast_t *break_ast)
 {
-  SOLC_ASSUME(buf != nullptr && break_ast != nullptr &&
+  SOLC_ASSUME(break_ast != nullptr &&
               break_ast->type == SOLC_AST_TYPE_STMT_BREAK);
-  return snprintf(buf, n, "STMT_BREAK");
+  string_t *out_v = vector_reserve(string_t, 1);
+  vector_push(out_v, string_create_from("STMT_BREAK"));
+  return out_v;
 }

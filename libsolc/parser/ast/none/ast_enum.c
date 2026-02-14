@@ -1,3 +1,4 @@
+#include "containers/string.h"
 #include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/defs.h"
@@ -44,7 +45,8 @@ void solc_ast_enum_add_element(solc_ast_t *enum_ast,
 {
   SOLC_ASSUME(enum_ast != nullptr &&
               enum_ast->type == SOLC_AST_TYPE_NONE_ENUM &&
-              enum_element_ast != nullptr);
+              enum_element_ast != nullptr &&
+              enum_element_ast->type == SOLC_AST_TYPE_NONE_ENUM_ELEMENT);
 
   SOLC_AST_CAST(enum_data, enum_ast, ast_enum_t);
   SOLC_ASSUME(enum_data->elements_v != nullptr);
@@ -52,11 +54,25 @@ void solc_ast_enum_add_element(solc_ast_t *enum_ast,
   vector_push(enum_data->elements_v, enum_element_ast);
 }
 
-sz solc_ast_enum_to_string(char *buf, sz n, solc_ast_t *enum_ast)
+string_t *solc_ast_enum_build_tree(solc_ast_t *enum_ast)
 {
-  SOLC_ASSUME(buf != nullptr && enum_ast != nullptr &&
-              enum_ast->type == SOLC_AST_TYPE_NONE_ENUM);
+  SOLC_ASSUME(enum_ast != nullptr && enum_ast->type == SOLC_AST_TYPE_NONE_ENUM);
+  SOLC_AST_CAST(enum_data, enum_ast, ast_enum_t);
+  SOLC_ASSUME(enum_data->elements_v != nullptr && enum_data->name != nullptr);
 
-  SOLC_TODO("Enum AST to string.");
-  return 0;
+  string_t header = string_create_from("ENUM { name: \"");
+  string_append_cstr(&header, enum_data->name);
+  string_append_cstr(&header, "\" }");
+
+  sz elements_v_size = vector_get_length(enum_data->elements_v);
+  string_t **children_vs_v = vector_reserve(string_t *, elements_v_size);
+  for (sz i = 0; i < elements_v_size; i++) {
+    SOLC_ASSUME(enum_data->elements_v[i] != nullptr &&
+                enum_data->elements_v[i]->type ==
+                  SOLC_AST_TYPE_NONE_ENUM_ELEMENT);
+    vector_push(children_vs_v,
+                solc_ast_enum_element_build_tree(enum_data->elements_v[i]));
+  }
+
+  return ast_build_tree(&header, children_vs_v);
 }

@@ -1,3 +1,4 @@
+#include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/parser/ast.h"
 #include <stdlib.h>
@@ -26,12 +27,23 @@ void solc_ast_stmt_return_destroy(solc_ast_t *return_ast)
   free(return_ast);
 }
 
-sz solc_ast_stmt_return_to_string(char *buf, sz n, solc_ast_t *return_ast)
+string_t *solc_ast_stmt_return_build_tree(solc_ast_t *return_ast)
 {
-  SOLC_ASSUME(buf != nullptr && return_ast != nullptr &&
+  SOLC_ASSUME(return_ast != nullptr &&
               return_ast->type == SOLC_AST_TYPE_STMT_RETURN);
+  SOLC_AST_CAST(return_data, return_ast, ast_return_stmt_t);
 
-  SOLC_TODO("Return statement to string.");
+  string_t header = string_create_from("STMT_RETURN");
+  if (return_data->expr_ast == nullptr) {
+    string_t *out_v = vector_reserve(string_t, 1);
+    vector_push(out_v, header);
+    return out_v;
+  }
 
-  return 0;
+  string_t **children_vs_v = vector_reserve(string_t *, 1);
+  vector_push(children_vs_v,
+              ast_get_build_tree_func(return_data->expr_ast->type)(
+                return_data->expr_ast));
+
+  return ast_build_tree(&header, children_vs_v);
 }

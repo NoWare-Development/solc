@@ -1,3 +1,5 @@
+#include "containers/string.h"
+#include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/parser/ast.h"
 #include <stdlib.h>
@@ -26,12 +28,18 @@ void solc_ast_stmt_defer_destroy(solc_ast_t *defer_ast)
   free(defer_data);
 }
 
-sz solc_ast_stmt_defer_to_string(char *buf, sz n, solc_ast_t *defer_ast)
+string_t *solc_ast_stmt_defer_build_tree(solc_ast_t *defer_ast)
 {
-  SOLC_ASSUME(buf != nullptr && defer_ast != nullptr &&
+  SOLC_ASSUME(defer_ast != nullptr &&
               defer_ast->type == SOLC_AST_TYPE_STMT_DEFER);
+  SOLC_AST_CAST(defer_data, defer_ast, ast_defer_stmt_t);
+  SOLC_ASSUME(defer_data->stmt_ast != nullptr);
 
-  SOLC_TODO("Defer statement to string.");
+  string_t header = string_create_from("STMT_DEFER");
+  string_t **children_vs_v = vector_reserve(string_t *, 1);
+  vector_push(
+    children_vs_v,
+    ast_get_build_tree_func(defer_data->stmt_ast->type)(defer_data->stmt_ast));
 
-  return 0;
+  return ast_build_tree(&header, children_vs_v);
 }

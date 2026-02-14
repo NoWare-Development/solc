@@ -1,3 +1,6 @@
+#include "containers/string.h"
+#include "containers/vector.h"
+#include "parser/ast/ast_group_generic.h"
 #include "parser/ast_private.h"
 #include "solc/parser/ast.h"
 #include <stdlib.h>
@@ -16,7 +19,9 @@ solc_ast_expr_operand_generic_call_create(sz pos, const char *callee_name,
                                           solc_ast_t *generic_type_list_ast)
 {
   SOLC_ASSUME(callee_name != nullptr && call_args_ast != nullptr &&
-              generic_type_list_ast != nullptr);
+              call_args_ast->type == SOLC_AST_TYPE_NONE_FUNC_ARGLIST &&
+              generic_type_list_ast != nullptr &&
+              generic_type_list_ast->type == SOLC_AST_TYPE_GENERIC_TYPE_LIST);
   const sz callee_name_len = strlen(callee_name) + 1;
   ast_expr_operand_generic_call_t *out_expr_operand_generic_call =
     malloc(sizeof(ast_expr_operand_generic_call_t) + callee_name_len);
@@ -41,20 +46,46 @@ void solc_ast_expr_operand_generic_call_destroy(
   SOLC_AST_CAST(generic_call_expr_operand_data, generic_call_expr_operand_ast,
                 ast_expr_operand_generic_call_t);
   SOLC_ASSUME(generic_call_expr_operand_data->call_args_ast != nullptr &&
-              generic_call_expr_operand_data->generic_type_list_ast != nullptr);
-  solc_ast_destroy(generic_call_expr_operand_data->call_args_ast);
-  solc_ast_destroy(generic_call_expr_operand_data->generic_type_list_ast);
+              generic_call_expr_operand_data->call_args_ast->type ==
+                SOLC_AST_TYPE_NONE_FUNC_ARGLIST &&
+              generic_call_expr_operand_data->generic_type_list_ast !=
+                nullptr &&
+              generic_call_expr_operand_data->generic_type_list_ast->type ==
+                SOLC_AST_TYPE_GENERIC_TYPE_LIST);
+  solc_ast_func_arglist_destroy(generic_call_expr_operand_data->call_args_ast);
+  solc_ast_generic_type_list_destroy(
+    generic_call_expr_operand_data->generic_type_list_ast);
   free(generic_call_expr_operand_data);
 }
 
-sz solc_ast_expr_operand_generic_call_to_string(
-  char *buf, sz n, solc_ast_t *generic_call_expr_operand_ast)
+string_t *solc_ast_expr_operand_generic_call_build_tree(
+  solc_ast_t *generic_call_expr_operand_ast)
 {
-  SOLC_ASSUME(buf != nullptr && generic_call_expr_operand_ast != nullptr &&
+  SOLC_ASSUME(generic_call_expr_operand_ast != nullptr &&
               generic_call_expr_operand_ast->type ==
                 SOLC_AST_TYPE_EXPR_OPERAND_GENERIC_CALL);
+  SOLC_AST_CAST(generic_call_expr_operand_data, generic_call_expr_operand_ast,
+                ast_expr_operand_generic_call_t);
+  SOLC_ASSUME(generic_call_expr_operand_data->call_args_ast != nullptr &&
+              generic_call_expr_operand_data->call_args_ast->type ==
+                SOLC_AST_TYPE_NONE_FUNC_ARGLIST &&
+              generic_call_expr_operand_data->generic_type_list_ast !=
+                nullptr &&
+              generic_call_expr_operand_data->generic_type_list_ast->type ==
+                SOLC_AST_TYPE_GENERIC_TYPE_LIST &&
+              generic_call_expr_operand_data->callee_name != nullptr);
 
-  SOLC_TODO("Generic call expression operand to string.");
+  string_t header =
+    string_create_from("EXPR_OPERAND_GENERIC_CALL { callee_name: \"");
+  string_append_cstr(&header, generic_call_expr_operand_data->callee_name);
+  string_append_cstr(&header, "\" }");
 
-  return 0;
+  string_t **children_vs_v = vector_reserve(string_t *, 2);
+  vector_push(children_vs_v,
+              solc_ast_generic_type_list_build_tree(
+                generic_call_expr_operand_data->generic_type_list_ast));
+  vector_push(children_vs_v, solc_ast_func_arglist_build_tree(
+                               generic_call_expr_operand_data->call_args_ast));
+
+  return ast_build_tree(&header, children_vs_v);
 }

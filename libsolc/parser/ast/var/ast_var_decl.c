@@ -1,3 +1,5 @@
+#include "containers/string.h"
+#include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/defs.h"
 #include "solc/parser/ast.h"
@@ -34,12 +36,21 @@ void solc_ast_var_decl_destroy(solc_ast_t *var_decl_ast)
   free(var_decl_ast);
 }
 
-sz solc_ast_var_decl_to_string(char *buf, sz n, solc_ast_t *var_decl_ast)
+string_t *solc_ast_var_decl_build_tree(solc_ast_t *var_decl_ast)
 {
-  SOLC_ASSUME(buf != nullptr && var_decl_ast != nullptr &&
+  SOLC_ASSUME(var_decl_ast != nullptr &&
               var_decl_ast->type == SOLC_AST_TYPE_VAR_DECL);
+  SOLC_AST_CAST(vardecl_data, var_decl_ast, ast_vardecl_t);
+  SOLC_ASSUME(vardecl_data->type_ast != nullptr &&
+              vardecl_data->name != nullptr);
+  string_t header = string_create_from("VAR_DECL { name: \"");
+  string_append_cstr(&header, vardecl_data->name);
+  string_append_cstr(&header, "\" }");
 
-  SOLC_TODO("Variable declaration to string.");
+  string_t **children_vs_v = vector_reserve(string_t *, 1);
+  vector_push(children_vs_v,
+              ast_get_build_tree_func(vardecl_data->type_ast->type)(
+                vardecl_data->type_ast));
 
-  return 0;
+  return ast_build_tree(&header, children_vs_v);
 }

@@ -1,3 +1,5 @@
+#include "containers/string.h"
+#include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/defs.h"
 #include "solc/parser/ast.h"
@@ -32,12 +34,21 @@ void solc_ast_stmt_dowhile_destroy(solc_ast_t *dowhile_ast)
   free(dowhile_data);
 }
 
-sz solc_ast_stmt_dowhile_to_string(char *buf, sz n, solc_ast_t *dowhile_ast)
+string_t *solc_ast_stmt_dowhile_build_tree(solc_ast_t *dowhile_ast)
 {
-  SOLC_ASSUME(buf != nullptr && dowhile_ast != nullptr &&
+  SOLC_ASSUME(dowhile_ast != nullptr &&
               dowhile_ast->type == SOLC_AST_TYPE_STMT_DOWHILE);
+  SOLC_AST_CAST(dowhile_data, dowhile_ast, ast_dowhile_t);
+  SOLC_ASSUME(dowhile_data->condition_expr_ast != nullptr &&
+              dowhile_data->stmt_ast != nullptr);
+  string_t header = string_create_from("STMT_DOWHILE");
+  string_t **children_vs_v = vector_reserve(string_t *, 2);
+  vector_push(children_vs_v,
+              ast_get_build_tree_func(dowhile_data->condition_expr_ast->type)(
+                dowhile_data->condition_expr_ast));
+  vector_push(children_vs_v,
+              ast_get_build_tree_func(dowhile_data->stmt_ast->type)(
+                dowhile_data->stmt_ast));
 
-  SOLC_TODO("Do-while statement to string.");
-
-  return 0;
+  return ast_build_tree(&header, children_vs_v);
 }

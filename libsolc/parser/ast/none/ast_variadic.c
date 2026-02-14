@@ -1,3 +1,5 @@
+#include "containers/string.h"
+#include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/parser/ast.h"
 #include <stdlib.h>
@@ -17,9 +19,11 @@ void solc_ast_variadic_destroy(solc_ast_t *variadic_ast)
   free(variadic_ast);
 }
 
-sz solc_ast_variadic_to_string(char *buf, sz n, solc_ast_t *variadic_ast)
+string_t *solc_ast_variadic_build_tree(solc_ast_t *variadic_ast)
 {
-  SOLC_ASSUME(buf != nullptr && variadic_ast != nullptr &&
+  SOLC_ASSUME(variadic_ast != nullptr &&
               variadic_ast->type == SOLC_AST_TYPE_NONE_VARIADIC);
-  return snprintf(buf, n, "VARIADIC");
+  string_t *out_v = vector_reserve(string_t, 1);
+  vector_push(out_v, string_create_from("VARIADIC"));
+  return out_v;
 }

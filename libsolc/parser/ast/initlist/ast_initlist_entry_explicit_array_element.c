@@ -1,3 +1,5 @@
+#include "containers/string.h"
+#include "containers/vector.h"
 #include "parser/ast_private.h"
 #include <stdlib.h>
 
@@ -38,15 +40,31 @@ void solc_ast_initlist_entry_explicit_array_element_destroy(
   free(initlist_entry_explicit_array_element_data);
 }
 
-sz solc_ast_initlist_entry_explicit_array_element_to_string(
-  char *buf, sz n, solc_ast_t *initlist_entry_explicit_array_element_ast)
+string_t *solc_ast_initlist_entry_explicit_array_element_build_tree(
+  solc_ast_t *initlist_entry_explicit_array_element_ast)
 {
-  SOLC_ASSUME(buf != nullptr &&
-              initlist_entry_explicit_array_element_ast != nullptr &&
+  SOLC_ASSUME(initlist_entry_explicit_array_element_ast != nullptr &&
               initlist_entry_explicit_array_element_ast->type ==
                 SOLC_AST_TYPE_INITLIST_ENTRY_EXPLICIT_ARRAY_ELEMENT);
+  SOLC_AST_CAST(initlist_entry_explicit_array_element_data,
+                initlist_entry_explicit_array_element_ast,
+                ast_initlist_entry_explicit_array_element_t);
+  SOLC_ASSUME(initlist_entry_explicit_array_element_data->index_expr_ast !=
+                nullptr &&
+              initlist_entry_explicit_array_element_data->expr_ast != nullptr);
 
-  SOLC_TODO("Explicit array element initialization list entry to string.");
+  string_t header = string_create_from("INITLIST_ENTRY_EXPLICIT_ARRAY_ELEMENT");
+  string_t **children_vs_v = vector_reserve(string_t *, 2);
+  vector_push(
+    children_vs_v,
+    ast_get_build_tree_func(
+      initlist_entry_explicit_array_element_data->index_expr_ast->type)(
+      initlist_entry_explicit_array_element_data->index_expr_ast));
 
-  return 0;
+  vector_push(children_vs_v,
+              ast_get_build_tree_func(
+                initlist_entry_explicit_array_element_data->expr_ast->type)(
+                initlist_entry_explicit_array_element_data->expr_ast));
+
+  return ast_build_tree(&header, children_vs_v);
 }

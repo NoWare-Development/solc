@@ -1,3 +1,4 @@
+#include "containers/string.h"
 #include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/defs.h"
@@ -48,12 +49,26 @@ void solc_ast_struct_add_child(solc_ast_t *struct_ast, solc_ast_t *child_ast)
   vector_push(struct_data->children_v, child_ast);
 }
 
-sz solc_ast_struct_to_string(char *buf, sz n, solc_ast_t *struct_ast)
+string_t *solc_ast_struct_build_tree(solc_ast_t *struct_ast)
 {
-  SOLC_ASSUME(buf != nullptr && struct_ast != nullptr &&
+  SOLC_ASSUME(struct_ast != nullptr &&
               struct_ast->type == SOLC_AST_TYPE_NONE_STRUCT);
+  SOLC_AST_CAST(struct_data, struct_ast, ast_struct_t);
+  SOLC_ASSUME(struct_data->children_v != nullptr &&
+              struct_data->name != nullptr);
 
-  SOLC_TODO("Struct AST to string.");
+  string_t header = string_create_from("STRUCT { name: \"");
+  string_append_cstr(&header, struct_data->name);
+  string_append_cstr(&header, "\" }");
 
-  return 0;
+  sz children_v_size = vector_get_length(struct_data->children_v);
+  string_t **children_vs_v = vector_reserve(string_t *, children_v_size);
+  for (sz i = 0; i < children_v_size; i++) {
+    SOLC_ASSUME(struct_data->children_v[i] != nullptr);
+    vector_push(children_vs_v,
+                ast_get_build_tree_func(struct_data->children_v[i]->type)(
+                  struct_data->children_v[i]));
+  }
+
+  return ast_build_tree(&header, children_vs_v);
 }

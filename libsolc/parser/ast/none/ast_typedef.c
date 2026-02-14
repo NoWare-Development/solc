@@ -1,3 +1,5 @@
+#include "containers/string.h"
+#include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/defs.h"
 #include "solc/parser/ast.h"
@@ -34,11 +36,20 @@ void solc_ast_typedef_destroy(solc_ast_t *typedef_ast)
   free(typedef_data);
 }
 
-sz solc_ast_typedef_to_string(char *buf, sz n, solc_ast_t *typedef_ast)
+string_t *solc_ast_typedef_build_tree(solc_ast_t *typedef_ast)
 {
-  SOLC_ASSUME(buf != nullptr && typedef_ast != nullptr);
+  SOLC_ASSUME(typedef_ast != nullptr &&
+              typedef_ast->type == SOLC_AST_TYPE_NONE_TYPEDEF);
+  SOLC_AST_CAST(typedef_data, typedef_ast, ast_typedef_t);
+  SOLC_ASSUME(typedef_data->type_ast != nullptr &&
+              typedef_data->name != nullptr);
+  string_t header = string_create_from("TYPEDEF { name: \"");
+  string_append_cstr(&header, typedef_data->name);
+  string_append_cstr(&header, "\" }");
 
-  SOLC_TODO("Typedef AST to string.");
-
-  return 0;
+  string_t **children_vs_v = vector_reserve(string_t *, 1);
+  vector_push(children_vs_v,
+              ast_get_build_tree_func(typedef_data->type_ast->type)(
+                typedef_data->type_ast));
+  return ast_build_tree(&header, children_vs_v);
 }

@@ -1,3 +1,5 @@
+#include "containers/string.h"
+#include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/defs.h"
 #include "solc/parser/ast.h"
@@ -35,12 +37,22 @@ void solc_ast_namespace_destroy(solc_ast_t *namespace_ast)
   free(namespace_data);
 }
 
-sz solc_ast_namespace_to_string(char *buf, sz n, solc_ast_t *namespace_ast)
+string_t *solc_ast_namespace_build_tree(solc_ast_t *namespace_ast)
 {
-  SOLC_ASSUME(buf != nullptr && namespace_ast != nullptr &&
+  SOLC_ASSUME(namespace_ast != nullptr &&
               namespace_ast->type == SOLC_AST_TYPE_NONE_NAMESPACE);
+  SOLC_AST_CAST(namespace_data, namespace_ast, ast_namespace_t);
+  SOLC_ASSUME(namespace_data->subobject != nullptr &&
+              namespace_data->name != nullptr);
 
-  SOLC_TODO("Namespace to string.");
+  string_t header = string_create_from("NAMESPACE { name: \"");
+  string_append_cstr(&header, namespace_data->name);
+  string_append_cstr(&header, "\" }");
 
-  return 0;
+  string_t **children_vs_v = vector_reserve(string_t *, 1);
+  vector_push(children_vs_v,
+              ast_get_build_tree_func(namespace_data->subobject->type)(
+                namespace_data->subobject));
+
+  return ast_build_tree(&header, children_vs_v);
 }

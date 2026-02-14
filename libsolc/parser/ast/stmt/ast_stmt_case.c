@@ -1,3 +1,6 @@
+#include "containers/string.h"
+#include "containers/vector.h"
+#include "parser/ast/ast_group_stmt.h"
 #include "parser/ast_private.h"
 #include "solc/parser/ast.h"
 #include <stdlib.h>
@@ -32,12 +35,19 @@ void solc_ast_stmt_case_destroy(solc_ast_t *case_ast)
   free(case_ast);
 }
 
-sz solc_ast_stmt_case_to_string(char *buf, sz n, solc_ast_t *case_ast)
+string_t *solc_ast_stmt_case_build_tree(solc_ast_t *case_ast)
 {
-  SOLC_ASSUME(buf != nullptr && case_ast != nullptr &&
-              case_ast->type == SOLC_AST_TYPE_STMT_CASE);
+  SOLC_ASSUME(case_ast != nullptr && case_ast->type == SOLC_AST_TYPE_STMT_CASE);
+  SOLC_AST_CAST(case_data, case_ast, ast_case_stmt_t);
+  SOLC_ASSUME(case_data->expr_ast != nullptr &&
+              case_data->block_ast != nullptr &&
+              case_data->block_ast->type == SOLC_AST_TYPE_STMT_BLOCK);
+  string_t header = string_create_from("STMT_CASE");
+  string_t **children_vs_v = vector_reserve(string_t *, 2);
+  vector_push(children_vs_v, ast_get_build_tree_func(case_data->expr_ast->type)(
+                               case_data->expr_ast));
+  vector_push(children_vs_v,
+              solc_ast_stmt_block_build_tree(case_data->block_ast));
 
-  SOLC_TODO("Case statement to string.");
-
-  return 0;
+  return ast_build_tree(&header, children_vs_v);
 }

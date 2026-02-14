@@ -1,3 +1,5 @@
+#include "containers/string.h"
+#include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/parser/ast.h"
 #include <stdlib.h>
@@ -26,12 +28,17 @@ void solc_ast_stmt_expr_destroy(solc_ast_t *expr_stmt_ast)
   free(expr_stmt_data);
 }
 
-sz solc_ast_stmt_expr_to_string(char *buf, sz n, solc_ast_t *expr_stmt_ast)
+string_t *solc_ast_stmt_expr_build_tree(solc_ast_t *expr_stmt_ast)
 {
-  SOLC_ASSUME(buf != nullptr && expr_stmt_ast != nullptr &&
+  SOLC_ASSUME(expr_stmt_ast != nullptr &&
               expr_stmt_ast->type == SOLC_AST_TYPE_STMT_EXPR);
+  SOLC_AST_CAST(expr_stmt_data, expr_stmt_ast, ast_expr_stmt_t);
+  SOLC_ASSUME(expr_stmt_data->expr_ast != nullptr);
+  string_t header = string_create_from("STMT_EXPR");
+  string_t **children_vs_v = vector_reserve(string_t *, 1);
+  vector_push(children_vs_v,
+              ast_get_build_tree_func(expr_stmt_data->expr_ast->type)(
+                expr_stmt_data->expr_ast));
 
-  SOLC_TODO("Expression statement to string.");
-
-  return 0;
+  return ast_build_tree(&header, children_vs_v);
 }

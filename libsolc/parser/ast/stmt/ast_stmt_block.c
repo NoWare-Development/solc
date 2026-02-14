@@ -1,3 +1,4 @@
+#include "containers/string.h"
 #include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/parser/ast.h"
@@ -41,12 +42,27 @@ void solc_ast_stmt_block_add_stmt(solc_ast_t *block_ast, solc_ast_t *stmt_ast)
   vector_push(block_data->stmt_asts_v, stmt_ast);
 }
 
-sz solc_ast_stmt_block_to_string(char *buf, sz n, solc_ast_t *block_ast)
+string_t *solc_ast_stmt_block_build_tree(solc_ast_t *block_ast)
 {
-  SOLC_ASSUME(buf != nullptr && block_ast != nullptr &&
+  SOLC_ASSUME(block_ast != nullptr &&
               block_ast->type == SOLC_AST_TYPE_STMT_BLOCK);
+  SOLC_AST_CAST(block_data, block_ast, ast_block_stmt_t);
+  SOLC_ASSUME(block_data->stmt_asts_v != nullptr);
 
-  SOLC_TODO("Block to string.");
+  string_t header = string_create_from("STMT_BLOCK");
+  sz stmt_asts_v_size = vector_get_length(block_data->stmt_asts_v);
+  if SOLC_UNLIKELY (stmt_asts_v_size == 0) {
+    string_t *out_v = vector_reserve(string_t, 1);
+    vector_push(out_v, header);
+    return out_v;
+  }
 
-  return 0;
+  string_t **children_vs_v = vector_reserve(string_t *, stmt_asts_v_size);
+  for (sz i = 0; i < stmt_asts_v_size; i++) {
+    SOLC_ASSUME(block_data->stmt_asts_v[i] != nullptr);
+    ast_get_build_tree_func(block_data->stmt_asts_v[i]->type)(
+      block_data->stmt_asts_v[i]);
+  }
+
+  return ast_build_tree(&header, children_vs_v);
 }

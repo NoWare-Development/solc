@@ -49,11 +49,25 @@ void solc_ast_union_add_child(solc_ast_t *union_ast, solc_ast_t *child_ast)
   vector_push(union_data->children_v, child_ast);
 }
 
-sz solc_ast_union_to_string(char *buf, sz n, solc_ast_t *union_ast)
+string_t *solc_ast_union_build_tree(solc_ast_t *union_ast)
 {
-  SOLC_ASSUME(buf != nullptr && union_ast != nullptr &&
+  SOLC_ASSUME(union_ast != nullptr &&
               union_ast->type == SOLC_AST_TYPE_NONE_UNION);
+  SOLC_AST_CAST(union_data, union_ast, ast_union_t);
+  SOLC_ASSUME(union_data->children_v != nullptr && union_data->name != nullptr);
 
-  SOLC_TODO("Union AST to string.");
-  return n;
+  string_t header = string_create_from("UNION { name: \"");
+  string_append_cstr(&header, union_data->name);
+  string_append_cstr(&header, "\" }");
+
+  sz children_v_size = vector_get_length(union_data->children_v);
+  string_t **children_vs_v = vector_reserve(string_t *, children_v_size);
+  for (sz i = 0; i < children_v_size; i++) {
+    SOLC_ASSUME(union_data->children_v[i] != nullptr);
+    vector_push(children_vs_v,
+                ast_get_build_tree_func(union_data->children_v[i]->type)(
+                  union_data->children_v[i]));
+  }
+
+  return ast_build_tree(&header, children_vs_v);
 }

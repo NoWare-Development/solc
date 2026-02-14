@@ -1,3 +1,6 @@
+#include "containers/string.h"
+#include "containers/vector.h"
+#include "parser/ast_op_types.h"
 #include "parser/ast_private.h"
 #include "solc/defs.h"
 #include "solc/parser/ast.h"
@@ -36,11 +39,19 @@ void solc_ast_expr_destroy(solc_ast_t *expr_ast)
   free(expr_ast);
 }
 
-sz solc_ast_expr_to_string(char *buf, sz n, solc_ast_t *expr_ast)
+string_t *solc_ast_expr_build_tree(solc_ast_t *expr_ast)
 {
-  SOLC_ASSUME(buf != nullptr && expr_ast != nullptr &&
-              expr_ast->type == SOLC_AST_TYPE_NONE_EXPR);
-
-  SOLC_TODO("Expression to string.");
-  return 0;
+  SOLC_ASSUME(expr_ast != nullptr && expr_ast->type == SOLC_AST_TYPE_NONE_EXPR);
+  SOLC_AST_CAST(expr_data, expr_ast, ast_expr_t);
+  SOLC_ASSUME(expr_data->lhs_ast != nullptr && expr_data->rhs_ast != nullptr);
+  string_t **children_vs_v = vector_reserve(string_t *, 2);
+  vector_push(children_vs_v, ast_get_build_tree_func(expr_data->lhs_ast->type)(
+                               expr_data->lhs_ast));
+  vector_push(children_vs_v, ast_get_build_tree_func(expr_data->rhs_ast->type)(
+                               expr_data->rhs_ast));
+  string_t header = string_create_from("EXPR { operator: \"");
+  string_append_cstr(
+    &header, ast_expr_operator_type_to_string(expr_data->operator_type));
+  string_append_cstr(&header, "\" }");
+  return ast_build_tree(&header, children_vs_v);
 }

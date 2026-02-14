@@ -1,3 +1,5 @@
+#include "containers/string.h"
+#include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/parser/ast.h"
 #include <stdlib.h>
@@ -27,13 +29,17 @@ void solc_ast_initlist_entry_destroy(solc_ast_t *initlist_entry_ast)
   free(initlist_entry_ast);
 }
 
-sz solc_ast_initlist_entry_to_string(char *buf, sz n,
-                                     solc_ast_t *initlist_entry_ast)
+string_t *solc_ast_initlist_entry_build_tree(solc_ast_t *initlist_entry_ast)
 {
-  SOLC_ASSUME(buf != nullptr && initlist_entry_ast != nullptr &&
+  SOLC_ASSUME(initlist_entry_ast != nullptr &&
               initlist_entry_ast->type == SOLC_AST_TYPE_INITLIST_ENTRY);
+  SOLC_AST_CAST(initlist_entry_data, initlist_entry_ast, ast_initlist_entry_t);
+  SOLC_ASSUME(initlist_entry_data->expr_ast != nullptr);
+  string_t header = string_create_from("INITLIST_ENTRY");
+  string_t **children_vs_v = vector_reserve(string_t *, 1);
+  vector_push(children_vs_v,
+              ast_get_build_tree_func(initlist_entry_data->expr_ast->type)(
+                initlist_entry_data->expr_ast));
 
-  SOLC_TODO("Initialization list entry to string.");
-
-  return 0;
+  return ast_build_tree(&header, children_vs_v);
 }

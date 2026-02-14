@@ -1,3 +1,4 @@
+#include "containers/string.h"
 #include "containers/vector.h"
 #include "parser/ast/ast_group_generic.h"
 #include "parser/ast_private.h"
@@ -65,13 +66,26 @@ void solc_ast_generic_struct_append_child(solc_ast_t *generic_struct_ast,
   vector_push(generic_struct_data->children_v, child_ast);
 }
 
-sz solc_ast_generic_struct_to_string(char *buf, sz n,
-                                     solc_ast_t *generic_struct_ast)
+string_t *solc_ast_generic_struct_build_tree(solc_ast_t *generic_struct_ast)
 {
-  SOLC_ASSUME(buf != nullptr && generic_struct_ast != nullptr &&
+  SOLC_ASSUME(generic_struct_ast != nullptr &&
               generic_struct_ast->type == SOLC_AST_TYPE_GENERIC_STRUCT);
+  SOLC_AST_CAST(generic_struct_data, generic_struct_ast, ast_generic_struct_t);
+  SOLC_ASSUME(generic_struct_data->children_v != nullptr &&
+              generic_struct_data->name != nullptr);
 
-  SOLC_TODO("Generic struct to string.");
+  string_t header = string_create_from("GENERIC_STRUCT { name: \"");
+  string_append_cstr(&header, generic_struct_data->name);
+  string_append_cstr(&header, "\" }");
 
-  return 0;
+  sz children_v_size = vector_get_length(generic_struct_data->children_v);
+  string_t **children_vs_v = vector_reserve(string_t *, children_v_size);
+  for (sz i = 0; i < children_v_size; i++) {
+    SOLC_ASSUME(generic_struct_data->children_v[i] != nullptr);
+    vector_push(children_vs_v, ast_get_build_tree_func(
+                                 generic_struct_data->children_v[i]->type)(
+                                 generic_struct_data->children_v[i]));
+  }
+
+  return ast_build_tree(&header, children_vs_v);
 }

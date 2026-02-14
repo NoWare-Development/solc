@@ -1,5 +1,6 @@
 libsolc_src += [
   'libsolc/parser/ast/none/ast_enum.c',
+  'libsolc/parser/ast/none/ast_enum_element.c',
   'libsolc/parser/ast/none/ast_err.c',
   'libsolc/parser/ast/none/ast_exported_func.c',
   'libsolc/parser/ast/none/ast_expr.c',
@@ -9,7 +10,6 @@ libsolc_src += [
   'libsolc/parser/ast/none/ast_func_explicit.c',
   'libsolc/parser/ast/none/ast_import.c',
   'libsolc/parser/ast/none/ast_initlist.c',
-  'libsolc/parser/ast/none/ast_label.c',
   'libsolc/parser/ast/none/ast_module.c',
   'libsolc/parser/ast/none/ast_namespace.c',
   'libsolc/parser/ast/none/ast_none.c',

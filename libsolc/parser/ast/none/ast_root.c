@@ -1,3 +1,4 @@
+#include "containers/string.h"
 #include "parser/ast_private.h"
 
 #include "solc/parser/ast.h"
@@ -44,11 +45,19 @@ void solc_ast_root_add_top_statement(solc_ast_t *root_ast,
   vector_push(root_data->top_stmts_v, top_stmt_ast);
 }
 
-sz solc_ast_root_to_string(char *buf, sz n, solc_ast_t *root_ast)
+string_t *solc_ast_root_build_tree(solc_ast_t *root_ast)
 {
-  SOLC_ASSUME(buf != nullptr && root_ast != nullptr &&
-              root_ast->type == SOLC_AST_TYPE_NONE_ROOT);
-
-  SOLC_TODO("Root AST to string");
-  return 0;
+  SOLC_ASSUME(root_ast != nullptr && root_ast->type == SOLC_AST_TYPE_NONE_ROOT);
+  SOLC_AST_CAST(root_data, root_ast, ast_root_t);
+  SOLC_ASSUME(root_data->top_stmts_v != nullptr);
+  sz top_stmts_v_len = vector_get_length(root_data->top_stmts_v);
+  string_t **children_vs_v = vector_reserve(string_t *, top_stmts_v_len);
+  for (sz i = 0; i < top_stmts_v_len; i++) {
+    SOLC_ASSUME(root_data->top_stmts_v[i] != nullptr);
+    solc_ast_build_tree_func_t build_tree_func =
+      ast_get_build_tree_func(root_data->top_stmts_v[i]->type);
+    vector_push(children_vs_v, build_tree_func(root_data->top_stmts_v[i]));
+  }
+  string_t header = string_create_from("ROOT");
+  return ast_build_tree(&header, children_vs_v);
 }

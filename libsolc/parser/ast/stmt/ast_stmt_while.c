@@ -1,3 +1,5 @@
+#include "containers/string.h"
+#include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/defs.h"
 #include "solc/parser/ast.h"
@@ -32,12 +34,21 @@ void solc_ast_stmt_while_destroy(solc_ast_t *while_ast)
   free(while_data);
 }
 
-sz solc_ast_stmt_while_to_string(char *buf, sz n, solc_ast_t *while_ast)
+string_t *solc_ast_stmt_while_build_tree(solc_ast_t *while_ast)
 {
-  SOLC_ASSUME(buf != nullptr && while_ast != nullptr &&
+  SOLC_ASSUME(while_ast != nullptr &&
               while_ast->type == SOLC_AST_TYPE_STMT_WHILE);
+  SOLC_AST_CAST(while_data, while_ast, ast_while_t);
+  SOLC_ASSUME(while_data->condition_expr_ast != nullptr &&
+              while_data->stmt_ast != nullptr);
+  string_t header = string_create_from("STMT_WHILE");
+  string_t **children_vs_v = vector_reserve(string_t *, 2);
+  vector_push(children_vs_v,
+              ast_get_build_tree_func(while_data->condition_expr_ast->type)(
+                while_data->condition_expr_ast));
+  vector_push(
+    children_vs_v,
+    ast_get_build_tree_func(while_data->stmt_ast->type)(while_data->stmt_ast));
 
-  SOLC_TODO("While statement to string.");
-
-  return 0;
+  return ast_build_tree(&header, children_vs_v);
 }

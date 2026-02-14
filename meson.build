@@ -34,6 +34,6 @@ solc_exe = executable(
   'solc',
   solc_src,
   dependencies: libsolc,
-  include_directories: solc_inc,
+  include_directories: [ solc_inc, include_directories(libsolc_dir) ],
   c_args: [ flags ],
 )

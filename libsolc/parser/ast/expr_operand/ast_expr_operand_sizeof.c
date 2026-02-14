@@ -1,3 +1,5 @@
+#include "containers/string.h"
+#include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/parser/ast.h"
 #include <stdlib.h>
@@ -30,14 +32,20 @@ void solc_ast_expr_operand_sizeof_destroy(solc_ast_t *sizeof_expr_operand_ast)
   free(sizeof_expr_operand_data);
 }
 
-sz solc_ast_expr_operand_sizeof_to_string(char *buf, sz n,
-                                          solc_ast_t *sizeof_expr_operand_ast)
+string_t *
+solc_ast_expr_operand_sizeof_build_tree(solc_ast_t *sizeof_expr_operand_ast)
 {
-  SOLC_ASSUME(buf != nullptr && sizeof_expr_operand_ast != nullptr &&
+  SOLC_ASSUME(sizeof_expr_operand_ast != nullptr &&
               sizeof_expr_operand_ast->type ==
                 SOLC_AST_TYPE_EXPR_OPERAND_SIZEOF);
+  SOLC_AST_CAST(sizeof_expr_operand_data, sizeof_expr_operand_ast,
+                ast_expr_operand_sizeof_t);
+  SOLC_ASSUME(sizeof_expr_operand_data->type_ast != nullptr);
+  string_t header = string_create_from("EXPR_OPERAND_SIZEOF");
+  string_t **children_vs_v = vector_reserve(string_t *, 1);
+  vector_push(children_vs_v,
+              ast_get_build_tree_func(sizeof_expr_operand_data->type_ast->type)(
+                sizeof_expr_operand_data->type_ast));
 
-  SOLC_TODO("Sizeof expression operand to string.");
-
-  return 0;
+  return ast_build_tree(&header, children_vs_v);
 }

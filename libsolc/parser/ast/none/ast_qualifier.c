@@ -1,3 +1,5 @@
+#include "containers/string.h"
+#include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/parser/ast.h"
 #include <stdio.h>
@@ -28,11 +30,17 @@ void solc_ast_qualifier_destroy(solc_ast_t *qualifier_ast)
   free(qualifier_ast);
 }
 
-sz solc_ast_qualifier_to_string(char *buf, sz n, solc_ast_t *qualifier_ast)
+string_t *solc_ast_qualifier_build_tree(solc_ast_t *qualifier_ast)
 {
   SOLC_ASSUME(qualifier_ast != nullptr &&
               qualifier_ast->type == SOLC_AST_TYPE_NONE_QUALIFIER);
   SOLC_AST_CAST(qualifier_data, qualifier_ast, ast_qualifier_t);
-
-  return snprintf(buf, n, "QUALIFIER { name: \"%s\" }", qualifier_data->name);
+  SOLC_ASSUME(qualifier_data->name != nullptr);
+  const sz n = 32 + strlen(qualifier_data->name);
+  char *buf = malloc(sizeof(char) * n);
+  snprintf(buf, n, "QUALIFIER { name: \"%s\" }", qualifier_data->name);
+  string_t *out_v = vector_reserve(string_t, 1);
+  vector_push(out_v, string_create_from(buf));
+  free(buf);
+  return out_v;
 }

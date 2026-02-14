@@ -1,3 +1,5 @@
+#include "containers/string.h"
+#include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/parser/ast.h"
 #include <stdlib.h>
@@ -25,12 +27,16 @@ void solc_ast_stmt_else_destroy(solc_ast_t *else_ast)
   free(else_ast);
 }
 
-sz solc_ast_stmt_else_to_string(char *buf, sz n, solc_ast_t *else_ast)
+string_t *solc_ast_stmt_else_build_tree(solc_ast_t *else_ast)
 {
-  SOLC_ASSUME(buf != nullptr && else_ast != nullptr &&
-              else_ast->type == SOLC_AST_TYPE_STMT_ELSE);
+  SOLC_ASSUME(else_ast != nullptr && else_ast->type == SOLC_AST_TYPE_STMT_ELSE);
+  SOLC_AST_CAST(else_data, else_ast, ast_else_t);
+  SOLC_ASSUME(else_data->stmt_ast != nullptr);
 
-  SOLC_TODO("Else statement to string.");
+  string_t header = string_create_from("STMT_ELSE");
+  string_t **children_vs_v = vector_reserve(string_t *, 1);
+  vector_push(children_vs_v, ast_get_build_tree_func(else_data->stmt_ast->type)(
+                               else_data->stmt_ast));
 
-  return 0;
+  return ast_build_tree(&header, children_vs_v);
 }

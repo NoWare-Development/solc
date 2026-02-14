@@ -1,3 +1,4 @@
+#include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/parser/ast.h"
 #include <stdlib.h>
@@ -32,12 +33,22 @@ void solc_ast_type_array_destroy(solc_ast_t *array_type_ast)
   free(array_type_ast);
 }
 
-sz solc_ast_type_array_to_string(char *buf, sz n, solc_ast_t *array_type_ast)
+string_t *solc_ast_type_array_build_tree(solc_ast_t *array_type_ast)
 {
-  SOLC_ASSUME(buf != nullptr && array_type_ast != nullptr &&
+  SOLC_ASSUME(array_type_ast != nullptr &&
               array_type_ast->type == SOLC_AST_TYPE_TYPE_ARRAY);
+  SOLC_AST_CAST(array_type_data, array_type_ast, ast_type_array_t);
+  SOLC_ASSUME(array_type_data->type_ast != nullptr);
+  string_t **children_vs_v = vector_create(string_t *);
+  vector_push(children_vs_v,
+              ast_get_build_tree_func(array_type_data->type_ast->type)(
+                array_type_data->type_ast));
+  if (array_type_data->size_expr_ast != nullptr) {
+    vector_push(children_vs_v,
+                ast_get_build_tree_func(array_type_data->size_expr_ast->type)(
+                  array_type_data->size_expr_ast));
+  }
 
-  SOLC_TODO("Type array to string.");
-
-  return 0;
+  string_t header = string_create_from("TYPE_ARRAY");
+  return ast_build_tree(&header, children_vs_v);
 }

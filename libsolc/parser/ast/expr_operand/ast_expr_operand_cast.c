@@ -1,4 +1,5 @@
 #include "solc/parser/ast.h"
+#include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/defs.h"
 #include <stdlib.h>
@@ -36,14 +37,28 @@ void solc_ast_expr_operand_cast_to_destroy(solc_ast_t *cast_to_expr_operand_ast)
   free(cast_to_expr_operand_ast);
 }
 
-sz solc_ast_expr_operand_cast_to_to_string(char *buf, sz n,
-                                           solc_ast_t *cast_to_expr_operand_ast)
+string_t *
+solc_ast_expr_operand_cast_to_build_tree(solc_ast_t *cast_to_expr_operand_ast)
 {
-  SOLC_ASSUME(buf != nullptr && cast_to_expr_operand_ast != nullptr &&
+  SOLC_ASSUME(cast_to_expr_operand_ast != nullptr &&
               cast_to_expr_operand_ast->type ==
                 SOLC_AST_TYPE_EXPR_OPERAND_CAST_TO);
+  SOLC_AST_CAST(cast_to_expr_operand_data, cast_to_expr_operand_ast,
+                ast_expr_operand_cast_t);
+  SOLC_ASSUME(cast_to_expr_operand_data->type_ast != nullptr &&
+              cast_to_expr_operand_data->expr_ast != nullptr);
 
-  SOLC_TODO("Expression operand cast to to string.");
+  solc_ast_build_tree_func_t type_build_tree_func =
+    ast_get_build_tree_func(cast_to_expr_operand_data->type_ast->type);
+  solc_ast_build_tree_func_t expr_build_tree_func =
+    ast_get_build_tree_func(cast_to_expr_operand_data->expr_ast->type);
 
-  return 0;
+  string_t **children_vs_v = vector_reserve(string_t *, 2);
+  vector_push(children_vs_v,
+              type_build_tree_func(cast_to_expr_operand_data->type_ast));
+  vector_push(children_vs_v,
+              expr_build_tree_func(cast_to_expr_operand_data->expr_ast));
+
+  string_t heading = string_create_from("EXPR_OPERAND_CAST_TO");
+  return ast_build_tree(&heading, children_vs_v);
 }

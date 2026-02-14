@@ -45,12 +45,26 @@ void solc_ast_prefix_expr_add_operator(solc_ast_t *prefix_expr_ast,
   vector_push(prefix_expr_data->operators, prefix_operator);
 }
 
-sz solc_ast_prefix_expr_to_string(char *buf, sz n, solc_ast_t *prefix_expr_ast)
+string_t *solc_ast_prefix_expr_build_tree(solc_ast_t *prefix_expr_ast)
 {
-  SOLC_ASSUME(buf != nullptr && prefix_expr_ast != nullptr &&
+  SOLC_ASSUME(prefix_expr_ast != nullptr &&
               prefix_expr_ast->type == SOLC_AST_TYPE_NONE_PREFIX_EXPR);
+  SOLC_AST_CAST(prefix_expr_data, prefix_expr_ast, ast_prefix_expr_t);
+  SOLC_ASSUME(prefix_expr_data->operand != nullptr &&
+              prefix_expr_data->operators != nullptr);
+  string_t header = string_create_from("PREFIX_EXPR { operators: \"");
+  for (sz i = 0,
+          operators_size = vector_get_length(prefix_expr_data->operators);
+       i < operators_size; i++) {
+    string_append_cstr(&header, ast_expr_operator_type_to_string(
+                                  prefix_expr_data->operators[i]));
+  }
+  string_append_cstr(&header, "\" }");
 
-  SOLC_TODO("Prefix expression to string.");
+  string_t **children_vs_v = vector_reserve(string_t *, 1);
+  vector_push(children_vs_v,
+              ast_get_build_tree_func(prefix_expr_data->operand->type)(
+                prefix_expr_data->operand));
 
-  return 0;
+  return ast_build_tree(&header, children_vs_v);
 }

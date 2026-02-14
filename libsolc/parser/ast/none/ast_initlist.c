@@ -1,3 +1,4 @@
+#include "containers/string.h"
 #include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/parser/ast.h"
@@ -42,12 +43,28 @@ void solc_ast_initlist_add_element(solc_ast_t *initlist_ast,
   vector_push(initlist_data->init_elements_v, initlist_element_ast);
 }
 
-sz solc_ast_initlist_to_string(char *buf, sz n, solc_ast_t *initlist_ast)
+string_t *solc_ast_initlist_build_tree(solc_ast_t *initlist_ast)
 {
-  SOLC_ASSUME(buf != nullptr && initlist_ast != nullptr &&
+  SOLC_ASSUME(initlist_ast != nullptr &&
               initlist_ast->type == SOLC_AST_TYPE_NONE_INITLIST);
+  SOLC_AST_CAST(initlist_data, initlist_ast, ast_initlist_t);
+  SOLC_ASSUME(initlist_data->init_elements_v != nullptr);
 
-  SOLC_TODO("Initialization list to string.");
+  string_t header = string_create_from("INITLIST");
+  sz init_elements_v_size = vector_get_length(initlist_data->init_elements_v);
+  if (init_elements_v_size == 0) {
+    string_t *out_v = vector_reserve(string_t, 1);
+    vector_push(out_v, header);
+    return out_v;
+  }
 
-  return 0;
+  string_t **children_vs_v = vector_reserve(string_t *, init_elements_v_size);
+  for (sz i = 0; i < init_elements_v_size; i++) {
+    SOLC_ASSUME(initlist_data->init_elements_v[i] != nullptr);
+    vector_push(children_vs_v, ast_get_build_tree_func(
+                                 initlist_data->init_elements_v[i]->type)(
+                                 initlist_data->init_elements_v[i]));
+  }
+
+  return ast_build_tree(&header, children_vs_v);
 }

@@ -1,22 +1,104 @@
 #include "solc/parser/ast.h"
+#include "containers/string.h"
+#include "containers/vector.h"
 #include "solc/defs.h"
 
 #include "parser/ast_private.h"
 
 solc_ast_destroy_func_t solc_ast_get_destroy_func(solc_ast_type_t ast_type)
 {
-  // TODO: More AST types.
+#define __SOLC_AST_TYPE_X(type_name, group_name, in_group_id, in_code_name) \
+  case __SOLC_FULL_AST_NAME(type_name, group_name):                         \
+    return solc_ast_##in_code_name##_destroy;
+
   switch (ast_type) {
-  case SOLC_AST_TYPE_NONE_ERR:
-    return solc_ast_err_destroy;
-
-  case SOLC_AST_TYPE_NONE_ROOT:
-    return solc_ast_root_destroy;
-
-  case SOLC_AST_TYPE_NONE_EXPR:
-    return solc_ast_expr_destroy;
-
+    __SOLC_AST_TYPES
   default:
     SOLC_NOREACH();
   }
+#undef __SOLC_AST_TYPE_X
+}
+
+void solc_ast_to_string(char *buf, sz n, solc_ast_t *ast)
+{
+  SOLC_ASSUME(buf != nullptr && ast != nullptr);
+
+  string_t out_str = string_create();
+
+  solc_ast_build_tree_func_t build_tree_func =
+    ast_get_build_tree_func(ast->type);
+  string_t *strs_v = build_tree_func(ast);
+  sz strs_v_size = vector_get_length(strs_v);
+  for (sz i = 0; i < strs_v_size; i++) {
+    string_append(&out_str, &strs_v[i]);
+    string_append_char(&out_str, '\n');
+    string_destroy(&strs_v[i]);
+  }
+  vector_destroy(strs_v);
+
+  snprintf(buf, n, "%s", out_str.data);
+  string_destroy(&out_str);
+}
+
+solc_ast_build_tree_func_t ast_get_build_tree_func(solc_ast_type_t ast_type)
+{
+#define __SOLC_AST_TYPE_X(type_name, group_name, in_group_id, in_code_name) \
+  case __SOLC_FULL_AST_NAME(type_name, group_name):                         \
+    return solc_ast_##in_code_name##_build_tree;
+
+  switch (ast_type) {
+    __SOLC_AST_TYPES
+  default:
+    SOLC_NOREACH();
+  }
+#undef __SOLC_AST_TYPE_X
+}
+
+string_t *ast_build_tree(string_t *heading, string_t **children_vs_v)
+{
+  string_t *out_v = vector_create(string_t);
+  vector_push(out_v, *heading);
+
+  for (sz i = 0, children_vs_v_size = vector_get_length(children_vs_v);
+       i < children_vs_v_size; i++) {
+    string_t *children_v = children_vs_v[i];
+    for (sz j = 0, children_v_size = vector_get_length(children_v);
+         j < children_v_size; j++) {
+      string_t str;
+
+      if (j == 0) {
+        if (i == children_vs_v_size - 1) {
+          str = string_create_from(" ╰─ ");
+        } else {
+          str = string_create_from(" ├─ ");
+        }
+      } else if (i < children_vs_v_size - 1) {
+        str = string_create_from(" │  ");
+      } else {
+        str = string_create_from("    ");
+      }
+
+      string_append(&str, &children_v[j]);
+      string_destroy(&children_v[j]);
+      vector_push(out_v, str);
+    }
+    vector_destroy(children_v);
+  }
+  vector_destroy(children_vs_v);
+
+  return out_v;
+}
+
+const char *ast_expr_operator_type_to_string(expr_operator_type_t t)
+{
+#define __EXPR_OPERATORS_X(type_name, group_name, id, display_val) \
+  case __EXPR_OPERATOR_TYPE_FULL_NAME(type_name, group_name):      \
+    return display_val;
+
+  switch (t) {
+    __EXPR_OPERATORS
+  default:
+    SOLC_NOREACH();
+  }
+#undef __EXPR_OPERATORS_X
 }

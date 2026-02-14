@@ -1,3 +1,5 @@
+#include "containers/string.h"
+#include "containers/vector.h"
 #include "parser/ast/ast_group_stmt.h"
 #include "parser/ast_private.h"
 #include "solc/parser/ast.h"
@@ -29,12 +31,17 @@ void solc_ast_stmt_default_destroy(solc_ast_t *default_ast)
   free(default_data);
 }
 
-sz solc_ast_stmt_default_to_string(char *buf, sz n, solc_ast_t *default_ast)
+string_t *solc_ast_stmt_default_build_tree(solc_ast_t *default_ast)
 {
-  SOLC_ASSUME(buf != nullptr && default_ast != nullptr &&
+  SOLC_ASSUME(default_ast != nullptr &&
               default_ast->type == SOLC_AST_TYPE_STMT_DEFAULT);
+  SOLC_AST_CAST(default_data, default_ast, ast_default_stmt_t);
+  SOLC_ASSUME(default_data->block_ast != nullptr &&
+              default_data->block_ast->type == SOLC_AST_TYPE_STMT_BLOCK);
+  string_t header = string_create_from("STMT_DEFAULT");
+  string_t **children_vs_v = vector_reserve(string_t *, 1);
+  vector_push(children_vs_v,
+              solc_ast_stmt_block_build_tree(default_data->block_ast));
 
-  SOLC_TODO("Default statement to string.");
-
-  return 0;
+  return ast_build_tree(&header, children_vs_v);
 }

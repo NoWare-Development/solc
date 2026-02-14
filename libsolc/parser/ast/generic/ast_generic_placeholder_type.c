@@ -1,3 +1,5 @@
+#include "containers/string.h"
+#include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/parser/ast.h"
 #include <stdlib.h>
@@ -31,16 +33,22 @@ void solc_ast_generic_placeholder_type_destroy(
   free(generic_placeholder_type_ast);
 }
 
-sz solc_ast_generic_placeholder_type_to_string(
-  char *buf, sz n, solc_ast_t *generic_placeholder_type_ast)
+string_t *solc_ast_generic_placeholder_type_build_tree(
+  solc_ast_t *generic_placeholder_type_ast)
 {
-  SOLC_ASSUME(buf != nullptr && generic_placeholder_type_ast != nullptr &&
+  SOLC_ASSUME(generic_placeholder_type_ast != nullptr &&
               generic_placeholder_type_ast->type ==
                 SOLC_AST_TYPE_GENERIC_PLACEHOLDER_TYPE);
-
   SOLC_AST_CAST(generic_placeholder_type_data, generic_placeholder_type_ast,
                 ast_generic_placeholder_type_t);
   SOLC_ASSUME(generic_placeholder_type_data->name != nullptr);
-  return snprintf(buf, n, "GENERIC_PLACEHOLDER_TYPE { name: \"%s\" }",
-                  generic_placeholder_type_data->name);
+
+  string_t header = string_create_from("GENERIC_PLACEHOLDER_TYPE { name: \"");
+  string_append_cstr(&header, generic_placeholder_type_data->name);
+  string_append_cstr(&header, "\" }");
+
+  string_t *out_v = vector_reserve(string_t, 1);
+  vector_push(out_v, header);
+
+  return out_v;
 }

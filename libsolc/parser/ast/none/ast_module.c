@@ -1,3 +1,5 @@
+#include "containers/string.h"
+#include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/defs.h"
 #include "solc/parser/ast.h"
@@ -15,7 +17,9 @@ solc_ast_t *solc_ast_module_create(sz pos, const char *name,
                                    solc_ast_t *submodule_ast)
 {
   SOLC_ASSUME(name != nullptr);
-
+  if (submodule_ast != nullptr) {
+    SOLC_ASSUME(submodule_ast->type == SOLC_AST_TYPE_NONE_MODULE);
+  }
   const sz name_len = strlen(name) + 1;
   ast_module_t *out_module = malloc(sizeof(ast_module_t) + name_len);
   SOLC_AST_INIT_HEADER(out_module, pos, SOLC_AST_TYPE_NONE_MODULE);
@@ -36,17 +40,24 @@ void solc_ast_module_destroy(solc_ast_t *module_ast)
   free(module_ast);
 }
 
-sz solc_ast_module_to_string(char *buf, sz n, solc_ast_t *module_ast)
+string_t *solc_ast_module_build_tree(solc_ast_t *module_ast)
 {
-  SOLC_ASSUME(buf != nullptr && module_ast != nullptr &&
+  SOLC_ASSUME(module_ast != nullptr &&
               module_ast->type == SOLC_AST_TYPE_NONE_MODULE);
-
   SOLC_AST_CAST(module_data, module_ast, ast_module_t);
   SOLC_ASSUME(module_data->name != nullptr);
+  string_t header = string_create_from("MODULE { name: \"");
+  string_append_cstr(&header, module_data->name);
+  string_append_cstr(&header, "\" }");
 
-  if (module_data->submodule_ast != nullptr) {
-    SOLC_TODO("Module with submodule to string.");
+  if (module_data->submodule_ast == nullptr) {
+    string_t *out_v = vector_reserve(string_t, 1);
+    vector_push(out_v, header);
+    return out_v;
   }
 
-  return snprintf(buf, n, "MODULE { name: \"%s\" }", module_data->name);
+  string_t **children_vs_v = vector_reserve(string_t *, 1);
+  vector_push(children_vs_v,
+              solc_ast_module_build_tree(module_data->submodule_ast));
+  return ast_build_tree(&header, children_vs_v);
 }

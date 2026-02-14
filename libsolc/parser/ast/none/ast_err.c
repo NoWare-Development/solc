@@ -1,3 +1,5 @@
+#include "containers/string.h"
+#include "containers/vector.h"
 #include "parser/ast_private.h"
 
 #include "solc/defs.h"
@@ -31,11 +33,16 @@ void solc_ast_err_destroy(solc_ast_t *err_ast)
   free(err_ast);
 }
 
-sz solc_ast_err_to_string(char *buf, sz n, solc_ast_t *err_ast)
+string_t *solc_ast_err_build_tree(solc_ast_t *err_ast)
 {
-  SOLC_ASSUME(buf != nullptr && err_ast != nullptr &&
-              err_ast->type == SOLC_AST_TYPE_NONE_ERR);
-
+  SOLC_ASSUME(err_ast != nullptr && err_ast->type == SOLC_AST_TYPE_NONE_ERR);
   SOLC_AST_CAST(err_data, err_ast, ast_err_t);
-  return snprintf(buf, n, "ERR { reason: \"%s\" }", err_data->reason);
+  SOLC_ASSUME(err_data->reason != nullptr);
+  const sz n = strlen(err_data->reason) + 32;
+  char *buf = malloc(sizeof(char) * n);
+  snprintf(buf, n, "ERR { reason: \"%s\" }", err_data->reason);
+  string_t *out_v = vector_reserve(string_t, 1);
+  vector_push(out_v, string_create_from(buf));
+  free(buf);
+  return out_v;
 }
