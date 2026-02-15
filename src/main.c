@@ -1,5 +1,4 @@
-#include "libsolc/parser/ast/ast_group_expr_operand.h"
-#include "libsolc/parser/ast/ast_group_type.h"
+#include "solc/parser/parser.h"
 #include <solc/lexer/lexer.h>
 #include <solc/lexer/token.h>
 #include <solc/defs.h>
@@ -18,7 +17,7 @@ s32 main(s32 argc, char **argv)
   s32 size = ftell(f);
   fseek(f, 0, SEEK_SET);
 
-  char *src = calloc(sizeof(char), size);
+  char *src = calloc(sizeof(char), size + 1);
   fread(src, sizeof(char), size, f);
   fclose(f);
 
@@ -29,7 +28,20 @@ s32 main(s32 argc, char **argv)
     char buf[0x80] = { 0 };
     solc_token_to_string(buf, sizeof(buf) - 1, &tokens[i]);
     printf("(%zu) %s\n", i, buf);
-    // TODO: remove it later
+  }
+
+  solc_parser_t parser = solc_parser_create(tokens, tokens_num);
+  solc_ast_t *root = solc_parser_parse(&parser);
+
+  sz n = 8192;
+  char *buf = malloc(sizeof(char) * (n + 1));
+  solc_ast_to_string(buf, n, root);
+  printf("%s", buf);
+  free(buf);
+
+  solc_ast_destroy(root);
+  solc_parser_destroy(&parser);
+  for (sz i = 0; i < tokens_num; i++) {
     solc_token_destroy(&tokens[i]);
   }
 
@@ -38,16 +50,6 @@ s32 main(s32 argc, char **argv)
   solc_lexer_destroy(&lexer);
 
   free(src);
-
-  solc_ast_t *type = solc_ast_type_plain_create(1, "long");
-  solc_ast_t *expr = solc_ast_expr_operand_num_create(2, 67, "u");
-  solc_ast_t *cast_to = solc_ast_expr_operand_cast_to_create(0, type, expr);
-  char *buf = malloc(sizeof(char) * 4096);
-  solc_ast_to_string(buf, 4096, cast_to);
-  printf("%s", buf);
-
-  free(buf);
-  solc_ast_destroy(cast_to);
 
   return 0;
 }
