@@ -1,9 +1,9 @@
 #include "parser/ast/ast_group_none.h"
+#include "parser/parser_context.h"
 #include "solc/lexer/token.h"
 #include "solc/parser/ast.h"
 #include "solc/parser/parser.h"
 #include "parser/parser_private.h"
-#include <string.h>
 
 solc_ast_t *solc_parser_parse_top(solc_parser_t *parser)
 {
@@ -13,13 +13,20 @@ solc_ast_t *solc_parser_parse_top(solc_parser_t *parser)
   case SOLC_TOKENTYPE_SEMI:
     return solc_ast_none_create(parser->pos++);
 
-  case SOLC_TOKENTYPE_ID:
-    if (strcmp(cur.value, "import") == 0) {
-      return solc_parser_parse_import(parser);
+  case SOLC_TOKENTYPE_ID: {
+    parser_toplevel_func_t toplevel_func =
+      parser_context_get_toplevel_func(cur.value);
+    if (toplevel_func != nullptr) {
+      return toplevel_func(parser);
+    } else if (solc_parser_peek(parser, parser->pos + 1) ==
+               SOLC_TOKENTYPE_LARROW) {
+      // TODO:
+      // return solc_parser_parse_generic_function(parser);
     }
-    // TODO: more toplevel statements.
 
+    // TODO:
     // return solc_parser_parse_decldef(parser);
+  }
 
   default:
     break;
