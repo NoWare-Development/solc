@@ -1,1 +1,18 @@
 import std::io;
+
+struct TestStruct1 {}
+struct TestStructGeneric1<T, U, V> {}
+
+struct TestStruct2 {
+  struct TestStructNested1 {
+    struct TestStructNestedNested1 {}
+  }
+  struct TestStructNested2 {}
+  struct TestStructNested3 {
+    struct TestStructNestedNested1 {}
+    struct TestStructNestedNested2 {}
+    struct TestStructNestedNested3 {}
+  }
+  struct TestStructNested2 {}
+  struct TestStructGenericNested1<T, U, V> {}
+}

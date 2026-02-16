@@ -31,7 +31,7 @@ void parser_context_create(void)
 
   // trie_insert(ctx->toplevel_funcptrs, "enum", solc_parser_parse_enum);
   // trie_insert(ctx->toplevel_funcptrs, "typedef", solc_parser_parse_typedef);
-  // trie_insert(ctx->toplevel_funcptrs, "struct", solc_parser_parse_struct);
+  trie_insert(ctx->toplevel_funcptrs, "struct", solc_parser_parse_struct);
   // trie_insert(ctx->toplevel_funcptrs, "union", solc_parser_parse_union);
   trie_insert(ctx->toplevel_funcptrs, "import", solc_parser_parse_import);
   // trie_insert(ctx->toplevel_funcptrs, "extern", solc_parser_parse_extern);
@@ -54,7 +54,7 @@ void parser_context_create(void)
 
   // trie_insert(ctx->struct_funcptrs, "typedef", solc_parser_parse_typedef);
   // trie_insert(ctx->struct_funcptrs, "enum", solc_parser_parse_enum);
-  // trie_insert(ctx->struct_funcptrs, "struct", solc_parser_parse_struct);
+  trie_insert(ctx->struct_funcptrs, "struct", solc_parser_parse_struct);
   // trie_insert(ctx->struct_funcptrs, "union", solc_parser_parse_union);
 
   // trie_insert(ctx->union_funcptrs, "typedef", solc_parser_parse_typedef);
