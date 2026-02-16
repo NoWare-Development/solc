@@ -79,7 +79,10 @@ string_t *solc_ast_generic_struct_build_tree(solc_ast_t *generic_struct_ast)
   string_append_cstr(&header, "\" }");
 
   sz children_v_size = vector_get_length(generic_struct_data->children_v);
-  string_t **children_vs_v = vector_reserve(string_t *, children_v_size);
+  string_t **children_vs_v = vector_reserve(string_t *, children_v_size + 1);
+  vector_push(children_vs_v,
+              solc_ast_generic_placeholder_type_list_build_tree(
+                generic_struct_data->generic_placeholder_type_list_ast));
   for (sz i = 0; i < children_v_size; i++) {
     SOLC_ASSUME(generic_struct_data->children_v[i] != nullptr);
     vector_push(children_vs_v, ast_get_build_tree_func(
