@@ -17,4 +17,6 @@ parser_stmt_func_t parser_context_get_stmt_func(const char *str);
 parser_struct_func_t parser_context_get_struct_func(const char *str);
 parser_union_func_t parser_context_get_union_func(const char *str);
 
+b8 parser_context_is_qualifier(const char *str);
+
 #endif // __SOLC_PARSER_CONTEXT_H__

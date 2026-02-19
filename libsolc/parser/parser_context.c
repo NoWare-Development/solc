@@ -9,6 +9,7 @@ typedef struct {
   trie_t *stmt_funcptrs;
   trie_t *struct_funcptrs;
   trie_t *union_funcptrs;
+  trie_t *qualifiers;
   sz refcount;
 } parser_context_t;
 
@@ -61,6 +62,10 @@ void parser_context_create(void)
   // trie_insert(ctx->union_funcptrs, "struct", solc_parser_parse_struct);
   // trie_insert(ctx->union_funcptrs, "union", solc_parser_parse_union);
 
+  trie_insert(ctx->qualifiers, "inline", (void *)1);
+  trie_insert(ctx->qualifiers, "persist", (void *)1);
+  trie_insert(ctx->qualifiers, "local", (void *)1);
+
   ctx->refcount = 1;
 }
 
@@ -74,6 +79,7 @@ void parser_context_destroy(void)
     trie_destroy(ctx->stmt_funcptrs);
     trie_destroy(ctx->struct_funcptrs);
     trie_destroy(ctx->union_funcptrs);
+    trie_destroy(ctx->qualifiers);
     free(ctx);
     ctx = nullptr;
   }
@@ -101,4 +107,10 @@ parser_union_func_t parser_context_get_union_func(const char *str)
 {
   SOLC_ASSUME(ctx != nullptr && str != nullptr);
   return trie_get(ctx->union_funcptrs, str);
+}
+
+b8 parser_context_is_qualifier(const char *str)
+{
+  SOLC_ASSUME(ctx != nullptr && str != nullptr);
+  return trie_get(ctx->qualifiers, str) != 0;
 }
