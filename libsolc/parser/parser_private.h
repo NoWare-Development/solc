@@ -1,7 +1,6 @@
 #ifndef __SOLC_PARSER_PRIVATE_H__
 #define __SOLC_PARSER_PRIVATE_H__
 
-#include "containers/string.h"
 #include "parser/ast_op_types.h"
 #include "solc/lexer/token.h"
 #include "solc/parser/ast.h"
@@ -85,7 +84,6 @@ solc_ast_t *
 solc_parser_parse_generic_placeholder_type_list(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_generic_type_list(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_expr(solc_parser_t *parser, b8 top_level);
-solc_ast_t *solc_parser_parse_expr_tree(solc_parser_t *parser, b8 top_level);
 solc_ast_t *solc_parser_parse_expr_operand(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_expr_operand_call(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_expr_operand_generic_call(solc_parser_t *parser);
@@ -97,13 +95,6 @@ solc_ast_t *solc_parser_parse_expr_operand_identifier(solc_parser_t *parser,
                                                       b8 accept_functions);
 solc_ast_t *solc_parser_parse_expr_operand_array_element(solc_parser_t *parser,
                                                          solc_ast_t *array_ast);
-solc_ast_t *solc_parser_pratt_parse_expr(solc_parser_t *parser,
-                                         solc_ast_t **asts_v, sz *pos,
-                                         s32 min_bp);
-b8 solc_parser_validate_expr(solc_parser_t *parser, sz *invalid_pos,
-                             const char **out_reason);
-void solc_parser_get_binding_power(expr_operator_type_t op_type, s32 *l_bp,
-                                   s32 *r_bp);
 
 void solc_parser_skip_until(solc_parser_t *parser, solc_tokentype_t token_type);
 void solc_parser_advance_to_terminator(solc_parser_t *parser);
@@ -122,5 +113,16 @@ const solc_token_t *solc_parser_peek_token(solc_parser_t *parser, sz pos);
 
 void solc_parser_add_error(solc_parser_t *parser, solc_parser_error_type_t type,
                            sz pos, sz len);
+
+b8 solc_parser_is_qualifier(const char *str);
+
+b8 solc_parser_is_operator_token(solc_tokentype_t type);
+b8 solc_parser_is_binary_operator_token(solc_tokentype_t type);
+b8 solc_parser_is_assign_operator_token(solc_tokentype_t type);
+b8 solc_parser_is_compare_operator_token(solc_tokentype_t type);
+b8 solc_parser_is_prefix_operator_token(solc_tokentype_t type);
+b8 solc_parser_is_numeric_token(solc_tokentype_t type);
+
+b8 solc_parser_is_operand_ast(solc_ast_type_t type);
 
 #endif // __SOLC_PARSER_PRIVATE_H__

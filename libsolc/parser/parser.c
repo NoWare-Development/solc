@@ -5,6 +5,7 @@
 #include "solc/defs.h"
 #include "parser/parser_private.h"
 #include "solc/lexer/token.h"
+#include "solc/parser/ast.h"
 #include <string.h>
 
 solc_parser_t solc_parser_create(solc_token_t *tokens, sz tokens_num)
@@ -148,4 +149,88 @@ void solc_parser_add_error(solc_parser_t *parser, solc_parser_error_type_t type,
   };
   vector_push(parser->errors_v, error);
   solc_parser_advance_to_terminator(parser);
+}
+
+b8 solc_parser_is_qualifier(const char *str)
+{
+  return parser_context_is_qualifier(str);
+}
+
+b8 solc_parser_is_operator_token(solc_tokentype_t type)
+{
+  return solc_parser_is_binary_operator_token(type) ||
+         solc_parser_is_assign_operator_token(type) ||
+         solc_parser_is_compare_operator_token(type) ||
+         solc_parser_is_prefix_operator_token(type);
+}
+
+b8 solc_parser_is_binary_operator_token(solc_tokentype_t type)
+{
+  switch (type) {
+  case SOLC_TOKENTYPE_PLUS:
+  case SOLC_TOKENTYPE_MINUS:
+  case SOLC_TOKENTYPE_ASTERISK:
+  case SOLC_TOKENTYPE_SLASH:
+  case SOLC_TOKENTYPE_PERCENT:
+  case SOLC_TOKENTYPE_AMPERSAND:
+  case SOLC_TOKENTYPE_PIPE:
+  case SOLC_TOKENTYPE_CIRCUMFLEX:
+    return true;
+  default:
+    return false;
+  }
+}
+
+b8 solc_parser_is_assign_operator_token(solc_tokentype_t type)
+{
+  return type == SOLC_TOKENTYPE_EQ;
+}
+
+b8 solc_parser_is_compare_operator_token(solc_tokentype_t type)
+{
+  return type == SOLC_TOKENTYPE_RARROW || type == SOLC_TOKENTYPE_LARROW;
+}
+
+b8 solc_parser_is_prefix_operator_token(solc_tokentype_t type)
+{
+  switch (type) {
+  case SOLC_TOKENTYPE_EXCLMARK:
+  case SOLC_TOKENTYPE_TILDE:
+  case SOLC_TOKENTYPE_MINUS:
+  case SOLC_TOKENTYPE_ASTERISK:
+  case SOLC_TOKENTYPE_AMPERSAND:
+    return true;
+  default:
+    return false;
+  }
+}
+
+b8 solc_parser_is_numeric_token(solc_tokentype_t type)
+{
+  switch (type) {
+  case SOLC_TOKENTYPE_NUM:
+  case SOLC_TOKENTYPE_NUMHEX:
+  case SOLC_TOKENTYPE_NUMBIN:
+  case SOLC_TOKENTYPE_NUMOCT:
+  case SOLC_TOKENTYPE_NUMFLOAT:
+    return true;
+  default:
+    return false;
+  }
+}
+
+b8 solc_parser_is_operand_ast(solc_ast_type_t type)
+{
+  switch (type) {
+  case SOLC_AST_TYPE_NONE_EXPR:
+  case SOLC_AST_TYPE_NONE_PREFIX_EXPR:
+  case SOLC_AST_TYPE_NONE_NAMESPACE:
+  case SOLC_AST_TYPE_GENERIC_NAMESPACE:
+    return true;
+
+  default: {
+    solc_ast_group_t group = solc_ast_type_get_group(type);
+    return group == SOLC_AST_GROUP_EXPR_OPERAND;
+  }
+  }
 }
