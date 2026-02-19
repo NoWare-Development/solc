@@ -1,9 +1,20 @@
 #include "solc/parser/ast.h"
 #include "containers/string.h"
 #include "containers/vector.h"
+#include "parser/ast_op_types.h"
 #include "solc/defs.h"
 
 #include "parser/ast_private.h"
+
+solc_ast_group_t solc_ast_type_get_group(solc_ast_type_t type)
+{
+  return (solc_ast_group_t)((type >> 8) & 0xFF);
+}
+
+u8 solc_ast_type_get_id_in_group(solc_ast_type_t type)
+{
+  return (u8)(type & 0xFF);
+}
 
 solc_ast_destroy_func_t solc_ast_get_destroy_func(solc_ast_type_t ast_type)
 {
@@ -87,6 +98,11 @@ string_t *ast_build_tree(string_t *heading, string_t **children_vs_v)
   vector_destroy(children_vs_v);
 
   return out_v;
+}
+
+expr_operator_group_t expr_operator_type_get_group(expr_operator_type_t type)
+{
+  return (expr_operator_group_t)((type >> 8) & 0xFF);
 }
 
 const char *ast_expr_operator_type_to_string(expr_operator_type_t t)

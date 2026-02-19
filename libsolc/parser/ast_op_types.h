@@ -74,6 +74,7 @@ typedef enum {
 #undef __EXPR_OPERATORS_X
 } expr_operator_type_t;
 
+expr_operator_group_t expr_operator_type_get_group(expr_operator_type_t type);
 const char *ast_expr_operator_type_to_string(expr_operator_type_t t);
 
 #endif // __SOLC_AST_OPERATOR_TYPES_H__
