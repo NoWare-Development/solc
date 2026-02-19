@@ -10,14 +10,15 @@ typedef struct {
   expr_operator_type_t *operators;
 } ast_prefix_expr_t;
 
-solc_ast_t *solc_ast_prefix_expr_create(sz pos, solc_ast_t *operand)
+solc_ast_t *solc_ast_prefix_expr_create(sz pos, solc_ast_t *operand,
+                                        expr_operator_type_t *ops_v)
 {
   SOLC_ASSUME(operand != nullptr);
 
   ast_prefix_expr_t *out_prefix_expr = malloc(sizeof(ast_prefix_expr_t));
   SOLC_AST_INIT_HEADER(out_prefix_expr, pos, SOLC_AST_TYPE_NONE_PREFIX_EXPR);
   out_prefix_expr->operand = operand;
-  out_prefix_expr->operators = vector_create(expr_operator_type_t);
+  out_prefix_expr->operators = ops_v;
   return SOLC_AST(out_prefix_expr);
 }
 
@@ -32,17 +33,6 @@ void solc_ast_prefix_expr_destroy(solc_ast_t *prefix_expr_ast)
   solc_ast_destroy(prefix_expr_data->operand);
   vector_destroy(prefix_expr_data->operators);
   free(prefix_expr_ast);
-}
-
-void solc_ast_prefix_expr_add_operator(solc_ast_t *prefix_expr_ast,
-                                       expr_operator_type_t prefix_operator)
-{
-  SOLC_ASSUME(prefix_expr_ast != nullptr &&
-              prefix_expr_ast->type == SOLC_AST_TYPE_NONE_PREFIX_EXPR);
-
-  SOLC_AST_CAST(prefix_expr_data, prefix_expr_ast, ast_prefix_expr_t);
-  SOLC_ASSUME(prefix_expr_data->operators != nullptr);
-  vector_push(prefix_expr_data->operators, prefix_operator);
 }
 
 string_t *solc_ast_prefix_expr_build_tree(solc_ast_t *prefix_expr_ast)

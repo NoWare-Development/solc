@@ -3,7 +3,6 @@
 
 #include "containers/string.h"
 #include "solc/parser/ast.h"
-#include <stdint.h>
 
 solc_ast_t *solc_ast_expr_operand_void_create(sz pos);
 void solc_ast_expr_operand_void_destroy(solc_ast_t *void_expr_operand_ast);
@@ -15,13 +14,13 @@ void solc_ast_expr_operand_identifier_destroy(solc_ast_t *id_expr_operand_ast);
 string_t *
 solc_ast_expr_operand_identifier_build_tree(solc_ast_t *id_expr_operand_ast);
 
-solc_ast_t *solc_ast_expr_operand_num_create(sz pos, int64_t value,
+solc_ast_t *solc_ast_expr_operand_num_create(sz pos, u64 value,
                                              const char *typespec);
 void solc_ast_expr_operand_num_destroy(solc_ast_t *num_expr_operand_ast);
 string_t *
 solc_ast_expr_operand_num_build_tree(solc_ast_t *num_expr_operand_ast);
 
-solc_ast_t *solc_ast_expr_operand_numfloat_create(sz pos, double value,
+solc_ast_t *solc_ast_expr_operand_numfloat_create(sz pos, f64 value,
                                                   const char *typespec);
 void solc_ast_expr_operand_numfloat_destroy(
   solc_ast_t *numfloat_expr_operand_ast);
@@ -59,6 +58,7 @@ string_t *
 solc_ast_expr_operand_symbol_build_tree(solc_ast_t *symbol_expr_operand_ast);
 
 solc_ast_t *solc_ast_expr_operand_access_member_create(sz pos,
+                                                       solc_ast_t *from_ast,
                                                        solc_ast_t *what_ast);
 void solc_ast_expr_operand_access_member_destroy(
   solc_ast_t *access_member_expr_operand_ast);
