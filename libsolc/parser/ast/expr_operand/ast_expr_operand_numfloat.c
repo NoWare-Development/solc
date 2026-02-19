@@ -7,11 +7,11 @@
 
 typedef struct {
   SOLC_AST_HEADER;
-  double value;
+  f64 value;
   char *typespec;
 } ast_numfloat_expr_operand_t;
 
-solc_ast_t *solc_ast_expr_operand_numfloat_create(sz pos, double value,
+solc_ast_t *solc_ast_expr_operand_numfloat_create(sz pos, f64 value,
                                                   const char *typespec)
 {
   const sz typespec_len = typespec != nullptr ? strlen(typespec) + 1 : 0;

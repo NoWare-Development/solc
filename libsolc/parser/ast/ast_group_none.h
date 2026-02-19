@@ -107,10 +107,9 @@ void solc_ast_initlist_add_element(solc_ast_t *initlist_ast,
                                    solc_ast_t *initlist_element_ast);
 string_t *solc_ast_initlist_build_tree(solc_ast_t *initlist_ast);
 
-solc_ast_t *solc_ast_prefix_expr_create(sz pos, solc_ast_t *operand);
+solc_ast_t *solc_ast_prefix_expr_create(sz pos, solc_ast_t *operand,
+                                        expr_operator_type_t *ops_v);
 void solc_ast_prefix_expr_destroy(solc_ast_t *prefix_expr_ast);
-void solc_ast_prefix_expr_add_operator(solc_ast_t *prefix_expr_ast,
-                                       expr_operator_type_t prefix_operator);
 string_t *solc_ast_prefix_expr_build_tree(solc_ast_t *prefix_expr_ast);
 
 solc_ast_t *solc_ast_func_explicit_create(solc_ast_t *func_ast);

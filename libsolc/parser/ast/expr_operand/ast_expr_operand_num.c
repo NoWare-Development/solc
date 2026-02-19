@@ -9,11 +9,11 @@
 
 typedef struct {
   SOLC_AST_HEADER;
-  int64_t value;
+  u64 value;
   char *typespec;
 } ast_num_expr_operand_t;
 
-solc_ast_t *solc_ast_expr_operand_num_create(sz pos, int64_t value,
+solc_ast_t *solc_ast_expr_operand_num_create(sz pos, u64 value,
                                              const char *typespec)
 {
   const sz typespec_len = typespec != nullptr ? strlen(typespec) + 1 : 0;
@@ -51,11 +51,11 @@ string_t *solc_ast_expr_operand_num_build_tree(solc_ast_t *num_expr_operand_ast)
   char *buf = malloc(sizeof(char) * 256 + typespec_len);
   if (num_expr_operand_data->typespec != nullptr) {
     snprintf(buf, 256 + typespec_len,
-             "EXPR_OPERAND_NUM { value: %" PRId64 ", typespec: \"%s\" }",
+             "EXPR_OPERAND_NUM { value: %" PRIu64 ", typespec: \"%s\" }",
              num_expr_operand_data->value, num_expr_operand_data->typespec);
   } else {
     snprintf(buf, 256,
-             "EXPR_OPERAND_NUM { value: %" PRId64 ", typespec: <NONE> }",
+             "EXPR_OPERAND_NUM { value: %" PRIu64 ", typespec: <NONE> }",
              num_expr_operand_data->value);
   }
   string_t *out_v = vector_reserve(string_t, 1);
