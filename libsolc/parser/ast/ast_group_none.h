@@ -45,7 +45,8 @@ solc_ast_t *solc_ast_extern_func_create(sz pos, const char *name,
 void solc_ast_extern_func_destroy(solc_ast_t *extern_func_ast);
 string_t *solc_ast_extern_func_build_tree(solc_ast_t *extern_func_ast);
 
-solc_ast_t *solc_ast_qualifier_create(sz pos, const char *name);
+solc_ast_t *solc_ast_qualifier_create(sz pos, const char *name,
+                                      solc_ast_t *qualified_ast);
 void solc_ast_qualifier_destroy(solc_ast_t *qualifier_ast);
 string_t *solc_ast_qualifier_build_tree(solc_ast_t *qualifier_ast);
 
