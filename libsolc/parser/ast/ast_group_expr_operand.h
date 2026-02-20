@@ -68,10 +68,11 @@ string_t *solc_ast_expr_operand_access_member_build_tree(
 
 solc_ast_t *
 solc_ast_expr_operand_generic_call_create(sz pos, const char *callee_name,
-                                          solc_ast_t *call_args_ast,
                                           solc_ast_t *generic_type_list_ast);
 void solc_ast_expr_operand_generic_call_destroy(
   solc_ast_t *generic_call_expr_operand_ast);
+void solc_ast_expr_operand_generic_call_add_argument(
+  solc_ast_t *generic_call_expr_operand_ast, solc_ast_t *argument_ast);
 string_t *solc_ast_expr_operand_generic_call_build_tree(
   solc_ast_t *generic_call_expr_operand_ast);
 
