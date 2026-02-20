@@ -55,6 +55,18 @@ void __vector_pop(void *v, void *out)
   header->len--;
 }
 
+void *vector_copy(const void *v)
+{
+  vector_header_t *header = get_vector_header(v);
+
+  const sz n = sizeof(vector_header_t) + header->stride * header->capacity;
+  vector_header_t *new_vec = malloc(n);
+
+  memcpy(new_vec, header, n);
+
+  return (char *)new_vec + sizeof(vector_header_t);
+}
+
 sz vector_get_capacity(const void *v)
 {
   return get_vector_header(v)->capacity;

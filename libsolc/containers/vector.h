@@ -18,6 +18,8 @@ void __vector_destroy(void *v);
 void *__vector_push(void *v, const void *val);
 void __vector_pop(void *v, void *out);
 
+void *vector_copy(const void *v);
+
 sz vector_get_capacity(const void *v);
 sz vector_get_stride(const void *v);
 sz vector_get_length(const void *v);
