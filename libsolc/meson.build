@@ -1,6 +1,7 @@
 subdir('lexer')
 subdir('parser')
 
+subdir('allocs')
 subdir('containers')
 
 libsolc_src += [
