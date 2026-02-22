@@ -3,9 +3,13 @@
 #include "parser/ast_private.h"
 #include "solc/parser/ast.h"
 
-solc_ast_t *solc_ast_func_explicit_create(solc_ast_t *func_ast)
+solc_ast_t *solc_ast_func_explicit_create(sz pos, const char *name,
+                                          solc_ast_t *type_ast,
+                                          solc_ast_t *arg_list_ast,
+                                          solc_ast_t *block_ast)
 {
-  SOLC_ASSUME(func_ast != nullptr && func_ast->type == SOLC_AST_TYPE_NONE_FUNC);
+  solc_ast_t *func_ast =
+    solc_ast_func_create(pos, name, type_ast, arg_list_ast, block_ast);
   func_ast->type = SOLC_AST_TYPE_NONE_FUNC_EXPLICIT;
   return func_ast;
 }
@@ -32,12 +36,9 @@ string_t *solc_ast_func_explicit_build_tree(solc_ast_t *func_explicit_ast)
   string_append_cstr(&header, "\" }");
 
   string_t **children_vs_v = vector_reserve(string_t *, 3);
-  if (type_ast != nullptr) {
-    vector_push(children_vs_v,
-                ast_get_build_tree_func(type_ast->type)(type_ast));
-  }
-  vector_push(children_vs_v, solc_ast_func_arglist_build_tree(arglist_ast));
-  vector_push(children_vs_v, solc_ast_stmt_block_build_tree(block_ast));
+  solc_ast_add_to_tree_if_exists(children_vs_v, type_ast);
+  solc_ast_add_to_tree_if_exists(children_vs_v, arglist_ast);
+  solc_ast_add_to_tree_if_exists(children_vs_v, block_ast);
 
   return ast_build_tree(&header, children_vs_v);
 }

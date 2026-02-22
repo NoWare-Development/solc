@@ -25,9 +25,8 @@ void solc_ast_initlist_destroy(solc_ast_t *initlist_ast)
   SOLC_ASSUME(initlist_data->init_elements_v != nullptr);
   for (sz i = 0, init_elements_v_len =
                    vector_get_length(initlist_data->init_elements_v);
-       i < init_elements_v_len; i++) {
-    solc_ast_destroy(initlist_data->init_elements_v[i]);
-  }
+       i < init_elements_v_len; i++)
+    solc_ast_destroy_if_exists(initlist_data->init_elements_v[i]);
   vector_destroy(initlist_data->init_elements_v);
   free(initlist_ast);
 }
@@ -36,8 +35,7 @@ void solc_ast_initlist_add_element(solc_ast_t *initlist_ast,
                                    solc_ast_t *initlist_element_ast)
 {
   SOLC_ASSUME(initlist_ast != nullptr &&
-              initlist_ast->type == SOLC_AST_TYPE_NONE_INITLIST &&
-              initlist_element_ast != nullptr);
+              initlist_ast->type == SOLC_AST_TYPE_NONE_INITLIST);
   SOLC_AST_CAST(initlist_data, initlist_ast, ast_initlist_t);
   SOLC_ASSUME(initlist_data->init_elements_v != nullptr);
   vector_push(initlist_data->init_elements_v, initlist_element_ast);
@@ -59,12 +57,9 @@ string_t *solc_ast_initlist_build_tree(solc_ast_t *initlist_ast)
   }
 
   string_t **children_vs_v = vector_reserve(string_t *, init_elements_v_size);
-  for (sz i = 0; i < init_elements_v_size; i++) {
-    SOLC_ASSUME(initlist_data->init_elements_v[i] != nullptr);
-    vector_push(children_vs_v, ast_get_build_tree_func(
-                                 initlist_data->init_elements_v[i]->type)(
-                                 initlist_data->init_elements_v[i]));
-  }
+  for (sz i = 0; i < init_elements_v_size; i++)
+    solc_ast_add_to_tree_if_exists(children_vs_v,
+                                   initlist_data->init_elements_v[i]);
 
   return ast_build_tree(&header, children_vs_v);
 }

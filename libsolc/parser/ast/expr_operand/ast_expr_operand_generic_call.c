@@ -17,8 +17,7 @@ solc_ast_t *
 solc_ast_expr_operand_generic_call_create(sz pos, const char *callee_name,
                                           solc_ast_t *generic_type_list_ast)
 {
-  SOLC_ASSUME(callee_name != nullptr && generic_type_list_ast != nullptr &&
-              generic_type_list_ast->type == SOLC_AST_TYPE_GENERIC_TYPE_LIST);
+  SOLC_ASSUME(callee_name != nullptr);
   const sz callee_name_len = strlen(callee_name) + 1;
   ast_expr_operand_generic_call_t *out_expr_operand_generic_call =
     malloc(sizeof(ast_expr_operand_generic_call_t) + callee_name_len);
@@ -42,18 +41,14 @@ void solc_ast_expr_operand_generic_call_destroy(
                 SOLC_AST_TYPE_EXPR_OPERAND_GENERIC_CALL);
   SOLC_AST_CAST(generic_call_expr_operand_data, generic_call_expr_operand_ast,
                 ast_expr_operand_generic_call_t);
-  SOLC_ASSUME(generic_call_expr_operand_data->arg_asts_v != nullptr &&
-              generic_call_expr_operand_data->generic_type_list_ast !=
-                nullptr &&
-              generic_call_expr_operand_data->generic_type_list_ast->type ==
-                SOLC_AST_TYPE_GENERIC_TYPE_LIST);
+  SOLC_ASSUME(generic_call_expr_operand_data->arg_asts_v != nullptr);
   for (sz i = 0, arg_asts_v_size = vector_get_length(
                    generic_call_expr_operand_data->arg_asts_v);
        i < arg_asts_v_size; i++) {
-    solc_ast_destroy(generic_call_expr_operand_data->arg_asts_v[i]);
+    solc_ast_destroy_if_exists(generic_call_expr_operand_data->arg_asts_v[i]);
   }
   vector_destroy(generic_call_expr_operand_data->arg_asts_v);
-  solc_ast_generic_type_list_destroy(
+  solc_ast_destroy_if_exists(
     generic_call_expr_operand_data->generic_type_list_ast);
   free(generic_call_expr_operand_data);
 }
@@ -63,15 +58,10 @@ void solc_ast_expr_operand_generic_call_add_argument(
 {
   SOLC_ASSUME(generic_call_expr_operand_ast != nullptr &&
               generic_call_expr_operand_ast->type ==
-                SOLC_AST_TYPE_EXPR_OPERAND_GENERIC_CALL &&
-              argument_ast != nullptr);
+                SOLC_AST_TYPE_EXPR_OPERAND_GENERIC_CALL);
   SOLC_AST_CAST(generic_call_expr_operand_data, generic_call_expr_operand_ast,
                 ast_expr_operand_generic_call_t);
-  SOLC_ASSUME(generic_call_expr_operand_data->arg_asts_v != nullptr &&
-              generic_call_expr_operand_data->generic_type_list_ast !=
-                nullptr &&
-              generic_call_expr_operand_data->generic_type_list_ast->type ==
-                SOLC_AST_TYPE_GENERIC_TYPE_LIST);
+  SOLC_ASSUME(generic_call_expr_operand_data->arg_asts_v != nullptr);
 
   vector_push(generic_call_expr_operand_data->arg_asts_v, argument_ast);
 }
@@ -85,10 +75,6 @@ string_t *solc_ast_expr_operand_generic_call_build_tree(
   SOLC_AST_CAST(generic_call_expr_operand_data, generic_call_expr_operand_ast,
                 ast_expr_operand_generic_call_t);
   SOLC_ASSUME(generic_call_expr_operand_data->arg_asts_v != nullptr &&
-              generic_call_expr_operand_data->generic_type_list_ast !=
-                nullptr &&
-              generic_call_expr_operand_data->generic_type_list_ast->type ==
-                SOLC_AST_TYPE_GENERIC_TYPE_LIST &&
               generic_call_expr_operand_data->callee_name != nullptr);
 
   string_t header =
@@ -100,15 +86,12 @@ string_t *solc_ast_expr_operand_generic_call_build_tree(
     vector_get_length(generic_call_expr_operand_data->arg_asts_v);
 
   string_t **children_vs_v = vector_reserve(string_t *, 1 + arg_asts_v_size);
-  vector_push(children_vs_v,
-              solc_ast_generic_type_list_build_tree(
-                generic_call_expr_operand_data->generic_type_list_ast));
+  solc_ast_add_to_tree_if_exists(
+    children_vs_v, generic_call_expr_operand_data->generic_type_list_ast);
 
   for (sz i = 0; i < arg_asts_v_size; i++) {
-    vector_push(children_vs_v,
-                ast_get_build_tree_func(
-                  generic_call_expr_operand_data->arg_asts_v[i]->type)(
-                  generic_call_expr_operand_data->arg_asts_v[i]));
+    solc_ast_add_to_tree_if_exists(
+      children_vs_v, generic_call_expr_operand_data->arg_asts_v[i]);
   }
 
   return ast_build_tree(&header, children_vs_v);

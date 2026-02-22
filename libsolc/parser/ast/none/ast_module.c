@@ -3,7 +3,6 @@
 #include "parser/ast_private.h"
 #include "solc/defs.h"
 #include "solc/parser/ast.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -17,9 +16,6 @@ solc_ast_t *solc_ast_module_create(sz pos, const char *name,
                                    solc_ast_t *submodule_ast)
 {
   SOLC_ASSUME(name != nullptr);
-  if (submodule_ast != nullptr) {
-    SOLC_ASSUME(submodule_ast->type == SOLC_AST_TYPE_NONE_MODULE);
-  }
   const sz name_len = strlen(name) + 1;
   ast_module_t *out_module = malloc(sizeof(ast_module_t) + name_len);
   SOLC_AST_INIT_HEADER(out_module, pos, SOLC_AST_TYPE_NONE_MODULE);
@@ -34,9 +30,7 @@ void solc_ast_module_destroy(solc_ast_t *module_ast)
   SOLC_ASSUME(module_ast != nullptr &&
               module_ast->type == SOLC_AST_TYPE_NONE_MODULE);
   SOLC_AST_CAST(module_data, module_ast, ast_module_t);
-  if (module_data->submodule_ast != nullptr) {
-    solc_ast_destroy(module_data->submodule_ast);
-  }
+  solc_ast_destroy_if_exists(module_data->submodule_ast);
   free(module_ast);
 }
 
@@ -57,7 +51,6 @@ string_t *solc_ast_module_build_tree(solc_ast_t *module_ast)
   }
 
   string_t **children_vs_v = vector_reserve(string_t *, 1);
-  vector_push(children_vs_v,
-              solc_ast_module_build_tree(module_data->submodule_ast));
+  solc_ast_add_to_tree_if_exists(children_vs_v, module_data->submodule_ast);
   return ast_build_tree(&header, children_vs_v);
 }

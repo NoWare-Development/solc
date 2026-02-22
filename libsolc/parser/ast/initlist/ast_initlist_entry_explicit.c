@@ -15,7 +15,7 @@ typedef struct {
 solc_ast_t *solc_ast_initlist_entry_explicit_create(sz pos, const char *name,
                                                     solc_ast_t *expr_ast)
 {
-  SOLC_ASSUME(name != nullptr && expr_ast != nullptr);
+  SOLC_ASSUME(name != nullptr);
   const sz name_len = strlen(name) + 1;
   ast_initlist_entry_explicit_t *out_initlist_entry_explicit =
     malloc(sizeof(ast_initlist_entry_explicit_t) + name_len);
@@ -36,8 +36,7 @@ void solc_ast_initlist_entry_explicit_destroy(
                 SOLC_AST_TYPE_INITLIST_ENTRY_EXPLICIT);
   SOLC_AST_CAST(initlist_entry_explicit_data, initlist_entry_explicit_ast,
                 ast_initlist_entry_explicit_t);
-  SOLC_ASSUME(initlist_entry_explicit_data->expr_ast != nullptr);
-  solc_ast_destroy(initlist_entry_explicit_data->expr_ast);
+  solc_ast_destroy_if_exists(initlist_entry_explicit_data->expr_ast);
   free(initlist_entry_explicit_ast);
 }
 
@@ -49,17 +48,15 @@ string_t *solc_ast_initlist_entry_explicit_build_tree(
                 SOLC_AST_TYPE_INITLIST_ENTRY_EXPLICIT);
   SOLC_AST_CAST(initlist_entry_explicit_data, initlist_entry_explicit_ast,
                 ast_initlist_entry_explicit_t);
-  SOLC_ASSUME(initlist_entry_explicit_data->expr_ast != nullptr &&
-              initlist_entry_explicit_data->name != nullptr);
+  SOLC_ASSUME(initlist_entry_explicit_data->name != nullptr);
 
   string_t header = string_create_from("INITLIST_ENTRY_EXPLICIT { name: \"");
   string_append_cstr(&header, initlist_entry_explicit_data->name);
   string_append_cstr(&header, "\" }");
 
   string_t **children_vs_v = vector_reserve(string_t *, 1);
-  vector_push(children_vs_v, ast_get_build_tree_func(
-                               initlist_entry_explicit_data->expr_ast->type)(
-                               initlist_entry_explicit_data->expr_ast));
+  solc_ast_add_to_tree_if_exists(children_vs_v,
+                                 initlist_entry_explicit_data->expr_ast);
 
   return ast_build_tree(&header, children_vs_v);
 }

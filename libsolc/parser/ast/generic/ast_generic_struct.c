@@ -17,9 +17,7 @@ solc_ast_t *
 solc_ast_generic_struct_create(sz pos, const char *name,
                                solc_ast_t *generic_placeholder_type_list_ast)
 {
-  SOLC_ASSUME(name != nullptr && generic_placeholder_type_list_ast != nullptr &&
-              generic_placeholder_type_list_ast->type ==
-                SOLC_AST_TYPE_GENERIC_PLACEHOLDER_TYPE_LIST);
+  SOLC_ASSUME(name != nullptr);
   const sz name_len = strlen(name) + 1;
   ast_generic_struct_t *out_generic_struct =
     malloc(sizeof(ast_generic_struct_t) + name_len);
@@ -38,19 +36,13 @@ void solc_ast_generic_struct_destroy(solc_ast_t *generic_struct_ast)
   SOLC_ASSUME(generic_struct_ast != nullptr &&
               generic_struct_ast->type == SOLC_AST_TYPE_GENERIC_STRUCT);
   SOLC_AST_CAST(generic_struct_data, generic_struct_ast, ast_generic_struct_t);
-  SOLC_ASSUME(generic_struct_data->generic_placeholder_type_list_ast !=
-                nullptr &&
-              generic_struct_data->generic_placeholder_type_list_ast->type ==
-                SOLC_AST_TYPE_GENERIC_PLACEHOLDER_TYPE_LIST &&
-              generic_struct_data->children_v != nullptr);
-  solc_ast_generic_placeholder_type_list_destroy(
+  SOLC_ASSUME(generic_struct_data->children_v != nullptr);
+  solc_ast_destroy_if_exists(
     generic_struct_data->generic_placeholder_type_list_ast);
   for (sz i = 0,
           children_v_size = vector_get_length(generic_struct_data->children_v);
-       i < children_v_size; i++) {
-    SOLC_ASSUME(generic_struct_data->children_v[i] != nullptr);
-    solc_ast_destroy(generic_struct_data->children_v[i]);
-  }
+       i < children_v_size; i++)
+    solc_ast_destroy_if_exists(generic_struct_data->children_v[i]);
   vector_destroy(generic_struct_data->children_v);
   free(generic_struct_data);
 }
@@ -59,8 +51,7 @@ void solc_ast_generic_struct_append_child(solc_ast_t *generic_struct_ast,
                                           solc_ast_t *child_ast)
 {
   SOLC_ASSUME(generic_struct_ast != nullptr &&
-              generic_struct_ast->type == SOLC_AST_TYPE_GENERIC_STRUCT &&
-              child_ast != nullptr);
+              generic_struct_ast->type == SOLC_AST_TYPE_GENERIC_STRUCT);
   SOLC_AST_CAST(generic_struct_data, generic_struct_ast, ast_generic_struct_t);
   SOLC_ASSUME(generic_struct_data->children_v != nullptr);
   vector_push(generic_struct_data->children_v, child_ast);
@@ -80,15 +71,11 @@ string_t *solc_ast_generic_struct_build_tree(solc_ast_t *generic_struct_ast)
 
   sz children_v_size = vector_get_length(generic_struct_data->children_v);
   string_t **children_vs_v = vector_reserve(string_t *, children_v_size + 1);
-  vector_push(children_vs_v,
-              solc_ast_generic_placeholder_type_list_build_tree(
-                generic_struct_data->generic_placeholder_type_list_ast));
-  for (sz i = 0; i < children_v_size; i++) {
-    SOLC_ASSUME(generic_struct_data->children_v[i] != nullptr);
-    vector_push(children_vs_v, ast_get_build_tree_func(
-                                 generic_struct_data->children_v[i]->type)(
-                                 generic_struct_data->children_v[i]));
-  }
+  solc_ast_add_to_tree_if_exists(
+    children_vs_v, generic_struct_data->generic_placeholder_type_list_ast);
+  for (sz i = 0; i < children_v_size; i++)
+    solc_ast_add_to_tree_if_exists(children_vs_v,
+                                   generic_struct_data->children_v[i]);
 
   return ast_build_tree(&header, children_vs_v);
 }

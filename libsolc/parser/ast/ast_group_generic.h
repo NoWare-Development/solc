@@ -60,8 +60,9 @@ void solc_ast_generic_namespace_destroy(solc_ast_t *generic_namespace_ast);
 string_t *
 solc_ast_generic_namespace_build_tree(solc_ast_t *generic_namespace_ast);
 
-solc_ast_t *solc_ast_generic_func_explicit_create(sz pos,
-                                                  solc_ast_t *generic_func_ast);
+solc_ast_t *solc_ast_generic_func_explicit_create(
+  sz pos, const char *name, solc_ast_t *type_ast, solc_ast_t *arg_list_ast,
+  solc_ast_t *block_ast, solc_ast_t *generic_placeholder_type_list_ast);
 void solc_ast_generic_func_explicit_destroy(
   solc_ast_t *generic_func_explicit_ast);
 string_t *solc_ast_generic_func_explicit_build_tree(

@@ -15,7 +15,7 @@ typedef struct {
 solc_ast_t *solc_ast_var_decl_create(sz pos, const char *name,
                                      solc_ast_t *type_ast)
 {
-  SOLC_ASSUME(name != nullptr && type_ast != nullptr);
+  SOLC_ASSUME(name != nullptr);
 
   const sz name_len = strlen(name) + 1;
   ast_vardecl_t *out_vardecl = malloc(sizeof(ast_vardecl_t) + name_len);
@@ -31,8 +31,7 @@ void solc_ast_var_decl_destroy(solc_ast_t *var_decl_ast)
   SOLC_ASSUME(var_decl_ast != nullptr &&
               var_decl_ast->type == SOLC_AST_TYPE_VAR_DECL);
   SOLC_AST_CAST(vardecl_data, var_decl_ast, ast_vardecl_t);
-  SOLC_ASSUME(vardecl_data->type_ast != nullptr);
-  solc_ast_destroy(vardecl_data->type_ast);
+  solc_ast_destroy_if_exists(vardecl_data->type_ast);
   free(var_decl_ast);
 }
 
@@ -41,16 +40,13 @@ string_t *solc_ast_var_decl_build_tree(solc_ast_t *var_decl_ast)
   SOLC_ASSUME(var_decl_ast != nullptr &&
               var_decl_ast->type == SOLC_AST_TYPE_VAR_DECL);
   SOLC_AST_CAST(vardecl_data, var_decl_ast, ast_vardecl_t);
-  SOLC_ASSUME(vardecl_data->type_ast != nullptr &&
-              vardecl_data->name != nullptr);
+  SOLC_ASSUME(vardecl_data->name != nullptr);
   string_t header = string_create_from("VAR_DECL { name: \"");
   string_append_cstr(&header, vardecl_data->name);
   string_append_cstr(&header, "\" }");
 
   string_t **children_vs_v = vector_reserve(string_t *, 1);
-  vector_push(children_vs_v,
-              ast_get_build_tree_func(vardecl_data->type_ast->type)(
-                vardecl_data->type_ast));
+  solc_ast_add_to_tree_if_exists(children_vs_v, vardecl_data->type_ast);
 
   return ast_build_tree(&header, children_vs_v);
 }

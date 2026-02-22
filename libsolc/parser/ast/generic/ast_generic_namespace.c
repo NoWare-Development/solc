@@ -17,9 +17,7 @@ solc_ast_t *solc_ast_generic_namespace_create(sz pos, const char *name,
                                               solc_ast_t *generic_type_list_ast,
                                               solc_ast_t *subobject_ast)
 {
-  SOLC_ASSUME(name != nullptr && generic_type_list_ast != nullptr &&
-              generic_type_list_ast->type == SOLC_AST_TYPE_GENERIC_TYPE_LIST &&
-              subobject_ast != nullptr);
+  SOLC_ASSUME(name != nullptr);
   const sz name_len = strlen(name) + 1;
   ast_generic_namespace_t *out_generic_namespace =
     malloc(sizeof(ast_generic_namespace_t) + name_len);
@@ -39,13 +37,8 @@ void solc_ast_generic_namespace_destroy(solc_ast_t *generic_namespace_ast)
               generic_namespace_ast->type == SOLC_AST_TYPE_GENERIC_NAMESPACE);
   SOLC_AST_CAST(generic_namespace_data, generic_namespace_ast,
                 ast_generic_namespace_t);
-  SOLC_ASSUME(generic_namespace_data->generic_type_list_ast != nullptr &&
-              generic_namespace_data->generic_type_list_ast->type ==
-                SOLC_AST_TYPE_GENERIC_TYPE_LIST &&
-              generic_namespace_data->subobject_ast != nullptr);
-  solc_ast_generic_type_list_destroy(
-    generic_namespace_data->generic_type_list_ast);
-  solc_ast_destroy(generic_namespace_data->subobject_ast);
+  solc_ast_destroy_if_exists(generic_namespace_data->generic_type_list_ast);
+  solc_ast_destroy_if_exists(generic_namespace_data->subobject_ast);
   free(generic_namespace_ast);
 }
 
@@ -56,22 +49,17 @@ solc_ast_generic_namespace_build_tree(solc_ast_t *generic_namespace_ast)
               generic_namespace_ast->type == SOLC_AST_TYPE_GENERIC_NAMESPACE);
   SOLC_AST_CAST(generic_namespace_data, generic_namespace_ast,
                 ast_generic_namespace_t);
-  SOLC_ASSUME(generic_namespace_data->generic_type_list_ast != nullptr &&
-              generic_namespace_data->generic_type_list_ast->type ==
-                SOLC_AST_TYPE_GENERIC_TYPE_LIST &&
-              generic_namespace_data->subobject_ast != nullptr &&
-              generic_namespace_data->name != nullptr);
+  SOLC_ASSUME(generic_namespace_data->name != nullptr);
 
   string_t header = string_create_from("GENERIC_NAMESPACE { name: \"");
   string_append_cstr(&header, generic_namespace_data->name);
   string_append_cstr(&header, "\" }");
 
   string_t **children_vs_v = vector_reserve(string_t *, 2);
-  vector_push(children_vs_v, solc_ast_generic_type_list_build_tree(
-                               generic_namespace_data->generic_type_list_ast));
-  vector_push(children_vs_v, ast_get_build_tree_func(
-                               generic_namespace_data->subobject_ast->type)(
-                               generic_namespace_data->subobject_ast));
+  solc_ast_add_to_tree_if_exists(children_vs_v,
+                                 generic_namespace_data->generic_type_list_ast);
+  solc_ast_add_to_tree_if_exists(children_vs_v,
+                                 generic_namespace_data->subobject_ast);
 
   return ast_build_tree(&header, children_vs_v);
 }

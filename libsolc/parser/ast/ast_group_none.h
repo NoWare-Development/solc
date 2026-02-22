@@ -35,7 +35,10 @@ solc_ast_t *solc_ast_typedef_create(sz pos, solc_ast_t *type_ast,
 void solc_ast_typedef_destroy(solc_ast_t *typedef_ast);
 string_t *solc_ast_typedef_build_tree(solc_ast_t *typedef_ast);
 
-solc_ast_t *solc_ast_exported_func_create(solc_ast_t *func_ast);
+solc_ast_t *solc_ast_exported_func_create(sz pos, const char *name,
+                                          solc_ast_t *type_ast,
+                                          solc_ast_t *arg_list_ast,
+                                          solc_ast_t *block_ast);
 void solc_ast_exported_func_destroy(solc_ast_t *exported_func_ast);
 string_t *solc_ast_exported_func_build_tree(solc_ast_t *exported_func_ast);
 
@@ -113,7 +116,10 @@ solc_ast_t *solc_ast_prefix_expr_create(sz pos, solc_ast_t *operand,
 void solc_ast_prefix_expr_destroy(solc_ast_t *prefix_expr_ast);
 string_t *solc_ast_prefix_expr_build_tree(solc_ast_t *prefix_expr_ast);
 
-solc_ast_t *solc_ast_func_explicit_create(solc_ast_t *func_ast);
+solc_ast_t *solc_ast_func_explicit_create(sz pos, const char *name,
+                                          solc_ast_t *type_ast,
+                                          solc_ast_t *arg_list_ast,
+                                          solc_ast_t *block_ast);
 void solc_ast_func_explicit_destroy(solc_ast_t *func_explicit_ast);
 string_t *solc_ast_func_explicit_build_tree(solc_ast_t *func_explicit_ast);
 

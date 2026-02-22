@@ -33,9 +33,8 @@ void solc_ast_enum_destroy(solc_ast_t *enum_ast)
   SOLC_AST_CAST(enum_data, enum_ast, ast_enum_t);
   SOLC_ASSUME(enum_data->elements_v != nullptr);
   for (sz i = 0, elements_v_size = vector_get_length(enum_data->elements_v);
-       i < elements_v_size; i++) {
-    solc_ast_destroy(enum_data->elements_v[i]);
-  }
+       i < elements_v_size; i++)
+    solc_ast_destroy_if_exists(enum_data->elements_v[i]);
   vector_destroy(enum_data->elements_v);
   free(enum_data);
 }
@@ -43,11 +42,7 @@ void solc_ast_enum_destroy(solc_ast_t *enum_ast)
 void solc_ast_enum_add_element(solc_ast_t *enum_ast,
                                solc_ast_t *enum_element_ast)
 {
-  SOLC_ASSUME(enum_ast != nullptr &&
-              enum_ast->type == SOLC_AST_TYPE_NONE_ENUM &&
-              enum_element_ast != nullptr &&
-              enum_element_ast->type == SOLC_AST_TYPE_NONE_ENUM_ELEMENT);
-
+  SOLC_ASSUME(enum_ast != nullptr && enum_ast->type == SOLC_AST_TYPE_NONE_ENUM);
   SOLC_AST_CAST(enum_data, enum_ast, ast_enum_t);
   SOLC_ASSUME(enum_data->elements_v != nullptr);
 
@@ -66,13 +61,8 @@ string_t *solc_ast_enum_build_tree(solc_ast_t *enum_ast)
 
   sz elements_v_size = vector_get_length(enum_data->elements_v);
   string_t **children_vs_v = vector_reserve(string_t *, elements_v_size);
-  for (sz i = 0; i < elements_v_size; i++) {
-    SOLC_ASSUME(enum_data->elements_v[i] != nullptr &&
-                enum_data->elements_v[i]->type ==
-                  SOLC_AST_TYPE_NONE_ENUM_ELEMENT);
-    vector_push(children_vs_v,
-                solc_ast_enum_element_build_tree(enum_data->elements_v[i]));
-  }
+  for (sz i = 0; i < elements_v_size; i++)
+    solc_ast_add_to_tree_if_exists(children_vs_v, enum_data->elements_v[i]);
 
   return ast_build_tree(&header, children_vs_v);
 }

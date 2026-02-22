@@ -24,10 +24,8 @@ void solc_ast_stmt_block_destroy(solc_ast_t *block_ast)
   SOLC_AST_CAST(block_data, block_ast, ast_block_stmt_t);
   SOLC_ASSUME(block_data->stmt_asts_v != nullptr);
   for (sz i = 0, stmt_asts_v_size = vector_get_length(block_data->stmt_asts_v);
-       i < stmt_asts_v_size; i++) {
-    SOLC_ASSUME(block_data->stmt_asts_v[i] != nullptr);
-    solc_ast_destroy(block_data->stmt_asts_v[i]);
-  }
+       i < stmt_asts_v_size; i++)
+    solc_ast_destroy_if_exists(block_data->stmt_asts_v[i]);
   vector_destroy(block_data->stmt_asts_v);
   free(block_ast);
 }
@@ -35,8 +33,7 @@ void solc_ast_stmt_block_destroy(solc_ast_t *block_ast)
 void solc_ast_stmt_block_add_stmt(solc_ast_t *block_ast, solc_ast_t *stmt_ast)
 {
   SOLC_ASSUME(block_ast != nullptr &&
-              block_ast->type == SOLC_AST_TYPE_STMT_BLOCK &&
-              stmt_ast != nullptr);
+              block_ast->type == SOLC_AST_TYPE_STMT_BLOCK);
   SOLC_AST_CAST(block_data, block_ast, ast_block_stmt_t);
   SOLC_ASSUME(block_data->stmt_asts_v != nullptr);
   vector_push(block_data->stmt_asts_v, stmt_ast);
@@ -58,11 +55,8 @@ string_t *solc_ast_stmt_block_build_tree(solc_ast_t *block_ast)
   }
 
   string_t **children_vs_v = vector_reserve(string_t *, stmt_asts_v_size);
-  for (sz i = 0; i < stmt_asts_v_size; i++) {
-    SOLC_ASSUME(block_data->stmt_asts_v[i] != nullptr);
-    ast_get_build_tree_func(block_data->stmt_asts_v[i]->type)(
-      block_data->stmt_asts_v[i]);
-  }
+  for (sz i = 0; i < stmt_asts_v_size; i++)
+    solc_ast_add_to_tree_if_exists(children_vs_v, block_data->stmt_asts_v[i]);
 
   return ast_build_tree(&header, children_vs_v);
 }

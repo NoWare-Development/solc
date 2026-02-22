@@ -18,10 +18,7 @@ solc_ast_t *solc_ast_func_create(sz pos, const char *name, solc_ast_t *type_ast,
                                  solc_ast_t *arg_list_ast,
                                  solc_ast_t *block_ast)
 {
-  SOLC_ASSUME(name != nullptr && arg_list_ast != nullptr &&
-              arg_list_ast->type == SOLC_AST_TYPE_NONE_FUNC_ARGLIST &&
-              block_ast != nullptr &&
-              block_ast->type == SOLC_AST_TYPE_STMT_BLOCK);
+  SOLC_ASSUME(name != nullptr);
 
   const sz name_len = strlen(name) + 1;
   ast_func_t *out_func = malloc(sizeof(ast_func_t) + name_len);
@@ -38,17 +35,10 @@ void solc_ast_func_destroy(solc_ast_t *func_ast)
 {
   SOLC_ASSUME(func_ast != nullptr && func_ast->type == SOLC_AST_TYPE_NONE_FUNC);
   SOLC_AST_CAST(func_data, func_ast, ast_func_t);
-  SOLC_ASSUME(func_data->arg_list_ast != nullptr &&
-              func_data->arg_list_ast->type ==
-                SOLC_AST_TYPE_NONE_FUNC_ARGLIST &&
-              func_data->block_ast != nullptr &&
-              func_data->block_ast->type == SOLC_AST_TYPE_STMT_BLOCK);
-  if (func_data->type_ast != nullptr) {
-    solc_ast_destroy(func_data->type_ast);
-  }
 
-  solc_ast_destroy(func_data->arg_list_ast);
-  solc_ast_destroy(func_data->block_ast);
+  solc_ast_destroy_if_exists(func_data->type_ast);
+  solc_ast_destroy_if_exists(func_data->arg_list_ast);
+  solc_ast_destroy_if_exists(func_data->block_ast);
 
   free(func_ast);
 }
@@ -57,26 +47,15 @@ string_t *solc_ast_func_build_tree(solc_ast_t *func_ast)
 {
   SOLC_ASSUME(func_ast != nullptr && func_ast->type == SOLC_AST_TYPE_NONE_FUNC);
   SOLC_AST_CAST(func_data, func_ast, ast_func_t);
-  SOLC_ASSUME(func_data->arg_list_ast != nullptr &&
-              func_data->arg_list_ast->type ==
-                SOLC_AST_TYPE_NONE_FUNC_ARGLIST &&
-              func_data->block_ast != nullptr &&
-              func_data->block_ast->type == SOLC_AST_TYPE_STMT_BLOCK &&
-              func_data->name != nullptr);
+  SOLC_ASSUME(func_data->name != nullptr);
   string_t header = string_create_from("FUNC { name: \"");
   string_append_cstr(&header, func_data->name);
   string_append_cstr(&header, "\" }");
 
   string_t **children_vs_v = vector_reserve(string_t *, 3);
-  if (func_data->type_ast != nullptr) {
-    vector_push(
-      children_vs_v,
-      ast_get_build_tree_func(func_data->type_ast->type)(func_data->type_ast));
-  }
-  vector_push(children_vs_v,
-              solc_ast_func_arglist_build_tree(func_data->arg_list_ast));
-  vector_push(children_vs_v,
-              solc_ast_stmt_block_build_tree(func_data->block_ast));
+  solc_ast_add_to_tree_if_exists(children_vs_v, func_data->type_ast);
+  solc_ast_add_to_tree_if_exists(children_vs_v, func_data->arg_list_ast);
+  solc_ast_add_to_tree_if_exists(children_vs_v, func_data->block_ast);
 
   return ast_build_tree(&header, children_vs_v);
 }
@@ -109,8 +88,6 @@ solc_ast_t *solc_ast_func_get_arg_list_ast(solc_ast_t *func_ast)
                func_ast->type == SOLC_AST_TYPE_NONE_FUNC_EXPLICIT ||
                func_ast->type == SOLC_AST_TYPE_NONE_EXPORTED_FUNC));
   SOLC_AST_CAST(func_data, func_ast, ast_func_t);
-  SOLC_ASSUME(func_data->arg_list_ast != nullptr &&
-              func_data->arg_list_ast->type == SOLC_AST_TYPE_NONE_FUNC_ARGLIST);
   return func_data->arg_list_ast;
 }
 
@@ -121,7 +98,5 @@ solc_ast_t *solc_ast_func_get_block_ast(solc_ast_t *func_ast)
                func_ast->type == SOLC_AST_TYPE_NONE_FUNC_EXPLICIT ||
                func_ast->type == SOLC_AST_TYPE_NONE_EXPORTED_FUNC));
   SOLC_AST_CAST(func_data, func_ast, ast_func_t);
-  SOLC_ASSUME(func_data->block_ast != nullptr &&
-              func_data->block_ast->type == SOLC_AST_TYPE_STMT_BLOCK);
   return func_data->block_ast;
 }

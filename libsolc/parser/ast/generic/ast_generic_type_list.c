@@ -29,10 +29,8 @@ void solc_ast_generic_type_list_destroy(solc_ast_t *generic_type_list_ast)
   SOLC_ASSUME(generic_type_list_data->type_asts_v != nullptr);
   for (sz i = 0, type_asts_v_size =
                    vector_get_length(generic_type_list_data->type_asts_v);
-       i < type_asts_v_size; i++) {
-    SOLC_ASSUME(generic_type_list_data->type_asts_v[i] != nullptr);
-    solc_ast_destroy(generic_type_list_data->type_asts_v[i]);
-  }
+       i < type_asts_v_size; i++)
+    solc_ast_destroy_if_exists(generic_type_list_data->type_asts_v[i]);
   vector_destroy(generic_type_list_data->type_asts_v);
   free(generic_type_list_data);
 }
@@ -41,8 +39,7 @@ void solc_ast_generic_type_list_add_type(solc_ast_t *generic_type_list_ast,
                                          solc_ast_t *type_ast)
 {
   SOLC_ASSUME(generic_type_list_ast != nullptr &&
-              generic_type_list_ast->type == SOLC_AST_TYPE_GENERIC_TYPE_LIST &&
-              type_ast != nullptr);
+              generic_type_list_ast->type == SOLC_AST_TYPE_GENERIC_TYPE_LIST);
   SOLC_AST_CAST(generic_type_list_data, generic_type_list_ast,
                 ast_generic_type_list_t);
   SOLC_ASSUME(generic_type_list_data->type_asts_v != nullptr);
@@ -68,12 +65,9 @@ solc_ast_generic_type_list_build_tree(solc_ast_t *generic_type_list_ast)
   }
 
   string_t **children_vs_v = vector_reserve(string_t *, type_asts_v_size);
-  for (sz i = 0; i < type_asts_v_size; i++) {
-    SOLC_ASSUME(generic_type_list_data->type_asts_v[i] != nullptr);
-    vector_push(children_vs_v, ast_get_build_tree_func(
-                                 generic_type_list_data->type_asts_v[i]->type)(
-                                 generic_type_list_data->type_asts_v[i]));
-  }
+  for (sz i = 0; i < type_asts_v_size; i++)
+    solc_ast_add_to_tree_if_exists(children_vs_v,
+                                   generic_type_list_data->type_asts_v[i]);
 
   return ast_build_tree(&header, children_vs_v);
 }

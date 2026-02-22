@@ -34,14 +34,9 @@ void solc_ast_generic_placeholder_type_list_destroy(
               nullptr);
   for (sz i = 0, placeholder_types_v_size = vector_get_length(
                    generic_placeholder_type_list_data->placeholder_types_v);
-       i < placeholder_types_v_size; i++) {
-    SOLC_ASSUME(
-      generic_placeholder_type_list_data->placeholder_types_v[i] != nullptr &&
-      generic_placeholder_type_list_data->placeholder_types_v[i]->type ==
-        SOLC_AST_TYPE_GENERIC_PLACEHOLDER_TYPE);
-    solc_ast_generic_placeholder_type_destroy(
+       i < placeholder_types_v_size; i++)
+    solc_ast_destroy_if_exists(
       generic_placeholder_type_list_data->placeholder_types_v[i]);
-  }
   vector_destroy(generic_placeholder_type_list_data->placeholder_types_v);
   free(generic_placeholder_type_list_data);
 }
@@ -52,10 +47,7 @@ void solc_ast_generic_placeholder_type_list_add_placeholder_type(
 {
   SOLC_ASSUME(generic_placeholder_type_list_ast != nullptr &&
               generic_placeholder_type_list_ast->type ==
-                SOLC_AST_TYPE_GENERIC_PLACEHOLDER_TYPE_LIST &&
-              generic_placeholder_type_ast != nullptr &&
-              generic_placeholder_type_ast->type ==
-                SOLC_AST_TYPE_GENERIC_PLACEHOLDER_TYPE);
+                SOLC_AST_TYPE_GENERIC_PLACEHOLDER_TYPE_LIST);
   SOLC_AST_CAST(generic_placeholder_type_list_data,
                 generic_placeholder_type_list_ast,
                 ast_generic_placeholder_type_list_t);
@@ -90,15 +82,10 @@ string_t *solc_ast_generic_placeholder_type_list_build_tree(
 
   string_t **children_vs_v =
     vector_reserve(string_t *, placeholder_types_v_size);
-  for (sz i = 0; i < placeholder_types_v_size; i++) {
-    SOLC_ASSUME(
-      generic_placeholder_type_list_data->placeholder_types_v[i] != nullptr &&
-      generic_placeholder_type_list_data->placeholder_types_v[i]->type ==
-        SOLC_AST_TYPE_GENERIC_PLACEHOLDER_TYPE);
-    vector_push(children_vs_v,
-                solc_ast_generic_placeholder_type_build_tree(
-                  generic_placeholder_type_list_data->placeholder_types_v[i]));
-  }
+  for (sz i = 0; i < placeholder_types_v_size; i++)
+    solc_ast_add_to_tree_if_exists(
+      children_vs_v,
+      generic_placeholder_type_list_data->placeholder_types_v[i]);
 
   return ast_build_tree(&header, children_vs_v);
 }

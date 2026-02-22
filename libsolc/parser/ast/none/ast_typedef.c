@@ -15,7 +15,7 @@ typedef struct {
 solc_ast_t *solc_ast_typedef_create(sz pos, solc_ast_t *type_ast,
                                     const char *name)
 {
-  SOLC_ASSUME(type_ast != nullptr && name != nullptr);
+  SOLC_ASSUME(name != nullptr);
 
   const sz name_len = strlen(name) + 1;
   ast_typedef_t *out_typedef = malloc(sizeof(ast_typedef_t) + name_len);
@@ -31,8 +31,7 @@ void solc_ast_typedef_destroy(solc_ast_t *typedef_ast)
   SOLC_ASSUME(typedef_ast != nullptr &&
               typedef_ast->type == SOLC_AST_TYPE_NONE_TYPEDEF);
   SOLC_AST_CAST(typedef_data, typedef_ast, ast_typedef_t);
-  SOLC_ASSUME(typedef_data->type_ast != nullptr);
-  solc_ast_destroy(typedef_data->type_ast);
+  solc_ast_destroy_if_exists(typedef_data->type_ast);
   free(typedef_data);
 }
 
@@ -41,15 +40,12 @@ string_t *solc_ast_typedef_build_tree(solc_ast_t *typedef_ast)
   SOLC_ASSUME(typedef_ast != nullptr &&
               typedef_ast->type == SOLC_AST_TYPE_NONE_TYPEDEF);
   SOLC_AST_CAST(typedef_data, typedef_ast, ast_typedef_t);
-  SOLC_ASSUME(typedef_data->type_ast != nullptr &&
-              typedef_data->name != nullptr);
+  SOLC_ASSUME(typedef_data->name != nullptr);
   string_t header = string_create_from("TYPEDEF { name: \"");
   string_append_cstr(&header, typedef_data->name);
   string_append_cstr(&header, "\" }");
 
   string_t **children_vs_v = vector_reserve(string_t *, 1);
-  vector_push(children_vs_v,
-              ast_get_build_tree_func(typedef_data->type_ast->type)(
-                typedef_data->type_ast));
+  solc_ast_add_to_tree_if_exists(children_vs_v, typedef_data->type_ast);
   return ast_build_tree(&header, children_vs_v);
 }

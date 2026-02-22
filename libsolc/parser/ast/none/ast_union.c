@@ -31,10 +31,8 @@ void solc_ast_union_destroy(solc_ast_t *union_ast)
   SOLC_AST_CAST(union_data, union_ast, ast_union_t);
   SOLC_ASSUME(union_data->children_v != nullptr);
   for (sz i = 0, children_v_size = vector_get_length(union_data->children_v);
-       i < children_v_size; i++) {
-    SOLC_ASSUME(union_data->children_v[i] != nullptr);
-    solc_ast_destroy(union_data->children_v[i]);
-  }
+       i < children_v_size; i++)
+    solc_ast_destroy_if_exists(union_data->children_v[i]);
   vector_destroy(union_data->children_v);
   free(union_data);
 }
@@ -42,8 +40,7 @@ void solc_ast_union_destroy(solc_ast_t *union_ast)
 void solc_ast_union_add_child(solc_ast_t *union_ast, solc_ast_t *child_ast)
 {
   SOLC_ASSUME(union_ast != nullptr &&
-              union_ast->type == SOLC_AST_TYPE_NONE_UNION &&
-              child_ast != nullptr);
+              union_ast->type == SOLC_AST_TYPE_NONE_UNION);
   SOLC_AST_CAST(union_data, union_ast, ast_union_t);
   SOLC_ASSUME(union_data->children_v != nullptr);
   vector_push(union_data->children_v, child_ast);
@@ -62,12 +59,8 @@ string_t *solc_ast_union_build_tree(solc_ast_t *union_ast)
 
   sz children_v_size = vector_get_length(union_data->children_v);
   string_t **children_vs_v = vector_reserve(string_t *, children_v_size);
-  for (sz i = 0; i < children_v_size; i++) {
-    SOLC_ASSUME(union_data->children_v[i] != nullptr);
-    vector_push(children_vs_v,
-                ast_get_build_tree_func(union_data->children_v[i]->type)(
-                  union_data->children_v[i]));
-  }
+  for (sz i = 0; i < children_v_size; i++)
+    solc_ast_add_to_tree_if_exists(children_vs_v, union_data->children_v[i]);
 
   return ast_build_tree(&header, children_vs_v);
 }

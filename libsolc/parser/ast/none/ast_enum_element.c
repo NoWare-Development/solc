@@ -30,9 +30,7 @@ void solc_ast_enum_element_destroy(solc_ast_t *enum_element_ast)
   SOLC_ASSUME(enum_element_ast != nullptr &&
               enum_element_ast->type == SOLC_AST_TYPE_NONE_ENUM_ELEMENT);
   SOLC_AST_CAST(enum_element_data, enum_element_ast, ast_enum_element_t);
-  if (enum_element_data->expr_ast != nullptr) {
-    solc_ast_destroy(enum_element_data->expr_ast);
-  }
+  solc_ast_destroy_if_exists(enum_element_data->expr_ast);
   free(enum_element_data);
 }
 

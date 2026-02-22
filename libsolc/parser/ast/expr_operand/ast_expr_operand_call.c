@@ -36,7 +36,7 @@ void solc_ast_expr_operand_call_destroy(solc_ast_t *call_expr_operand_ast)
   for (sz i = 0, arg_asts_v_size =
                    vector_get_length(call_expr_operand_data->arg_asts_v);
        i < arg_asts_v_size; i++) {
-    solc_ast_destroy(call_expr_operand_data->arg_asts_v[i]);
+    solc_ast_destroy_if_exists(call_expr_operand_data->arg_asts_v[i]);
   }
   vector_destroy(call_expr_operand_data->arg_asts_v);
   free(call_expr_operand_ast);
@@ -46,8 +46,7 @@ void solc_ast_expr_operand_call_add_argument(solc_ast_t *call_expr_operand_ast,
                                              solc_ast_t *argument_ast)
 {
   SOLC_ASSUME(call_expr_operand_ast != nullptr &&
-              call_expr_operand_ast->type == SOLC_AST_TYPE_EXPR_OPERAND_CALL &&
-              argument_ast != nullptr);
+              call_expr_operand_ast->type == SOLC_AST_TYPE_EXPR_OPERAND_CALL);
   SOLC_AST_CAST(call_expr_operand_data, call_expr_operand_ast,
                 ast_expr_operand_call_t);
   SOLC_ASSUME(call_expr_operand_data->arg_asts_v != nullptr);
@@ -78,9 +77,8 @@ solc_ast_expr_operand_call_build_tree(solc_ast_t *call_expr_operand_ast)
 
   string_t **children_vs_v = vector_reserve(string_t *, args_num);
   for (sz i = 0; i < args_num; i++) {
-    vector_push(children_vs_v, ast_get_build_tree_func(
-                                 call_expr_operand_data->arg_asts_v[i]->type)(
-                                 call_expr_operand_data->arg_asts_v[i]));
+    solc_ast_add_to_tree_if_exists(children_vs_v,
+                                   call_expr_operand_data->arg_asts_v[i]);
   }
 
   return ast_build_tree(&header, children_vs_v);
