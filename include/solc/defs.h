@@ -18,6 +18,9 @@ typedef int64_t s64;
 typedef float f32;
 typedef double f64;
 
+typedef intptr_t sptr;
+typedef uintptr_t uptr;
+
 #ifdef __cplusplus__
 #define __SOLC_CPP_GUARD_TOP() extern "C" {
 #define __SOLC_CPP_GUARD_BOTTOM() }
