@@ -5,7 +5,7 @@
 
 typedef struct {
   void *memory;
-  uptr end;
+  sz size;
   uptr cursor;
 } alloc_arena_block_t;
 

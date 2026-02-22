@@ -32,12 +32,10 @@ void *alloc_arena_allocate_aligned(alloc_arena_t *alloc_arena, sz size,
 
   sz real_size = alignment + size;
   alloc_arena_block_t *suitable_block = nullptr;
-  if (real_size > PAGE_SIZE)
-    goto alloc_arena_allocate_aligned_no_block;
 
   for (sz i = 0; i < alloc_arena->blocks_num; i++) {
     alloc_arena_block_t *block = &alloc_arena->blocks[i];
-    if (block->end - (uptr)block->memory - block->cursor < real_size)
+    if (((uptr)block->memory + block->size) - block->cursor < real_size)
       continue;
 
     suitable_block = block;
@@ -45,12 +43,10 @@ void *alloc_arena_allocate_aligned(alloc_arena_t *alloc_arena, sz size,
   }
 
   if (suitable_block == nullptr)
-alloc_arena_allocate_aligned_no_block:
     suitable_block =
       alloc_arena_add_block(alloc_arena, get_aligned(real_size, PAGE_SIZE));
 
-  void *out_data = (void *)get_aligned(
-    (uptr)(suitable_block->memory + suitable_block->cursor), alignment);
+  void *out_data = (void *)get_aligned(suitable_block->cursor, alignment);
   suitable_block->cursor += real_size;
 
   return out_data;
@@ -68,8 +64,8 @@ alloc_arena_add_block(alloc_arena_t *alloc_arena, sz block_size)
 {
   alloc_arena_block_t block = { 0 };
   block.memory = malloc(block_size);
-  block.end = (uptr)(block.memory + block_size);
-  block.cursor = 0;
+  block.size = block_size;
+  block.cursor = (uptr)block.memory;
   vector_push(alloc_arena->blocks, block);
 
   alloc_arena_block_t *block_ptr =
