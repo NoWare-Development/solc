@@ -3,7 +3,7 @@
 #include "solc/defs.h"
 #include <stdlib.h>
 
-#define PAGE_SIZE 4096
+#define MINIMAL_BLOCK_SIZE 16384
 
 static inline alloc_arena_block_t *
 alloc_arena_add_block(alloc_arena_t *alloc_arena, sz block_size);
@@ -43,8 +43,8 @@ void *alloc_arena_allocate_aligned(alloc_arena_t *alloc_arena, sz size,
   }
 
   if (suitable_block == nullptr)
-    suitable_block =
-      alloc_arena_add_block(alloc_arena, get_aligned(real_size, PAGE_SIZE));
+    suitable_block = alloc_arena_add_block(
+      alloc_arena, get_aligned(real_size, MINIMAL_BLOCK_SIZE));
 
   void *out_data = (void *)get_aligned(suitable_block->cursor, alignment);
   suitable_block->cursor += real_size;
