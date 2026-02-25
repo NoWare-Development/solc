@@ -1,3 +1,4 @@
+#include "solc/init.h"
 #include "solc/parser/parser.h"
 #include <solc/lexer/lexer.h>
 #include <solc/lexer/token.h>
@@ -11,6 +12,8 @@ s32 main(s32 argc, char **argv)
   if (argc < 2) {
     return -1;
   }
+
+  solc_init();
 
   FILE *f = fopen(argv[1], "r");
   fseek(f, 0, SEEK_END);
@@ -50,6 +53,8 @@ s32 main(s32 argc, char **argv)
   solc_lexer_destroy(&lexer);
 
   free(src);
+
+  solc_deinit();
 
   return 0;
 }
