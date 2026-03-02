@@ -10,7 +10,6 @@
 
 solc_parser_t solc_parser_create(solc_token_t *tokens, sz tokens_num)
 {
-  parser_context_create();
   return (solc_parser_t){
     .tokens = tokens,
     .errors_v = vector_create(solc_parser_error_t),
@@ -22,7 +21,6 @@ solc_parser_t solc_parser_create(solc_token_t *tokens, sz tokens_num)
 
 void solc_parser_destroy(solc_parser_t *parser)
 {
-  parser_context_destroy();
   SOLC_ASSUME(parser != nullptr);
   vector_destroy(parser->errors_v);
   memset(parser, 0, sizeof(solc_parser_t));

@@ -9,8 +9,7 @@ typedef solc_ast_t *(*parser_stmt_func_t)(solc_parser_t *);
 typedef solc_ast_t *(*parser_struct_func_t)(solc_parser_t *);
 typedef solc_ast_t *(*parser_union_func_t)(solc_parser_t *);
 
-void parser_context_create(void);
-void parser_context_destroy(void);
+void parser_context_initialize(void);
 
 parser_toplevel_func_t parser_context_get_toplevel_func(const char *str);
 parser_stmt_func_t parser_context_get_stmt_func(const char *str);
