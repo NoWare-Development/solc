@@ -27,6 +27,7 @@ void parser_context_create(void)
   ctx->stmt_funcptrs = trie_create();
   ctx->struct_funcptrs = trie_create();
   ctx->union_funcptrs = trie_create();
+  ctx->qualifiers = trie_create();
 
   // TODO: uncomment these lines when all these functions are implemented.
 
@@ -75,11 +76,6 @@ void parser_context_destroy(void)
 
   ctx->refcount--;
   if (ctx->refcount == 0) {
-    trie_destroy(ctx->toplevel_funcptrs);
-    trie_destroy(ctx->stmt_funcptrs);
-    trie_destroy(ctx->struct_funcptrs);
-    trie_destroy(ctx->union_funcptrs);
-    trie_destroy(ctx->qualifiers);
     free(ctx);
     ctx = nullptr;
   }
