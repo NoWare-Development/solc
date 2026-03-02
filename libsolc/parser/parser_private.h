@@ -30,14 +30,14 @@
       return nullptr;                                                        \
     }                                                                        \
   }
-#define VERIFY_WHITESPACE(_parser, _pos, _got, _expected)          \
-  {                                                                \
-    if (!solc_parser_verify_whitespace((_parser), (_pos), (_got),  \
-                                       (_expected))) {             \
-      fprintf(stderr, "[%s]: ERROR <UNEXPECTED(whitespace)> %d\n", \
-              __FUNCTION__, __LINE__);                             \
-      return nullptr;                                              \
-    }                                                              \
+#define VERIFY_WHITESPACE(_parser, _pos, _got, _expected, _next_tok)           \
+  {                                                                            \
+    if (!solc_parser_verify_whitespace((_parser), (_pos), (_got), (_expected), \
+                                       (_next_tok))) {                         \
+      fprintf(stderr, "[%s]: ERROR <UNEXPECTED(whitespace)> %d\n",             \
+              __FUNCTION__, __LINE__);                                         \
+      return nullptr;                                                          \
+    }                                                                          \
   }
 
 solc_ast_t *solc_parser_parse_top(solc_parser_t *parser);
@@ -88,10 +88,9 @@ solc_ast_t *solc_parser_parse_expr_operand(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_expr_operand_call(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_expr_operand_generic_call(solc_parser_t *parser);
 b8 solc_parser_is_expr_operand_generic_call(solc_parser_t *parser);
-solc_ast_t *solc_parser_parse_generic_namespace(solc_parser_t *parser);
 b8 solc_parser_is_generic_namespace(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_expr_operand_identifier(solc_parser_t *parser,
-                                                      b8 accept_modules,
+                                                      b8 accept_namespaces,
                                                       b8 accept_functions);
 solc_ast_t *solc_parser_parse_expr_operand_array_element(solc_parser_t *parser,
                                                          solc_ast_t *array_ast);
