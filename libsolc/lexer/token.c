@@ -1,16 +1,8 @@
 #include <stdio.h>
 #include <solc/lexer/token.h>
-#include <stdlib.h>
 #include <string.h>
 
 static inline const char *tokentype_to_string(solc_tokentype_t type);
-
-void solc_token_destroy(solc_token_t *token)
-{
-  if (token->value != nullptr) {
-    free(token->value);
-  }
-}
 
 void solc_token_to_string(char *buf, sz n, const solc_token_t *token)
 {
