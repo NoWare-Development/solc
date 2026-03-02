@@ -5,12 +5,17 @@
 #include <solc/lexer/token.h>
 
 typedef struct {
-  void *data;
+  solc_token_t *tokens_v;
+  const char *src;
+  sz src_len;
+  sz pos;
+  sz line;
+  sz llp;
 } solc_lexer_t;
 
 __SOLC_CPP_GUARD_TOP()
 
-solc_lexer_t solc_lexer_create(const char *src);
+solc_lexer_t *solc_lexer_create(const char *src);
 void solc_lexer_destroy(solc_lexer_t *lexer);
 
 // Returned array must be freed with `free()' later.

@@ -24,9 +24,9 @@ s32 main(s32 argc, char **argv)
   fread(src, sizeof(char), size, f);
   fclose(f);
 
-  solc_lexer_t lexer = solc_lexer_create(src);
+  solc_lexer_t *lexer = solc_lexer_create(src);
   sz tokens_num;
-  solc_token_t *tokens = solc_lexer_tokenize(&lexer, &tokens_num);
+  solc_token_t *tokens = solc_lexer_tokenize(lexer, &tokens_num);
   for (sz i = 0; i < tokens_num; i++) {
     char buf[0x80] = { 0 };
     solc_token_to_string(buf, sizeof(buf) - 1, &tokens[i]);
@@ -44,13 +44,8 @@ s32 main(s32 argc, char **argv)
 
   solc_ast_destroy(root);
   solc_parser_destroy(&parser);
-  for (sz i = 0; i < tokens_num; i++) {
-    solc_token_destroy(&tokens[i]);
-  }
 
-  free(tokens);
-
-  solc_lexer_destroy(&lexer);
+  solc_lexer_destroy(lexer);
 
   free(src);
 
