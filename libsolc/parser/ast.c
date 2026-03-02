@@ -79,14 +79,14 @@ string_t *ast_build_tree(string_t *heading, string_t **children_vs_v)
 
       if (j == 0) {
         if (i == children_vs_v_size - 1) {
-          str = string_create_from(" ╰─ ");
+          str = string_create_from("╰─");
         } else {
-          str = string_create_from(" ├─ ");
+          str = string_create_from("├─");
         }
       } else if (i < children_vs_v_size - 1) {
-        str = string_create_from(" │  ");
+        str = string_create_from("│ ");
       } else {
-        str = string_create_from("    ");
+        str = string_create_from("  ");
       }
 
       string_append(&str, &children_v[j]);
