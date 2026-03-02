@@ -2,6 +2,7 @@
 #define __SOLC_AST_PRIVATE_H__
 
 #include "containers/string.h"
+#include "containers/vector.h"
 #include "parser/ast/ast_group_expr_operand.h"
 #include "parser/ast/ast_group_generic.h"
 #include "parser/ast/ast_group_initlist.h"
@@ -25,5 +26,17 @@ typedef string_t *(*solc_ast_build_tree_func_t)(solc_ast_t *ast);
 solc_ast_build_tree_func_t ast_get_build_tree_func(solc_ast_type_t ast_type);
 
 string_t *ast_build_tree(string_t *heading, string_t **children_vs_v);
+
+#define solc_ast_destroy_if_exists(_ast) \
+  {                                      \
+    if SOLC_LIKELY ((_ast) != nullptr)   \
+      solc_ast_destroy((_ast));          \
+  }
+
+#define solc_ast_add_to_tree_if_exists(_vec, _ast)                        \
+  {                                                                       \
+    if SOLC_LIKELY ((_ast) != nullptr)                                    \
+      vector_push((_vec), ast_get_build_tree_func((_ast)->type)((_ast))); \
+  }
 
 #endif // __SOLC_AST_PRIVATE_H__
