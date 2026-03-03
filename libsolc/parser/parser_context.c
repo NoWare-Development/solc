@@ -57,6 +57,7 @@ void parser_context_initialize(void)
   trie_insert(parser_ctx.qualifiers, "inline", (void *)1);
   trie_insert(parser_ctx.qualifiers, "persist", (void *)1);
   trie_insert(parser_ctx.qualifiers, "local", (void *)1);
+  trie_insert(parser_ctx.qualifiers, "const", (void *)1);
 }
 
 void parser_context_destroy(void)
