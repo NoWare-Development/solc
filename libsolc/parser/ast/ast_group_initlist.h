@@ -16,7 +16,7 @@ string_t *solc_ast_initlist_entry_explicit_build_tree(
   solc_ast_t *initlist_entry_explicit_ast);
 
 solc_ast_t *solc_ast_initlist_entry_explicit_array_element_create(
-  sz pos, solc_ast_t *index_expr_ast, solc_ast_t *expr_ast);
+  sz pos, const char *name, solc_ast_t *index_expr_ast, solc_ast_t *expr_ast);
 void solc_ast_initlist_entry_explicit_array_element_destroy(
   solc_ast_t *initlist_entry_explicit_array_element_ast);
 string_t *solc_ast_initlist_entry_explicit_array_element_build_tree(
