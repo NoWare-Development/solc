@@ -33,6 +33,6 @@ solc_ast_t *solc_parser_parse_top(solc_parser_t *parser)
   }
 
   solc_parser_add_error(parser, SOLC_PARSER_ERROR_TYPE_UNEXPECTED, parser->pos,
-                        1);
+                        1, SOLC_TOKENTYPE_ERR);
   return nullptr;
 }

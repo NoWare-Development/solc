@@ -82,7 +82,8 @@ void solc_parser_advance_to_terminator(solc_parser_t *parser)
 b8 solc_parser_verify_pos(solc_parser_t *parser, sz pos)
 {
   if (pos >= parser->tokens_num) {
-    solc_parser_add_error(parser, SOLC_PARSER_ERROR_TYPE_EXPECTED, pos, 1);
+    solc_parser_add_error(parser, SOLC_PARSER_ERROR_TYPE_EXPECTED, pos, 1,
+                          SOLC_TOKENTYPE_ERR);
     return false;
   }
   return true;
@@ -92,7 +93,8 @@ b8 solc_parser_verify_token(solc_parser_t *parser, sz pos, solc_tokentype_t got,
                             solc_tokentype_t expected)
 {
   if (got != expected) {
-    solc_parser_add_error(parser, SOLC_PARSER_ERROR_TYPE_UNEXPECTED, pos, 1);
+    solc_parser_add_error(parser, SOLC_PARSER_ERROR_TYPE_UNEXPECTED, pos, 1,
+                          SOLC_TOKENTYPE_ERR);
     return false;
   }
   return true;
@@ -102,7 +104,8 @@ b8 solc_parser_verify_value(solc_parser_t *parser, sz pos, const char *got,
                             const char *expected)
 {
   if (strcmp(got, expected) != 0) {
-    solc_parser_add_error(parser, SOLC_PARSER_ERROR_TYPE_EXPECTED, pos, 1);
+    solc_parser_add_error(parser, SOLC_PARSER_ERROR_TYPE_EXPECTED, pos, 1,
+                          SOLC_TOKENTYPE_ERR);
     return false;
   }
   return true;
@@ -112,11 +115,9 @@ b8 solc_parser_verify_whitespace(solc_parser_t *parser, sz pos, b8 got,
                                  b8 expected,
                                  solc_tokentype_t expected_tokentype_after)
 {
-  // TODO: use expected_after to indicate
-  // which token type was expected after.
   if (got != expected) {
     solc_parser_add_error(parser, SOLC_PARSER_ERROR_TYPE_UNEXPECTED_WHITESPACE,
-                          pos, 1);
+                          pos, 1, expected_tokentype_after);
     return false;
   }
   return true;
@@ -137,12 +138,13 @@ const solc_token_t *solc_parser_peek_token(solc_parser_t *parser, sz pos)
 }
 
 void solc_parser_add_error(solc_parser_t *parser, solc_parser_error_type_t type,
-                           sz pos, sz len)
+                           sz pos, sz len, solc_tokentype_t expected_after)
 {
   parser->errored = true;
   solc_parser_error_t error = {
     .len = len,
     .pos = pos,
+    .expected_after = expected_after,
     .type = type,
   };
   vector_push(parser->errors_v, error);

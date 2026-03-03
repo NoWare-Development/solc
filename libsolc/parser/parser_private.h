@@ -1,7 +1,6 @@
 #ifndef __SOLC_PARSER_PRIVATE_H__
 #define __SOLC_PARSER_PRIVATE_H__
 
-#include "parser/ast_op_types.h"
 #include "solc/lexer/token.h"
 #include "solc/parser/ast.h"
 #include "solc/parser/parser.h"
@@ -111,7 +110,7 @@ solc_tokentype_t solc_parser_peek(solc_parser_t *parser, sz pos);
 const solc_token_t *solc_parser_peek_token(solc_parser_t *parser, sz pos);
 
 void solc_parser_add_error(solc_parser_t *parser, solc_parser_error_type_t type,
-                           sz pos, sz len);
+                           sz pos, sz len, solc_tokentype_t expected_after);
 
 b8 solc_parser_is_qualifier(const char *str);
 
