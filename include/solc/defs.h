@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#define LIBSOLC_VERSION 0.0.1
+
 typedef uint8_t u8;
 typedef uint16_t u16;
 typedef uint32_t u32;
