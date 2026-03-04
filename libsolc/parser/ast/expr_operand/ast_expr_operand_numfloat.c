@@ -44,7 +44,7 @@ solc_ast_expr_operand_numfloat_build_tree(solc_ast_t *numfloat_expr_operand_ast)
 {
   SOLC_ASSUME(numfloat_expr_operand_ast != nullptr &&
               numfloat_expr_operand_ast->type ==
-                SOLC_AST_TYPE_EXPR_OPERAND_NUM);
+                SOLC_AST_TYPE_EXPR_OPERAND_NUMFLOAT);
   SOLC_AST_CAST(numfloat_expr_operand_data, numfloat_expr_operand_ast,
                 ast_numfloat_expr_operand_t);
   const sz typespec_len = numfloat_expr_operand_data->typespec != nullptr ?
