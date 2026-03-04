@@ -20,12 +20,10 @@ solc_ast_t *solc_parser_parse_top(solc_parser_t *parser)
       return toplevel_func(parser);
     } else if (solc_parser_peek(parser, parser->pos + 1) ==
                SOLC_TOKENTYPE_LARROW) {
-      // TODO:
-      // return solc_parser_parse_def_func_generic(parser);
+      return solc_parser_parse_def_func_generic(parser);
     }
 
-    // TODO:
-    // return solc_parser_parse_decldef(parser);
+    return solc_parser_parse_decldef(parser);
   }
 
   default:
