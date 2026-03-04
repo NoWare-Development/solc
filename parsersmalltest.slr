@@ -2,7 +2,7 @@ import std::io;
 
 global_var_1: int;
 global_var_2: int = 123 * 0123;
-global_var_3 : = 123;
+global_var_3 := 123;
 
 local persist inline const local_var: int = 0;
 
