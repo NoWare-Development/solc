@@ -49,11 +49,13 @@ void string_destroy(string_t *str)
 
 char string_at(string_t *str, sz pos)
 {
+  SOLC_ASSUME(str != nullptr);
   return pos < str->size ? str->data[pos] : 0;
 }
 
 void string_append(string_t *dst, string_t *src)
 {
+  SOLC_ASSUME(dst != nullptr && src != nullptr);
   char *new_data = malloc(sizeof(char) * (dst->size - 1 + src->size));
   if (dst->size > 1) {
     memcpy(new_data, dst->data, sizeof(char) * (dst->size - 1));
@@ -66,6 +68,8 @@ void string_append(string_t *dst, string_t *src)
 
 void string_append_cstr(string_t *dst, const char *c_str)
 {
+  SOLC_ASSUME(dst != nullptr && c_str != nullptr);
+
   const sz c_str_len = strlen(c_str);
   char *new_data = malloc(sizeof(char) * (dst->size + c_str_len));
   memcpy(new_data, dst->data, sizeof(char) * (dst->size - 1));
@@ -77,6 +81,7 @@ void string_append_cstr(string_t *dst, const char *c_str)
 
 void string_append_char(string_t *dst, char c)
 {
+  SOLC_ASSUME(dst != nullptr);
   char *new_data = malloc(sizeof(char) * (dst->size + 1));
   memcpy(new_data, dst->data, sizeof(char) * (dst->size - 1));
   new_data[dst->size - 1] = c;
