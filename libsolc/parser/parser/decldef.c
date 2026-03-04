@@ -64,11 +64,16 @@ solc_ast_t *solc_parser_parse_decldef_var(solc_parser_t *parser)
   parser->pos++;
   VERIFY_POS(parser, parser->pos);
 
-  // TODO: allow implicit types for variable definition `variable := value;`.
-  solc_ast_t *type_ast = solc_parser_parse_type(parser);
+  solc_ast_t *type_ast = nullptr;
+  if (!parser->tokens[parser->pos - 1].has_whitespace_after &&
+      parser->tokens[parser->pos].type == SOLC_TOKENTYPE_EQ) {
+    goto parse_var_def;
+  }
 
-  VERIFY_POS(parser, parser->pos);
+  type_ast = solc_parser_parse_type(parser);
+
   if (parser->tokens[parser->pos].type == SOLC_TOKENTYPE_EQ) {
+parse_var_def:
     parser->pos++;
     VERIFY_POS(parser, parser->pos);
 
