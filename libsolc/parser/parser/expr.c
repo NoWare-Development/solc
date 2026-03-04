@@ -18,14 +18,14 @@ typedef struct {
   union {
     solc_ast_t *ast;
     struct {
-      sz op_pos;
-      expr_operator_type_t op_type;
+      sz operator_pos;
+      expr_operator_type_t operator_type;
     };
   };
-  b8 is_op;
+  b8 is_operator;
 } ast_op_union_t;
 
-static inline void get_binding_power(expr_operator_type_t op, s32 *l_bp,
+static inline void get_binding_power(expr_operator_type_t operator, s32 *l_bp,
                                      s32 *r_bp);
 
 static inline ast_op_union_t *parse_expr_data(solc_parser_t *parser,
@@ -36,7 +36,8 @@ static inline b8 validate_expr_data(sz start_pos,
 static solc_ast_t *pratt_parse_expr(ast_op_union_t *ast_op_unions_v, sz *pos,
                                     s32 min_bp);
 static expr_operator_type_t
-token_to_expr_operator(expr_operator_group_t op_group, solc_tokentype_t type);
+token_to_expr_operator(expr_operator_group_t operator_group,
+                       solc_tokentype_t type);
 
 static inline u64 num_tok_to_u64(solc_token_t *token);
 
@@ -66,10 +67,12 @@ solc_ast_t *solc_parser_parse_expr(solc_parser_t *parser, b8 toplevel)
           solc_ast_err_create(invalid_pos, error_reason) :
           pratt_parse_expr(ast_op_unions_v, nullptr, 0);
 
-  for (sz i = 0, ast_op_unions_v_size = vector_get_length(ast_op_unions_v);
-       i < ast_op_unions_v_size; i++) {
-    if (ast_op_unions_v[i].is_op) {
-      solc_ast_destroy(ast_op_unions_v[i].ast);
+  if (out->type == SOLC_AST_TYPE_NONE_ERR) {
+    for (sz i = 0, ast_op_unions_v_size = vector_get_length(ast_op_unions_v);
+         i < ast_op_unions_v_size; i++) {
+      if (!ast_op_unions_v[i].is_operator) {
+        solc_ast_destroy(ast_op_unions_v[i].ast);
+      }
     }
   }
   vector_destroy(ast_op_unions_v);
@@ -85,37 +88,37 @@ static inline ast_op_union_t *parse_expr_data(solc_parser_t *parser,
   typedef struct {
     union {
       solc_ast_type_t ast_type;
-      expr_operator_type_t op_type;
+      expr_operator_type_t operator_type;
     };
-    b8 is_op;
+    b8 is_operator;
   } ast_type_op_union_t;
 
   ast_type_op_union_t prev = {
     .ast_type = SOLC_AST_TYPE_NONE_ERR,
-    .is_op = false,
+    .is_operator = false,
   };
   while (parser->pos < parser->tokens_num) {
     solc_token_t cur_tok = parser->tokens[parser->pos];
 
     // Prefix operators
-    if ((prev.is_op || prev.ast_type == SOLC_AST_TYPE_NONE_ERR) &&
+    if ((prev.is_operator || prev.ast_type == SOLC_AST_TYPE_NONE_ERR) &&
         solc_parser_is_prefix_operator_token(cur_tok.type)) {
       ast_op_union_t out_op = {
-        .op_pos = parser->pos,
-        .op_type =
+        .operator_pos = parser->pos,
+        .operator_type =
           token_to_expr_operator(EXPR_OPERATOR_GROUP_PREFIX, cur_tok.type),
-        .is_op = true,
+        .is_operator = true,
       };
       vector_push(out_ast_op_unions_v, out_op);
       parser->pos++;
 
-      prev.is_op = true;
-      prev.op_type = out_op.op_type;
+      prev.is_operator = true;
+      prev.operator_type = out_op.operator_type;
       continue;
     }
 
     // Operators
-    else if (!prev.is_op && prev.ast_type != SOLC_AST_TYPE_NONE_ERR) {
+    else if (!prev.is_operator && prev.ast_type != SOLC_AST_TYPE_NONE_ERR) {
       if (!cur_tok.has_whitespace_after) {
         // == != >= <=
         // += -= *= /= %= &= |= ^=
@@ -124,148 +127,148 @@ static inline ast_op_union_t *parse_expr_data(solc_parser_t *parser,
           // Compare operators (except < and >)
           case SOLC_TOKENTYPE_EXCLMARK: { // !=
             ast_op_union_t out_op = {
-              .op_pos = parser->pos,
-              .op_type = EXPR_OPERATOR_TYPE_COMPARE_NOTEQ,
-              .is_op = true,
+              .operator_pos = parser->pos,
+              .operator_type = EXPR_OPERATOR_TYPE_COMPARE_NOTEQ,
+              .is_operator = true,
             };
             vector_push(out_ast_op_unions_v, out_op);
             parser->pos += 2;
-            prev.is_op = true;
-            prev.op_type = out_op.op_type;
+            prev.is_operator = true;
+            prev.operator_type = out_op.operator_type;
             continue;
           }
           case SOLC_TOKENTYPE_EQ: { // ==
             ast_op_union_t out_op = {
-              .op_pos = parser->pos,
-              .op_type = EXPR_OPERATOR_TYPE_COMPARE_EQ,
-              .is_op = true,
+              .operator_pos = parser->pos,
+              .operator_type = EXPR_OPERATOR_TYPE_COMPARE_EQ,
+              .is_operator = true,
             };
             vector_push(out_ast_op_unions_v, out_op);
             parser->pos += 2;
-            prev.is_op = true;
-            prev.op_type = out_op.op_type;
+            prev.is_operator = true;
+            prev.operator_type = out_op.operator_type;
             continue;
           }
           case SOLC_TOKENTYPE_RARROW: { // >=
             ast_op_union_t out_op = {
-              .op_pos = parser->pos,
-              .op_type = EXPR_OPERATOR_TYPE_COMPARE_GTHANEQ,
-              .is_op = true,
+              .operator_pos = parser->pos,
+              .operator_type = EXPR_OPERATOR_TYPE_COMPARE_GTHANEQ,
+              .is_operator = true,
             };
             vector_push(out_ast_op_unions_v, out_op);
             parser->pos += 2;
-            prev.is_op = true;
-            prev.op_type = out_op.op_type;
+            prev.is_operator = true;
+            prev.operator_type = out_op.operator_type;
             continue;
           }
           case SOLC_TOKENTYPE_LARROW: { // <=
             ast_op_union_t out_op = {
-              .op_pos = parser->pos,
-              .op_type = EXPR_OPERATOR_TYPE_COMPARE_LTHANEQ,
-              .is_op = true,
+              .operator_pos = parser->pos,
+              .operator_type = EXPR_OPERATOR_TYPE_COMPARE_LTHANEQ,
+              .is_operator = true,
             };
             vector_push(out_ast_op_unions_v, out_op);
             parser->pos += 2;
-            prev.is_op = true;
-            prev.op_type = out_op.op_type;
+            prev.is_operator = true;
+            prev.operator_type = out_op.operator_type;
             continue;
           }
 
           // Assign operators (except =, >>= and <<=)
           case SOLC_TOKENTYPE_PLUS: { // +=
             ast_op_union_t out_op = {
-              .op_pos = parser->pos,
-              .op_type = EXPR_OPERATOR_TYPE_ASSIGN_ADDEQ,
-              .is_op = true,
+              .operator_pos = parser->pos,
+              .operator_type = EXPR_OPERATOR_TYPE_ASSIGN_ADDEQ,
+              .is_operator = true,
             };
             vector_push(out_ast_op_unions_v, out_op);
             parser->pos += 2;
-            prev.is_op = true;
-            prev.op_type = out_op.op_type;
+            prev.is_operator = true;
+            prev.operator_type = out_op.operator_type;
             continue;
           }
           case SOLC_TOKENTYPE_MINUS: { // -=
             ast_op_union_t out_op = {
-              .op_pos = parser->pos,
-              .op_type = EXPR_OPERATOR_TYPE_ASSIGN_SUBEQ,
-              .is_op = true,
+              .operator_pos = parser->pos,
+              .operator_type = EXPR_OPERATOR_TYPE_ASSIGN_SUBEQ,
+              .is_operator = true,
             };
             vector_push(out_ast_op_unions_v, out_op);
             parser->pos += 2;
-            prev.is_op = true;
-            prev.op_type = out_op.op_type;
+            prev.is_operator = true;
+            prev.operator_type = out_op.operator_type;
             continue;
           }
           case SOLC_TOKENTYPE_ASTERISK: { // *=
             ast_op_union_t out_op = {
-              .op_pos = parser->pos,
-              .op_type = EXPR_OPERATOR_TYPE_ASSIGN_MULEQ,
-              .is_op = true,
+              .operator_pos = parser->pos,
+              .operator_type = EXPR_OPERATOR_TYPE_ASSIGN_MULEQ,
+              .is_operator = true,
             };
             vector_push(out_ast_op_unions_v, out_op);
             parser->pos += 2;
-            prev.is_op = true;
-            prev.op_type = out_op.op_type;
+            prev.is_operator = true;
+            prev.operator_type = out_op.operator_type;
             continue;
           }
           case SOLC_TOKENTYPE_SLASH: { // /=
             ast_op_union_t out_op = {
-              .op_pos = parser->pos,
-              .op_type = EXPR_OPERATOR_TYPE_ASSIGN_DIVEQ,
-              .is_op = true,
+              .operator_pos = parser->pos,
+              .operator_type = EXPR_OPERATOR_TYPE_ASSIGN_DIVEQ,
+              .is_operator = true,
             };
             vector_push(out_ast_op_unions_v, out_op);
             parser->pos += 2;
-            prev.is_op = true;
-            prev.op_type = out_op.op_type;
+            prev.is_operator = true;
+            prev.operator_type = out_op.operator_type;
             continue;
           }
           case SOLC_TOKENTYPE_PERCENT: { // %=
             ast_op_union_t out_op = {
-              .op_pos = parser->pos,
-              .op_type = EXPR_OPERATOR_TYPE_ASSIGN_MODEQ,
-              .is_op = true,
+              .operator_pos = parser->pos,
+              .operator_type = EXPR_OPERATOR_TYPE_ASSIGN_MODEQ,
+              .is_operator = true,
             };
             vector_push(out_ast_op_unions_v, out_op);
             parser->pos += 2;
-            prev.is_op = true;
-            prev.op_type = out_op.op_type;
+            prev.is_operator = true;
+            prev.operator_type = out_op.operator_type;
             continue;
           }
           case SOLC_TOKENTYPE_AMPERSAND: { // &=
             ast_op_union_t out_op = {
-              .op_pos = parser->pos,
-              .op_type = EXPR_OPERATOR_TYPE_ASSIGN_ANDEQ,
-              .is_op = true,
+              .operator_pos = parser->pos,
+              .operator_type = EXPR_OPERATOR_TYPE_ASSIGN_ANDEQ,
+              .is_operator = true,
             };
             vector_push(out_ast_op_unions_v, out_op);
             parser->pos += 2;
-            prev.is_op = true;
-            prev.op_type = out_op.op_type;
+            prev.is_operator = true;
+            prev.operator_type = out_op.operator_type;
             continue;
           }
           case SOLC_TOKENTYPE_PIPE: { // |=
             ast_op_union_t out_op = {
-              .op_pos = parser->pos,
-              .op_type = EXPR_OPERATOR_TYPE_ASSIGN_OREQ,
-              .is_op = true,
+              .operator_pos = parser->pos,
+              .operator_type = EXPR_OPERATOR_TYPE_ASSIGN_OREQ,
+              .is_operator = true,
             };
             vector_push(out_ast_op_unions_v, out_op);
             parser->pos += 2;
-            prev.is_op = true;
-            prev.op_type = out_op.op_type;
+            prev.is_operator = true;
+            prev.operator_type = out_op.operator_type;
             continue;
           }
           case SOLC_TOKENTYPE_CIRCUMFLEX: { // ^=
             ast_op_union_t out_op = {
-              .op_pos = parser->pos,
-              .op_type = EXPR_OPERATOR_TYPE_ASSIGN_XOREQ,
-              .is_op = true,
+              .operator_pos = parser->pos,
+              .operator_type = EXPR_OPERATOR_TYPE_ASSIGN_XOREQ,
+              .is_operator = true,
             };
             vector_push(out_ast_op_unions_v, out_op);
             parser->pos += 2;
-            prev.is_op = true;
-            prev.op_type = out_op.op_type;
+            prev.is_operator = true;
+            prev.operator_type = out_op.operator_type;
             continue;
           }
 
@@ -283,26 +286,26 @@ static inline ast_op_union_t *parse_expr_data(solc_parser_t *parser,
             switch (cur_tok.type) {
             case SOLC_TOKENTYPE_RARROW: { // >>=
               ast_op_union_t out_op = {
-                .op_pos = parser->pos,
-                .op_type = EXPR_OPERATOR_TYPE_ASSIGN_SHREQ,
-                .is_op = true,
+                .operator_pos = parser->pos,
+                .operator_type = EXPR_OPERATOR_TYPE_ASSIGN_SHREQ,
+                .is_operator = true,
               };
               vector_push(out_ast_op_unions_v, out_op);
               parser->pos += 3;
-              prev.is_op = true;
-              prev.op_type = out_op.op_type;
+              prev.is_operator = true;
+              prev.operator_type = out_op.operator_type;
               continue;
             }
             case SOLC_TOKENTYPE_LARROW: { // <<=
               ast_op_union_t out_op = {
-                .op_pos = parser->pos,
-                .op_type = EXPR_OPERATOR_TYPE_ASSIGN_SHLEQ,
-                .is_op = true,
+                .operator_pos = parser->pos,
+                .operator_type = EXPR_OPERATOR_TYPE_ASSIGN_SHLEQ,
+                .is_operator = true,
               };
               vector_push(out_ast_op_unions_v, out_op);
               parser->pos += 3;
-              prev.is_op = true;
-              prev.op_type = out_op.op_type;
+              prev.is_operator = true;
+              prev.operator_type = out_op.operator_type;
               continue;
             }
 
@@ -316,52 +319,52 @@ static inline ast_op_union_t *parse_expr_data(solc_parser_t *parser,
           // Boolean operators (&&, ||)
           case SOLC_TOKENTYPE_AMPERSAND: { // &&
             ast_op_union_t out_op = {
-              .op_pos = parser->pos,
-              .op_type = EXPR_OPERATOR_TYPE_BOOLEAN_AND,
-              .is_op = true,
+              .operator_pos = parser->pos,
+              .operator_type = EXPR_OPERATOR_TYPE_BOOLEAN_AND,
+              .is_operator = true,
             };
             vector_push(out_ast_op_unions_v, out_op);
             parser->pos += 2;
-            prev.is_op = true;
-            prev.op_type = out_op.op_type;
+            prev.is_operator = true;
+            prev.operator_type = out_op.operator_type;
             continue;
           }
           case SOLC_TOKENTYPE_PIPE: { // ||
             ast_op_union_t out_op = {
-              .op_pos = parser->pos,
-              .op_type = EXPR_OPERATOR_TYPE_BOOLEAN_OR,
-              .is_op = true,
+              .operator_pos = parser->pos,
+              .operator_type = EXPR_OPERATOR_TYPE_BOOLEAN_OR,
+              .is_operator = true,
             };
             vector_push(out_ast_op_unions_v, out_op);
             parser->pos += 2;
-            prev.is_op = true;
-            prev.op_type = out_op.op_type;
+            prev.is_operator = true;
+            prev.operator_type = out_op.operator_type;
             continue;
           }
 
           // Binary operators (<<, >>)
           case SOLC_TOKENTYPE_LARROW: { // <<
             ast_op_union_t out_op = {
-              .op_pos = parser->pos,
-              .op_type = EXPR_OPERATOR_TYPE_BINARY_SHL,
-              .is_op = true,
+              .operator_pos = parser->pos,
+              .operator_type = EXPR_OPERATOR_TYPE_BINARY_SHL,
+              .is_operator = true,
             };
             vector_push(out_ast_op_unions_v, out_op);
             parser->pos += 2;
-            prev.is_op = true;
-            prev.op_type = out_op.op_type;
+            prev.is_operator = true;
+            prev.operator_type = out_op.operator_type;
             continue;
           }
           case SOLC_TOKENTYPE_RARROW: { // >>
             ast_op_union_t out_op = {
-              .op_pos = parser->pos,
-              .op_type = EXPR_OPERATOR_TYPE_BINARY_SHR,
-              .is_op = true,
+              .operator_pos = parser->pos,
+              .operator_type = EXPR_OPERATOR_TYPE_BINARY_SHR,
+              .is_operator = true,
             };
             vector_push(out_ast_op_unions_v, out_op);
             parser->pos += 2;
-            prev.is_op = true;
-            prev.op_type = out_op.op_type;
+            prev.is_operator = true;
+            prev.operator_type = out_op.operator_type;
             continue;
           }
 
@@ -375,40 +378,40 @@ static inline ast_op_union_t *parse_expr_data(solc_parser_t *parser,
       // Remaining compare operators (< >)
       case SOLC_TOKENTYPE_LARROW: { // <
         ast_op_union_t out_op = {
-          .op_pos = parser->pos,
-          .op_type = EXPR_OPERATOR_TYPE_COMPARE_LTHAN,
-          .is_op = true,
+          .operator_pos = parser->pos,
+          .operator_type = EXPR_OPERATOR_TYPE_COMPARE_LTHAN,
+          .is_operator = true,
         };
         vector_push(out_ast_op_unions_v, out_op);
         parser->pos++;
-        prev.is_op = true;
-        prev.op_type = out_op.op_type;
+        prev.is_operator = true;
+        prev.operator_type = out_op.operator_type;
         continue;
       }
       case SOLC_TOKENTYPE_RARROW: { // >
         ast_op_union_t out_op = {
-          .op_pos = parser->pos,
-          .op_type = EXPR_OPERATOR_TYPE_COMPARE_GTHAN,
-          .is_op = true,
+          .operator_pos = parser->pos,
+          .operator_type = EXPR_OPERATOR_TYPE_COMPARE_GTHAN,
+          .is_operator = true,
         };
         vector_push(out_ast_op_unions_v, out_op);
         parser->pos++;
-        prev.is_op = true;
-        prev.op_type = out_op.op_type;
+        prev.is_operator = true;
+        prev.operator_type = out_op.operator_type;
         continue;
       }
 
       // =
       case SOLC_TOKENTYPE_EQ: {
         ast_op_union_t out_op = {
-          .op_pos = parser->pos,
-          .op_type = EXPR_OPERATOR_TYPE_ASSIGN_EQ,
-          .is_op = true,
+          .operator_pos = parser->pos,
+          .operator_type = EXPR_OPERATOR_TYPE_ASSIGN_EQ,
+          .is_operator = true,
         };
         vector_push(out_ast_op_unions_v, out_op);
         parser->pos++;
-        prev.is_op = true;
-        prev.op_type = out_op.op_type;
+        prev.is_operator = true;
+        prev.operator_type = out_op.operator_type;
         continue;
       }
 
@@ -419,20 +422,20 @@ static inline ast_op_union_t *parse_expr_data(solc_parser_t *parser,
       // Remaining binary operators
       if (solc_parser_is_binary_operator_token(cur_tok.type)) {
         ast_op_union_t out_op = {
-          .op_pos = parser->pos,
-          .op_type =
+          .operator_pos = parser->pos,
+          .operator_type =
             token_to_expr_operator(EXPR_OPERATOR_GROUP_BINARY, cur_tok.type),
-          .is_op = true,
+          .is_operator = true,
         };
         vector_push(out_ast_op_unions_v, out_op);
         parser->pos++;
-        prev.is_op = true;
-        prev.op_type = out_op.op_type;
+        prev.is_operator = true;
+        prev.operator_type = out_op.operator_type;
         continue;
       }
     }
 
-    else if (prev.is_op || prev.ast_type == SOLC_AST_TYPE_NONE_ERR) {
+    else if (prev.is_operator || prev.ast_type == SOLC_AST_TYPE_NONE_ERR) {
       switch (cur_tok.type) {
       default:
         if (!solc_parser_is_numeric_token(cur_tok.type))
@@ -445,11 +448,12 @@ static inline ast_op_union_t *parse_expr_data(solc_parser_t *parser,
       {
         ast_op_union_t out_operand = {
           .ast = solc_parser_parse_expr_operand(parser),
-          .is_op = false,
+          .is_operator = false,
         };
         vector_push(out_ast_op_unions_v, out_operand);
-        prev.is_op = false;
-        prev.ast_type = out_operand.ast->type;
+        prev.is_operator = false;
+        prev.ast_type = out_operand.ast != nullptr ? out_operand.ast->type :
+                                                     SOLC_AST_TYPE_NONE_ERR;
         continue;
       }
       }
@@ -854,13 +858,13 @@ static inline b8 validate_expr_data(sz start_pos,
   }
 
   ast_op_union_t *prev = nullptr, *cur = nullptr;
-  for (sz i = 0; i < ast_op_unions_v_size; i++) {
+  for (sz i = 0; i < ast_op_unions_v_size; i++, prev = cur) {
     cur = &ast_op_unions_v[i];
-    sz cur_pos = cur->is_op ? cur->op_pos : cur->ast->token_pos;
+    sz cur_pos = cur->is_operator ? cur->operator_pos : cur->ast->token_pos;
 
-    if ((cur->is_op && expr_operator_type_get_group(cur->op_type) ==
-                         EXPR_OPERATOR_GROUP_PREFIX) &&
-        (prev == nullptr || prev->is_op ||
+    if ((cur->is_operator && expr_operator_type_get_group(cur->operator_type) ==
+                               EXPR_OPERATOR_GROUP_PREFIX) &&
+        (prev == nullptr || prev->is_operator ||
          prev->ast->type == SOLC_AST_TYPE_NONE_ERR)) {
       if SOLC_UNLIKELY (i + 1 >= ast_op_unions_v_size) {
         *invalid_pos = cur_pos;
@@ -869,19 +873,29 @@ static inline b8 validate_expr_data(sz start_pos,
       }
 
       ast_op_union_t *next = &ast_op_unions_v[i + 1];
-      if SOLC_LIKELY (!next->is_op ||
-                      expr_operator_type_get_group(next->op_type) ==
+      if SOLC_LIKELY (!next->is_operator ||
+                      expr_operator_type_get_group(next->operator_type) ==
                         EXPR_OPERATOR_GROUP_PREFIX)
         continue;
 
       *invalid_pos = cur_pos;
       *out_reason = "Prefix operator goes after operand";
       return false;
-    } else if SOLC_UNLIKELY (cur->is_op && (prev == nullptr || !prev->is_op)) {
-      *invalid_pos = cur_pos;
-      *out_reason = "Two non-prefix operators";
-      return false;
-    } else if SOLC_UNLIKELY (!cur->is_op && prev != nullptr && !prev->is_op) {
+    } else if SOLC_UNLIKELY (cur->is_operator) {
+      if (prev == nullptr) {
+        *invalid_pos = cur_pos;
+        *out_reason = "Non-prefix operator at the beginning of the expression";
+        printf("ERR POS: %zu\n", cur_pos);
+        return false;
+      } else if (prev->is_operator) {
+        *invalid_pos = cur_pos;
+        *out_reason = "Two non-prefix operators";
+        printf("ERR POS: %zu\n", cur_pos);
+        return false;
+      }
+      continue;
+    } else if SOLC_UNLIKELY (!cur->is_operator && prev != nullptr &&
+                             !prev->is_operator) {
       *invalid_pos = cur_pos;
       *out_reason = "Two operands";
       return false;
@@ -891,11 +905,11 @@ static inline b8 validate_expr_data(sz start_pos,
   b8 has_assign_operator = false;
   for (sz i = 0; i < ast_op_unions_v_size; i++) {
     ast_op_union_t *ast_op_union = &ast_op_unions_v[i];
-    if (ast_op_union->is_op &&
-        expr_operator_type_get_group(ast_op_union->op_type) ==
+    if (ast_op_union->is_operator &&
+        expr_operator_type_get_group(ast_op_union->operator_type) ==
           EXPR_OPERATOR_GROUP_ASSIGN) {
       if SOLC_UNLIKELY (has_assign_operator) {
-        *invalid_pos = ast_op_union->op_pos;
+        *invalid_pos = ast_op_union->operator_pos;
         *out_reason = "Two assign operators";
         return false;
       }
@@ -903,8 +917,8 @@ static inline b8 validate_expr_data(sz start_pos,
     }
   }
 
-  if SOLC_UNLIKELY (ast_op_unions_v[ast_op_unions_v_size - 1].is_op) {
-    *invalid_pos = ast_op_unions_v[ast_op_unions_v_size - 1].op_pos;
+  if SOLC_UNLIKELY (ast_op_unions_v[ast_op_unions_v_size - 1].is_operator) {
+    *invalid_pos = ast_op_unions_v[ast_op_unions_v_size - 1].operator_pos;
     *out_reason = "Last node in an expression is not an operand";
     return false;
   }
@@ -927,21 +941,21 @@ static solc_ast_t *pratt_parse_expr(ast_op_union_t *ast_op_unions_v, sz *pos,
   solc_ast_t *lhs = nullptr;
 
   // Handle prefix operators
-  if (ast_op_unions_v[*pos].is_op &&
-      expr_operator_type_get_group(ast_op_unions_v[*pos].op_type) ==
+  if (ast_op_unions_v[*pos].is_operator &&
+      expr_operator_type_get_group(ast_op_unions_v[*pos].operator_type) ==
         EXPR_OPERATOR_GROUP_PREFIX) {
     ast_op_union_t *cur = &ast_op_unions_v[(*pos)++];
     expr_operator_type_t *prefix_operators_v =
       vector_create(expr_operator_type_t);
 
-    sz prefix_start = cur->op_pos;
+    sz prefix_start = cur->operator_pos;
 
     // Obtain all prefix operators
-    while (cur->is_op &&
-           expr_operator_type_get_group(cur->op_type) ==
+    while (cur->is_operator &&
+           expr_operator_type_get_group(cur->operator_type) ==
              EXPR_OPERATOR_GROUP_PREFIX &&
            (*pos) < ast_op_unions_v_size) {
-      vector_push(prefix_operators_v, cur->op_type);
+      vector_push(prefix_operators_v, cur->operator_type);
       cur = &ast_op_unions_v[(*pos)++];
     }
     solc_ast_t *operand = cur->ast; // Obtain operand
@@ -964,17 +978,18 @@ static solc_ast_t *pratt_parse_expr(ast_op_union_t *ast_op_unions_v, sz *pos,
   while (*pos < ast_op_unions_v_size) {
     // Just a debug assumption, must be checked before, but still
     // TODO: maybe remove
-    SOLC_ASSUME(ast_op_unions_v[*pos].is_op);
-    expr_operator_type_t op = ast_op_unions_v[*pos].op_type;
+    SOLC_ASSUME(ast_op_unions_v[*pos].is_operator);
+    expr_operator_type_t op = ast_op_unions_v[*pos].operator_type;
 
     s32 l_bp, r_bp;
     get_binding_power(op, &l_bp, &r_bp);
-    if (l_bp < r_bp)
+    if (l_bp < min_bp)
       break;
 
     (*pos)++;
     solc_ast_t *rhs = pratt_parse_expr(ast_op_unions_v, pos, r_bp);
-    lhs = solc_ast_expr_create(lhs->token_pos, lhs, rhs, op);
+    solc_ast_t *new_lhs = solc_ast_expr_create(lhs->token_pos, lhs, rhs, op);
+    lhs = new_lhs;
   }
 
   if SOLC_UNLIKELY (pos_was_null)
