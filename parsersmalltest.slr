@@ -1,5 +1,8 @@
 import std::io;
 
+global_var_1: int;
+global_var_2: int = 123 * 0123;
+
 struct TestStruct1 {}
 struct TestStructGeneric1<T, U, V> {}
 
