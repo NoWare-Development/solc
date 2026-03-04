@@ -1,8 +1,8 @@
 #include "containers/string.h"
 #include "containers/vector.h"
 #include "parser/ast_private.h"
+#include "solc/defs.h"
 #include "solc/parser/ast.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
