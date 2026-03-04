@@ -7,8 +7,8 @@
 
 static const char *_help_message = "Usage: solc [options] file...\n"
                                    "Options:\n"
-                                   "  --help -h     Display this information\n"
-                                   "  --version -v  Display version";
+                                   "  -h --help     Display this information\n"
+                                   "  -v --version  Display version";
 
 static const char *_version_message = "solc (SOLC) " __SOLC_MACRO_STR(
   SOLC_VERSION) "\n"
