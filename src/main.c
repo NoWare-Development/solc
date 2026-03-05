@@ -22,8 +22,11 @@ static const char *_version_message = "solc (SOLC) " __SOLC_MACRO_STR(
   SOLC_VERSION) "\n"
                 "Copyright (C) " __SOLC_MACRO_STR(
                   SOLC_COPYRIGHT_YEAR) " " SOLC_COMPILER_DEVELOPER "\n"
-                                       "This is free software; see the source for copying conditions (not ready yet).  There is NO\n"
-                                       "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.";
+                                       "This is free software; see the source "
+                                       "for copying conditions (not ready yet)."
+                                       "  There is NO\n"
+                                       "warranty; not even for MERCHANTABILITY"
+                                       " or FITNESS FOR A PARTICULAR PURPOSE.";
 
 s32 main(s32 argc, char **argv)
 {
