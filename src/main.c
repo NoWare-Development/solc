@@ -1,5 +1,10 @@
+#define ARGUMENTS                                                 \
+  BOOLEAN_ARG(show_help, "--help", "-h", "Display this message")  \
+  BOOLEAN_ARG(show_version, "--version", "-v", "Display version") \
+  PREFIX_ARG(link_against, "-l", "Link against", "lib")           \
+  VALUE_ARG(output, "--output", "-o", "Output", "file")
+
 #include "args.h"
-#include "info.h"
 #include <solc/init.h>
 #include <solc/parser/parser.h>
 #include <solc/lexer/lexer.h>
@@ -9,35 +14,40 @@
 #include <stdlib.h>
 #include <solc/parser/ast.h>
 
+#define SOLC_VERSION 0.0.1
+#define SOLC_COPYRIGHT_YEAR 2026
+#define SOLC_COMPILER_DEVELOPER "NoWare-Development"
+
+static const char *_version_message = "solc (SOLC) " __SOLC_MACRO_STR(
+  SOLC_VERSION) "\n"
+                "Copyright (C) " __SOLC_MACRO_STR(
+                  SOLC_COPYRIGHT_YEAR) " " SOLC_COMPILER_DEVELOPER "\n"
+                                       "This is free software; see the source for copying conditions (not ready yet).  There is NO\n"
+                                       "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.";
+
 s32 main(s32 argc, char **argv)
 {
-  if (argc < 2) {
-    display_help();
-    return 0;
-  }
-
   solc_init();
 
-  args_set(argc, argv);
+  args_t args = { 0 }; // TODO: Make a way to set arguments to default values.
+  if (!args_parse(&args, argc, argv))
+    return -1;
 
-  if (arg_present("--help", "-h")) {
-    display_help();
+  if (args.show_help) {
+    args_help("Usage: solc [options] file...");
     return 0;
-  } else if (arg_present("--version", "-v")) {
-    display_version();
-    return 0;
-  }
-
-  s32 dangling_arguments_num = arg_get_dangling(nullptr);
-  if (dangling_arguments_num == 0) {
-    display_help();
+  } else if (args.show_version) {
+    puts(_version_message);
     return 0;
   }
-  s32 *dangling_arguments = malloc(sizeof(s32) * dangling_arguments_num);
-  arg_get_dangling(dangling_arguments);
 
-  for (s32 i = 0; i < dangling_arguments_num; i++) {
-    FILE *f = fopen(argv[dangling_arguments[i]], "r");
+  if (args.num_dangling == 0) {
+    fprintf(stderr, "No sources were provided.\n");
+    return -1;
+  }
+
+  for (s32 i = 0; i < args.num_dangling; i++) {
+    FILE *f = fopen(argv[args.danlings[i]], "r");
     fseek(f, 0, SEEK_END);
     s32 size = ftell(f);
     fseek(f, 0, SEEK_SET);
