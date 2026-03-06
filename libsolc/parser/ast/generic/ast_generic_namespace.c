@@ -42,6 +42,20 @@ void solc_ast_generic_namespace_destroy(solc_ast_t *generic_namespace_ast)
   free(generic_namespace_ast);
 }
 
+void solc_ast_generic_namespace_set_subobject(solc_ast_t *generic_namespace_ast,
+                                              solc_ast_t *subobject_ast)
+{
+  if SOLC_UNLIKELY (generic_namespace_ast == nullptr)
+    return;
+
+  SOLC_ASSUME(generic_namespace_ast->type == SOLC_AST_TYPE_GENERIC_NAMESPACE);
+  SOLC_AST_CAST(generic_namespace_data, generic_namespace_ast,
+                ast_generic_namespace_t);
+
+  solc_ast_destroy_if_exists(generic_namespace_data->subobject_ast);
+  generic_namespace_data->subobject_ast = subobject_ast;
+}
+
 string_t *
 solc_ast_generic_namespace_build_tree(solc_ast_t *generic_namespace_ast)
 {

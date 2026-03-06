@@ -57,6 +57,8 @@ solc_ast_t *solc_ast_generic_namespace_create(sz pos, const char *name,
                                               solc_ast_t *generic_type_list_ast,
                                               solc_ast_t *subobject_ast);
 void solc_ast_generic_namespace_destroy(solc_ast_t *generic_namespace_ast);
+void solc_ast_generic_namespace_set_subobject(solc_ast_t *generic_namespace_ast,
+                                              solc_ast_t *subobject_ast);
 string_t *
 solc_ast_generic_namespace_build_tree(solc_ast_t *generic_namespace_ast);
 
