@@ -47,8 +47,13 @@ static inline b8 args_parse(args_t *args, s32 argc, char **argv)
         result_##_name = 0;                                                  \
     }                                                                        \
                                                                              \
-    if (result_##_name && *arg_p) {                                          \
-      strncpy(args->_name[args->num_##_name++], arg_p, 1023);                \
+    if (result_##_name) {                                                    \
+      if (*arg_p) {                                                          \
+        strncpy(args->_name[args->num_##_name++], arg_p, 1023);              \
+      } else {                                                               \
+        fprintf(stderr, "Expected " _val " after \"" _prefix "\".\n");       \
+        result = false;                                                      \
+      }                                                                      \
       continue;                                                              \
     }                                                                        \
   }
