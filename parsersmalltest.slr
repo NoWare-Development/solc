@@ -22,3 +22,7 @@ struct TestStruct2 {
   struct TestStructNested2 {}
   struct TestStructGenericNested1<T, U, V> {}
 }
+
+main :: (a: int) {
+  return 0.0f + 123llu;
+}

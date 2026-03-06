@@ -1,6 +1,7 @@
 #include "containers/vector.h"
 #include "parser/ast/ast_group_generic.h"
 #include "parser/parser_private.h"
+#include "solc/defs.h"
 #include "solc/lexer/token.h"
 #include "solc/parser/ast.h"
 #include "solc/parser/parser.h"
@@ -171,4 +172,9 @@ b8 solc_parser_is_generic_namespace(solc_parser_t *parser)
   parser->pos = old_pos;
 
   return result;
+}
+
+solc_ast_t *solc_parser_parse_generic_namespace(solc_parser_t *parser)
+{
+  SOLC_TODO("Parse generic namespace.");
 }

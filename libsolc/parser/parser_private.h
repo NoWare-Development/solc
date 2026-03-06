@@ -86,6 +86,7 @@ solc_ast_t *solc_parser_parse_expr(solc_parser_t *parser, b8 top_level);
 solc_ast_t *solc_parser_parse_expr_operand(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_expr_operand_call(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_expr_operand_generic_call(solc_parser_t *parser);
+solc_ast_t *solc_parser_parse_generic_namespace(solc_parser_t *parser);
 b8 solc_parser_is_expr_operand_generic_call(solc_parser_t *parser);
 b8 solc_parser_is_generic_namespace(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_expr_operand_identifier(solc_parser_t *parser,
