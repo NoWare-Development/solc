@@ -53,11 +53,11 @@ solc_ast_expr_operand_numfloat_build_tree(solc_ast_t *numfloat_expr_operand_ast)
   char *buf = malloc(sizeof(char) * 256 + typespec_len);
   if (numfloat_expr_operand_data->typespec != nullptr) {
     snprintf(buf, 256 + typespec_len,
-             "EXPR_OPERAND_NUM { value: %lf, typespec: \"%s\" }",
+             "EXPR_OPERAND_NUMFLOAT { value: %lf, typespec: \"%s\" }",
              numfloat_expr_operand_data->value,
              numfloat_expr_operand_data->typespec);
   } else {
-    snprintf(buf, 256, "EXPR_OPERAND_NUM { value: %lf, typespec: <NONE> }",
+    snprintf(buf, 256, "EXPR_OPERAND_NUMFLOAT { value: %lf, typespec: <NONE> }",
              numfloat_expr_operand_data->value);
   }
   string_t *out_v = vector_reserve(string_t, 1);
