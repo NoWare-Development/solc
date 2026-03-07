@@ -6,6 +6,7 @@ libsolc_src += [
   'libsolc/parser/parser/continue.c',
   'libsolc/parser/parser/decldef.c',
   'libsolc/parser/parser/defer.c',
+  'libsolc/parser/parser/dowhile.c',
   'libsolc/parser/parser/else.c',
   'libsolc/parser/parser/expr.c',
   'libsolc/parser/parser/func.c',
