@@ -63,15 +63,8 @@ solc_ast_t *solc_parser_parse_stmt(solc_parser_t *parser)
     }
   } break;
 
-  case SOLC_TOKENTYPE_AT: {
-    solc_ast_t *label = solc_parser_parse_stmt_label(parser);
-    VERIFY_POS(parser, parser->pos);
-    VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,
-                 SOLC_TOKENTYPE_COLON);
-
-    parser->pos++;
-    return label;
-  }
+  case SOLC_TOKENTYPE_AT:
+    return solc_parser_parse_stmt_label(parser);
 
   default:
     break;

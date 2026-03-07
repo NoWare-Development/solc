@@ -4,7 +4,6 @@
 #include "solc/parser/ast.h"
 #include "solc/parser/parser.h"
 
-// TODO: Remove this `stmt` from function name.
 solc_ast_t *solc_parser_parse_stmt_label(solc_parser_t *parser)
 {
   sz pos = parser->pos++;
@@ -12,9 +11,13 @@ solc_ast_t *solc_parser_parse_stmt_label(solc_parser_t *parser)
   VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,
                SOLC_TOKENTYPE_ID);
 
-  // TODO: Remove `stmt` from function name.
-  solc_ast_t *out_label =
-    solc_ast_stmt_label_create(pos, parser->tokens[parser->pos++].value);
+  const char *label_name = parser->tokens[parser->pos++].value;
 
-  return out_label;
+  VERIFY_POS(parser, parser->pos);
+  VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,
+               SOLC_TOKENTYPE_COLON);
+
+  parser->pos++;
+
+  return solc_ast_stmt_label_create(pos, label_name);
 }
