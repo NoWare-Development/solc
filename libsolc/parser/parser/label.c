@@ -7,14 +7,7 @@
 // TODO: Remove this `stmt` from function name.
 solc_ast_t *solc_parser_parse_stmt_label(solc_parser_t *parser)
 {
-  sz pos = parser->pos;
-
-  VERIFY_POS(parser, parser->pos);
-  VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,
-               SOLC_TOKENTYPE_AT);
-
-  parser->pos++;
-
+  sz pos = parser->pos++;
   VERIFY_POS(parser, parser->pos);
   VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,
                SOLC_TOKENTYPE_ID);
