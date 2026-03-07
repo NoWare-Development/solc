@@ -35,4 +35,6 @@ main :: (a: int) {
   @label:
 
   goto @label;
+
+  break;
 }
