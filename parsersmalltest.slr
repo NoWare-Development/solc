@@ -33,4 +33,6 @@ main :: (a: int) {
   return 0.0f + 123llu;
 
   @label:
+
+  goto @label;
 }

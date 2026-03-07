@@ -7,6 +7,7 @@ libsolc_src += [
   'libsolc/parser/parser/expr.c',
   'libsolc/parser/parser/func.c',
   'libsolc/parser/parser/generic.c',
+  'libsolc/parser/parser/goto.c',
   'libsolc/parser/parser/import.c',
   'libsolc/parser/parser/initlist.c',
   'libsolc/parser/parser/label.c',

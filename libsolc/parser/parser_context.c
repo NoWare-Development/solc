@@ -35,7 +35,7 @@ void parser_context_initialize(void)
   // trie_insert(parser_ctx.stmt_funcptrs, "enum", solc_parser_parse_enum);
   trie_insert(parser_ctx.stmt_funcptrs, "return",
               solc_parser_parse_stmt_return);
-  // trie_insert(parser_ctx.stmt_funcptrs, "goto", solc_parser_parse_stmt_goto);
+  trie_insert(parser_ctx.stmt_funcptrs, "goto", solc_parser_parse_stmt_goto);
   // trie_insert(parser_ctx.stmt_funcptrs, "break", solc_parser_parse_stmt_break);
   // trie_insert(parser_ctx.stmt_funcptrs, "continue", solc_parser_parse_stmt_continue);
   trie_insert(parser_ctx.stmt_funcptrs, "while", solc_parser_parse_stmt_while);
