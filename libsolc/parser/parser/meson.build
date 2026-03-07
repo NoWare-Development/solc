@@ -3,6 +3,7 @@ libsolc_src += [
   'libsolc/parser/parser/array_elem.c',
   'libsolc/parser/parser/block.c',
   'libsolc/parser/parser/decldef.c',
+  'libsolc/parser/parser/defer.c',
   'libsolc/parser/parser/expr.c',
   'libsolc/parser/parser/func.c',
   'libsolc/parser/parser/generic.c',
@@ -14,4 +15,5 @@ libsolc_src += [
   'libsolc/parser/parser/struct.c',
   'libsolc/parser/parser/top.c',
   'libsolc/parser/parser/type.c',
+  'libsolc/parser/parser/while.c',
 ]

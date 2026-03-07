@@ -24,5 +24,11 @@ struct TestStruct2 {
 }
 
 main :: (a: int) {
+  defer { return 0; }
+
+  while (false) {
+    return 0;
+  }
+
   return 0.0f + 123llu;
 }
