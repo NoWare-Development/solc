@@ -46,4 +46,6 @@ main :: (a: int) {
   do return 0; while (0);
 
   for (i := 0; i < 123u; i += 4) return 0;
+
+  typedef **int i64;
 }

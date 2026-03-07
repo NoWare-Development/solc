@@ -22,5 +22,6 @@ libsolc_src += [
   'libsolc/parser/parser/struct.c',
   'libsolc/parser/parser/top.c',
   'libsolc/parser/parser/type.c',
+  'libsolc/parser/parser/typedef.c',
   'libsolc/parser/parser/while.c',
 ]
