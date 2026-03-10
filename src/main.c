@@ -5,6 +5,7 @@
   VALUE_ARG(output, "--output", "-o", "Output", "file")
 
 #include "args.h"
+#include "errorhandler.h"
 #include <solc/init.h>
 #include <solc/parser/parser.h>
 #include <solc/lexer/lexer.h>
@@ -68,14 +69,31 @@ s32 main(s32 argc, char **argv)
       printf("(%zu) %s\n", i, buf);
     }
 
+    error_handler_t handler =
+      error_handler_create(argv[args.danlings[i]], src, tokens, tokens_num);
+    if (!error_handler_handle_invalid_tokens(&handler)) {
+      return -2;
+    }
+
     solc_parser_t parser = solc_parser_create(tokens, tokens_num);
     solc_ast_t *root = solc_parser_parse(&parser);
 
+#ifdef _DEBUG
     sz n = 8192;
     char *buf = malloc(sizeof(char) * (n + 1));
     solc_ast_to_string(buf, n, root);
     printf("%s", buf);
     free(buf);
+#endif
+
+    sz parser_errors_num;
+    solc_parser_error_t *parser_errors =
+      solc_parser_get_errors(&parser, &parser_errors_num);
+
+    if (!error_handler_handle_parser_errors(&handler, parser_errors,
+                                            parser_errors_num)) {
+      return -3;
+    }
 
     solc_ast_destroy(root);
     solc_parser_destroy(&parser);
