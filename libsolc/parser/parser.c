@@ -94,7 +94,7 @@ b8 solc_parser_verify_token(solc_parser_t *parser, sz pos, solc_tokentype_t got,
 {
   if (got != expected) {
     solc_parser_add_error(parser, SOLC_PARSER_ERROR_TYPE_UNEXPECTED, pos, 1,
-                          SOLC_TOKENTYPE_ERR);
+                          expected);
     return false;
   }
   return true;
