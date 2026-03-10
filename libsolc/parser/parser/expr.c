@@ -703,7 +703,7 @@ solc_ast_t *solc_parser_parse_expr_operand_identifier(solc_parser_t *parser,
   solc_ast_t *out_operand = nullptr;
 
   if (accept_functions) {
-    if (next->type == SOLC_TOKENTYPE_LPAREN) {
+    if (next != nullptr && next->type == SOLC_TOKENTYPE_LPAREN) {
       out_operand = solc_parser_parse_expr_operand_call(parser);
       goto idop_process_out_operand;
     } else if (solc_parser_is_expr_operand_generic_call(parser)) {
@@ -885,12 +885,10 @@ static inline b8 validate_expr_data(sz start_pos,
       if (prev == nullptr) {
         *invalid_pos = cur_pos;
         *out_reason = "Non-prefix operator at the beginning of the expression";
-        printf("ERR POS: %zu\n", cur_pos);
         return false;
       } else if (prev->is_operator) {
         *invalid_pos = cur_pos;
         *out_reason = "Two non-prefix operators";
-        printf("ERR POS: %zu\n", cur_pos);
         return false;
       }
       continue;

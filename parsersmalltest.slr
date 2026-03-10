@@ -49,3 +49,8 @@ main :: (a: int) {
 
   typedef **int i64;
 }
+
+call_test :: () {
+  call(1, "test", '\n');
+  i;
+}
