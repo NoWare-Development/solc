@@ -37,11 +37,13 @@ solc_ast_t *solc_parser_parse_stmt(solc_parser_t *parser)
   VERIFY_POS(parser, parser->pos);
 
   switch (parser->tokens[parser->pos].type) {
-  case SOLC_TOKENTYPE_SEMI:
+  case SOLC_TOKENTYPE_SEMI: {
     return solc_ast_none_create(parser->pos++);
+  }
 
-  case SOLC_TOKENTYPE_LCBRACK:
+  case SOLC_TOKENTYPE_LCBRACK: {
     return solc_parser_parse_stmt_block(parser);
+  }
 
   case SOLC_TOKENTYPE_ID: {
     parser_stmt_func_t func =
@@ -63,8 +65,9 @@ solc_ast_t *solc_parser_parse_stmt(solc_parser_t *parser)
     }
   } break;
 
-  case SOLC_TOKENTYPE_AT:
+  case SOLC_TOKENTYPE_AT: {
     return solc_parser_parse_stmt_label(parser);
+  }
 
   default:
     break;
@@ -85,26 +88,28 @@ solc_ast_t *solc_parser_parse_stmt(solc_parser_t *parser)
 solc_ast_t *
 solc_parser_parse_stmt_expr_or_generic_func_or_namespace(solc_parser_t *parser)
 {
+  sz pos = parser->pos;
+
   VERIFY_POS(parser, parser->pos);
-  if (parser->tokens[parser->pos].type == SOLC_TOKENTYPE_ID) {
-    parser->pos++;
-    if (solc_parser_peek(parser, parser->pos++) == SOLC_TOKENTYPE_LARROW) {
+  if (parser->tokens[pos].type == SOLC_TOKENTYPE_ID) {
+    pos++;
+    if (solc_parser_peek(parser, pos++) == SOLC_TOKENTYPE_LARROW) {
       b8 not_a_generic_func = false;
-      while (parser->pos < parser->tokens_num && !not_a_generic_func) {
-        switch (parser->tokens[parser->pos].type) {
+      while (pos < parser->tokens_num && !not_a_generic_func) {
+        switch (parser->tokens[pos].type) {
         case SOLC_TOKENTYPE_ID:
         case SOLC_TOKENTYPE_COMMA:
           break;
 
         case SOLC_TOKENTYPE_RARROW: {
           const solc_token_t *peeked_1 =
-            solc_parser_peek_token(parser, parser->pos + 1);
-          solc_tokentype_t peeked_2 = solc_parser_peek(parser, parser->pos + 2);
+            solc_parser_peek_token(parser, pos + 1);
+          solc_tokentype_t peeked_2 = solc_parser_peek(parser, pos + 2);
 
           if (peeked_1 != nullptr && peeked_1->type == SOLC_TOKENTYPE_COLON &&
               !peeked_1->has_whitespace_after &&
               peeked_2 == SOLC_TOKENTYPE_COLON) {
-            switch (solc_parser_peek(parser, parser->pos + 3)) {
+            switch (solc_parser_peek(parser, pos + 3)) {
             case SOLC_TOKENTYPE_LPAREN:
               return solc_parser_parse_def_func_generic(parser);
 
@@ -120,13 +125,13 @@ solc_parser_parse_stmt_expr_or_generic_func_or_namespace(solc_parser_t *parser)
 
             case SOLC_TOKENTYPE_ERR: {
               solc_parser_add_error(parser, SOLC_PARSER_ERROR_TYPE_EXPECTED,
-                                    parser->pos + 3, 1, SOLC_TOKENTYPE_ERR);
+                                    pos + 3, 1, SOLC_TOKENTYPE_ERR);
               return nullptr;
             }
 
             default: {
               solc_parser_add_error(parser, SOLC_PARSER_ERROR_TYPE_UNEXPECTED,
-                                    parser->pos + 3, 1, SOLC_TOKENTYPE_ERR);
+                                    pos + 3, 1, SOLC_TOKENTYPE_ERR);
               return nullptr;
             }
             }
@@ -140,7 +145,7 @@ solc_parser_parse_stmt_expr_or_generic_func_or_namespace(solc_parser_t *parser)
           break;
         }
 
-        parser->pos++;
+        pos++;
       }
     }
   }
