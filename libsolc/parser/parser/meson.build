@@ -20,6 +20,7 @@ libsolc_src += [
   'libsolc/parser/parser/module.c',
   'libsolc/parser/parser/return.c',
   'libsolc/parser/parser/struct.c',
+  'libsolc/parser/parser/switch.c',
   'libsolc/parser/parser/top.c',
   'libsolc/parser/parser/type.c',
   'libsolc/parser/parser/typedef.c',
