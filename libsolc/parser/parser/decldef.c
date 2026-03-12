@@ -1,5 +1,6 @@
 #include "parser/ast/ast_group_none.h"
 #include "parser/ast/ast_group_var.h"
+#include "parser/ast_func_type.h"
 #include "parser/parser_private.h"
 #include "solc/defs.h"
 #include "solc/lexer/token.h"
@@ -19,7 +20,18 @@ solc_ast_t *solc_parser_parse_decldef(solc_parser_t *parser)
   }
 
   if (cur.type == SOLC_TOKENTYPE_ID && strcmp(cur.value, "func") == 0) {
-    SOLC_TODO("Parse explicit functions and generic functions.");
+    parser->pos++;
+    VERIFY_POS(parser, parser->pos);
+    VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,
+                 SOLC_TOKENTYPE_ID);
+
+    VERIFY_POS(parser, parser->pos + 1);
+    if (parser->tokens[parser->pos + 1].type == SOLC_TOKENTYPE_LARROW) {
+      return solc_parser_parse_def_func_generic(parser,
+                                                SOLC_AST_FUNC_TYPE_EXPLICIT);
+    }
+
+    return solc_parser_parse_def_func(parser, SOLC_AST_FUNC_TYPE_EXPLICIT);
   }
 
   VERIFY_POS(parser, parser->pos + 1);
@@ -27,7 +39,7 @@ solc_ast_t *solc_parser_parse_decldef(solc_parser_t *parser)
   case SOLC_TOKENTYPE_COLON: {
     if (!parser->tokens[parser->pos + 1].has_whitespace_after &&
         solc_parser_peek(parser, parser->pos + 2) == SOLC_TOKENTYPE_COLON) {
-      return solc_parser_parse_def_func(parser);
+      return solc_parser_parse_def_func(parser, SOLC_AST_FUNC_TYPE_DEFAULT);
     }
 
     solc_ast_t *var_decldef_ast = solc_parser_parse_decldef_var(parser);
@@ -39,7 +51,8 @@ solc_ast_t *solc_parser_parse_decldef(solc_parser_t *parser)
   }
 
   case SOLC_TOKENTYPE_LARROW: {
-    return solc_parser_parse_def_func_generic(parser);
+    return solc_parser_parse_def_func_generic(parser,
+                                              SOLC_AST_FUNC_TYPE_DEFAULT);
   }
 
   default:

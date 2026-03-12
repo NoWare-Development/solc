@@ -1,6 +1,7 @@
 #ifndef __SOLC_PARSER_PRIVATE_H__
 #define __SOLC_PARSER_PRIVATE_H__
 
+#include "parser/ast_func_type.h"
 #include "solc/lexer/token.h"
 #include "solc/parser/ast.h"
 #include "solc/parser/parser.h"
@@ -52,8 +53,10 @@ solc_ast_t *solc_parser_parse_export(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_extern(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_decldef(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_decldef_var(solc_parser_t *parser);
-solc_ast_t *solc_parser_parse_def_func(solc_parser_t *parser);
-solc_ast_t *solc_parser_parse_def_func_generic(solc_parser_t *parser);
+solc_ast_t *solc_parser_parse_def_func(solc_parser_t *parser,
+                                       solc_ast_func_type_t func_type);
+solc_ast_t *solc_parser_parse_def_func_generic(solc_parser_t *parser,
+                                               solc_ast_func_type_t func_type);
 solc_ast_t *solc_parser_parse_func_arg(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_stmt(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_stmt_expr(solc_parser_t *parser);

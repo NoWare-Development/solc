@@ -1,11 +1,13 @@
 #include "parser/ast/ast_group_none.h"
+#include "parser/ast_func_type.h"
 #include "solc/defs.h"
 #include "solc/lexer/token.h"
 #include "solc/parser/ast.h"
 #include "solc/parser/parser.h"
 #include "parser/parser_private.h"
 
-solc_ast_t *solc_parser_parse_def_func(solc_parser_t *parser)
+solc_ast_t *solc_parser_parse_def_func(solc_parser_t *parser,
+                                       solc_ast_func_type_t func_type)
 {
   VERIFY_POS(parser, parser->pos);
   VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,
@@ -48,11 +50,12 @@ solc_ast_t *solc_parser_parse_def_func(solc_parser_t *parser)
 
   solc_ast_t *block = solc_parser_parse_stmt_block(parser);
 
-  return solc_ast_func_create(func_pos, func_name, type_ast, arglist_ast,
-                              block);
+  return solc_ast_func_create(func_pos, func_name, type_ast, arglist_ast, block,
+                              func_type);
 }
 
-solc_ast_t *solc_parser_parse_def_func_generic(solc_parser_t *parser)
+solc_ast_t *solc_parser_parse_def_func_generic(solc_parser_t *parser,
+                                               solc_ast_func_type_t func_type)
 {
   SOLC_TODO("Parse generic function definition.");
 }

@@ -1,6 +1,7 @@
 #include "parser/ast/ast_group_generic.h"
 #include "parser/ast/ast_group_none.h"
 #include "parser/ast/ast_group_stmt.h"
+#include "parser/ast_func_type.h"
 #include "parser/parser_context.h"
 #include "parser/parser_private.h"
 #include "solc/lexer/token.h"
@@ -111,7 +112,8 @@ solc_parser_parse_stmt_expr_or_generic_func_or_namespace(solc_parser_t *parser)
               peeked_2 == SOLC_TOKENTYPE_COLON) {
             switch (solc_parser_peek(parser, pos + 3)) {
             case SOLC_TOKENTYPE_LPAREN:
-              return solc_parser_parse_def_func_generic(parser);
+              return solc_parser_parse_def_func_generic(
+                parser, SOLC_AST_FUNC_TYPE_DEFAULT);
 
             case SOLC_TOKENTYPE_ID: {
               solc_ast_t *generic_namespace =

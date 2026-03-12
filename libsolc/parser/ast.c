@@ -118,3 +118,13 @@ const char *ast_expr_operator_type_to_string(expr_operator_type_t t)
   }
 #undef __EXPR_OPERATORS_X
 }
+
+const char *solc_ast_func_type_to_string(solc_ast_func_type_t func_type)
+{
+  static const char *strs[] = {
+    "DEFAULT",
+    "EXPLICIT",
+    "EXPORTED",
+  };
+  return strs[func_type];
+}

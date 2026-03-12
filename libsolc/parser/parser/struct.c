@@ -44,7 +44,6 @@ solc_ast_t *solc_parser_parse_struct(solc_parser_t *parser)
     solc_ast_t *child_ast = nullptr;
     if (cur.type == SOLC_TOKENTYPE_RCBRACK)
       break;
-
     else if (cur.type == SOLC_TOKENTYPE_ID) {
       parser_struct_func_t struct_func =
         parser_context_get_struct_func(cur.value);

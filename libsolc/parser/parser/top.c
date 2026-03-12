@@ -1,4 +1,5 @@
 #include "parser/ast/ast_group_none.h"
+#include "parser/ast_func_type.h"
 #include "parser/parser_context.h"
 #include "solc/lexer/token.h"
 #include "solc/parser/ast.h"
@@ -20,7 +21,8 @@ solc_ast_t *solc_parser_parse_top(solc_parser_t *parser)
       return toplevel_func(parser);
     } else if (solc_parser_peek(parser, parser->pos + 1) ==
                SOLC_TOKENTYPE_LARROW) {
-      return solc_parser_parse_def_func_generic(parser);
+      return solc_parser_parse_def_func_generic(parser,
+                                                SOLC_AST_FUNC_TYPE_DEFAULT);
     }
 
     return solc_parser_parse_decldef(parser);

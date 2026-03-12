@@ -32,28 +32,26 @@ typedef enum {
   __SOLC_AST_TYPES_INITLIST     \
   __SOLC_AST_TYPES_GENERIC
 
-#define __SOLC_AST_TYPES_NONE                              \
-  __SOLC_AST_TYPE_X(ERR, NONE, 0, err)                     \
-  __SOLC_AST_TYPE_X(ROOT, NONE, 1, root)                   \
-  __SOLC_AST_TYPE_X(EXPR, NONE, 2, expr)                   \
-  __SOLC_AST_TYPE_X(MODULE, NONE, 3, module)               \
-  __SOLC_AST_TYPE_X(IMPORT, NONE, 4, import)               \
-  __SOLC_AST_TYPE_X(TYPEDEF, NONE, 5, typedef)             \
-  __SOLC_AST_TYPE_X(EXPORTED_FUNC, NONE, 6, exported_func) \
-  __SOLC_AST_TYPE_X(EXTERN_FUNC, NONE, 7, extern_func)     \
-  __SOLC_AST_TYPE_X(QUALIFIER, NONE, 8, qualifier)         \
-  __SOLC_AST_TYPE_X(NONE, NONE, 9, none)                   \
-  __SOLC_AST_TYPE_X(VARIADIC, NONE, 10, variadic)          \
-  __SOLC_AST_TYPE_X(STRUCT, NONE, 11, struct)              \
-  __SOLC_AST_TYPE_X(UNION, NONE, 12, union)                \
-  __SOLC_AST_TYPE_X(ENUM, NONE, 13, enum)                  \
-  __SOLC_AST_TYPE_X(ENUM_ELEMENT, NONE, 14, enum_element)  \
-  __SOLC_AST_TYPE_X(FUNC, NONE, 15, func)                  \
-  __SOLC_AST_TYPE_X(FUNC_ARGLIST, NONE, 16, func_arglist)  \
-  __SOLC_AST_TYPE_X(NAMESPACE, NONE, 17, namespace)        \
-  __SOLC_AST_TYPE_X(INITLIST, NONE, 18, initlist)          \
-  __SOLC_AST_TYPE_X(PREFIX_EXPR, NONE, 19, prefix_expr)    \
-  __SOLC_AST_TYPE_X(FUNC_EXPLICIT, NONE, 20, func_explicit)
+#define __SOLC_AST_TYPES_NONE                             \
+  __SOLC_AST_TYPE_X(ERR, NONE, 0, err)                    \
+  __SOLC_AST_TYPE_X(ROOT, NONE, 1, root)                  \
+  __SOLC_AST_TYPE_X(EXPR, NONE, 2, expr)                  \
+  __SOLC_AST_TYPE_X(MODULE, NONE, 3, module)              \
+  __SOLC_AST_TYPE_X(IMPORT, NONE, 4, import)              \
+  __SOLC_AST_TYPE_X(TYPEDEF, NONE, 5, typedef)            \
+  __SOLC_AST_TYPE_X(EXTERN_FUNC, NONE, 6, extern_func)    \
+  __SOLC_AST_TYPE_X(QUALIFIER, NONE, 7, qualifier)        \
+  __SOLC_AST_TYPE_X(NONE, NONE, 8, none)                  \
+  __SOLC_AST_TYPE_X(VARIADIC, NONE, 9, variadic)          \
+  __SOLC_AST_TYPE_X(STRUCT, NONE, 10, struct)             \
+  __SOLC_AST_TYPE_X(UNION, NONE, 11, union)               \
+  __SOLC_AST_TYPE_X(ENUM, NONE, 12, enum)                 \
+  __SOLC_AST_TYPE_X(ENUM_ELEMENT, NONE, 13, enum_element) \
+  __SOLC_AST_TYPE_X(FUNC, NONE, 14, func)                 \
+  __SOLC_AST_TYPE_X(FUNC_ARGLIST, NONE, 15, func_arglist) \
+  __SOLC_AST_TYPE_X(NAMESPACE, NONE, 16, namespace)       \
+  __SOLC_AST_TYPE_X(INITLIST, NONE, 17, initlist)         \
+  __SOLC_AST_TYPE_X(PREFIX_EXPR, NONE, 18, prefix_expr)
 
 #define __SOLC_AST_TYPES_STMT                         \
   __SOLC_AST_TYPE_X(BLOCK, STMT, 0, stmt_block)       \
@@ -114,8 +112,7 @@ typedef enum {
   __SOLC_AST_TYPE_X(PLACEHOLDER_TYPE, GENERIC, 3, generic_placeholder_type) \
   __SOLC_AST_TYPE_X(TYPE_LIST, GENERIC, 4, generic_type_list)               \
   __SOLC_AST_TYPE_X(TYPE, GENERIC, 5, generic_type)                         \
-  __SOLC_AST_TYPE_X(NAMESPACE, GENERIC, 6, generic_namespace)               \
-  __SOLC_AST_TYPE_X(FUNC_EXPLICIT, GENERIC, 7, generic_func_explicit)
+  __SOLC_AST_TYPE_X(NAMESPACE, GENERIC, 6, generic_namespace)
 
 typedef enum {
 #define __SOLC_AST_TYPE_X(type_name, group_name, in_group_id, in_code_name) \

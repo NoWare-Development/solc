@@ -1,6 +1,5 @@
 libsolc_src += [
   'libsolc/parser/ast/generic/ast_generic_func.c',
-  'libsolc/parser/ast/generic/ast_generic_func_explicit.c',
   'libsolc/parser/ast/generic/ast_generic_namespace.c',
   'libsolc/parser/ast/generic/ast_generic_placeholder_type.c',
   'libsolc/parser/ast/generic/ast_generic_placeholder_type_list.c',
