@@ -77,7 +77,7 @@ main :: (argc: int = 4*5, argv: char[][]) -> int {
   call_to_func(123 + 4, id / 2.25f);
 
   switch (id + 5) {
-    case 1 + 2: return 0;
+    case 1 + 2: { return 0; }
 
     default: {
       id += 14;
@@ -116,14 +116,6 @@ testfunc :: () -> void {
       *data = value;
     }
   }
-}
-
-struct StructWithMarkers {
-public:
-  public_field: int;
-
-private:
-  private_field: int;
 }
 
 testFunc :: () -> void {
