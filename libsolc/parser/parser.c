@@ -138,13 +138,13 @@ const solc_token_t *solc_parser_peek_token(solc_parser_t *parser, sz pos)
 }
 
 void solc_parser_add_error(solc_parser_t *parser, solc_parser_error_type_t type,
-                           sz pos, sz len, solc_tokentype_t expected_after)
+                           sz pos, sz len, solc_tokentype_t expected)
 {
   parser->errored = true;
   solc_parser_error_t error = {
     .len = len,
     .pos = pos,
-    .expected_after = expected_after,
+    .expected = expected,
     .type = type,
   };
   vector_push(parser->errors_v, error);

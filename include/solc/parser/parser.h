@@ -17,7 +17,7 @@ typedef enum {
 
 typedef struct {
   sz pos, len;
-  solc_tokentype_t expected_after;
+  solc_tokentype_t expected;
   solc_parser_error_type_t type : 3;
 } solc_parser_error_t;
 

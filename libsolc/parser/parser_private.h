@@ -114,7 +114,7 @@ solc_tokentype_t solc_parser_peek(solc_parser_t *parser, sz pos);
 const solc_token_t *solc_parser_peek_token(solc_parser_t *parser, sz pos);
 
 void solc_parser_add_error(solc_parser_t *parser, solc_parser_error_type_t type,
-                           sz pos, sz len, solc_tokentype_t expected_after);
+                           sz pos, sz len, solc_tokentype_t expected);
 
 b8 solc_parser_is_qualifier(const char *str);
 
