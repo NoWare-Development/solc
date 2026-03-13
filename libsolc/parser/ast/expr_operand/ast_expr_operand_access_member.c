@@ -46,7 +46,7 @@ string_t *solc_ast_expr_operand_access_member_build_tree(
   SOLC_ASSUME(access_member_expr_operand_data->what_ast != nullptr);
 
   string_t header = string_create_from("EXPR_OPERAND_ACCESS_MEMBER");
-  string_t **children_vs_v = vector_reserve(string_t, 2);
+  string_t **children_vs_v = vector_reserve(string_t *, 2);
   solc_ast_add_to_tree_if_exists(children_vs_v,
                                  access_member_expr_operand_data->from_ast);
   solc_ast_add_to_tree_if_exists(children_vs_v,
