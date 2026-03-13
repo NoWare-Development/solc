@@ -24,7 +24,17 @@ solc_ast_t *solc_parser_parse_extern(solc_parser_t *parser)
   solc_ast_t *extern_ast;
 
   if (parser->tokens[parser->pos].has_whitespace_after) {
-    SOLC_TODO("External variables");
+    parser->pos++;
+
+    solc_ast_t *type_ast = solc_parser_parse_type(parser);
+    VERIFY_POS(parser, parser->pos);
+    VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,
+                 SOLC_TOKENTYPE_SEMI);
+
+    parser->pos++;
+
+    extern_ast =
+      solc_ast_extern_vardecl_create(extern_pos, extern_name, type_ast);
   } else {
     parser->pos++;
     VERIFY_POS(parser, parser->pos);

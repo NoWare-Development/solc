@@ -4,6 +4,7 @@ libsolc_src += [
   'libsolc/parser/ast/none/ast_err.c',
   'libsolc/parser/ast/none/ast_expr.c',
   'libsolc/parser/ast/none/ast_extern_func.c',
+  'libsolc/parser/ast/none/ast_extern_vardecl.c',
   'libsolc/parser/ast/none/ast_func.c',
   'libsolc/parser/ast/none/ast_func_arglist.c',
   'libsolc/parser/ast/none/ast_import.c',
