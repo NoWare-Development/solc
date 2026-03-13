@@ -20,8 +20,6 @@ void parser_context_initialize(void)
   parser_ctx.union_funcptrs = trie_create();
   parser_ctx.qualifiers = trie_create();
 
-  // TODO: uncomment these lines when all these functions are implemented.
-
   trie_insert(parser_ctx.toplevel_funcptrs, "enum", solc_parser_parse_enum);
   trie_insert(parser_ctx.toplevel_funcptrs, "typedef",
               solc_parser_parse_typedef);
