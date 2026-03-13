@@ -39,6 +39,8 @@ solc_ast_t *solc_parser_parse_struct(solc_parser_t *parser)
       solc_ast_struct_create(struct_pos, struct_name);
 
   while (parser->pos < parser->tokens_num) {
+    // NOTE: Cannot check if 'child_ast' is a null-pointer or not,
+    // because if parse function failed, it can output a null-pointer.
     b8 parsed_child = false;
     cur = parser->tokens[parser->pos];
     solc_ast_t *child_ast = nullptr;
@@ -53,10 +55,8 @@ solc_ast_t *solc_parser_parse_struct(solc_parser_t *parser)
       }
     }
 
-    if (!parsed_child) {
+    if (!parsed_child)
       child_ast = solc_parser_parse_decldef(parser);
-      parsed_child = true;
-    }
 
     if (struct_ast->type == SOLC_AST_TYPE_NONE_STRUCT) {
       solc_ast_struct_add_child(struct_ast, child_ast);

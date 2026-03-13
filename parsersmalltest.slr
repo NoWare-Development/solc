@@ -70,3 +70,8 @@ enum TestEnum {
   ELEMENT_4 = 10,
   ELEMENT_5 = ELEMENT_2,
 }
+
+union TestUnion {
+  x: int;
+  y: float;
+}
