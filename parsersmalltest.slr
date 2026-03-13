@@ -80,3 +80,8 @@ extern extern_func_1 :: ();
 extern extern_func_2 :: () -> void;
 extern extern_func_3 :: (x: int) -> void;
 extern extern_func_4 :: (x: int = 1, ...) -> void;
+
+generic_func_1<T, U> :: () {}
+generic_func_2<T, U> :: (x: int) {}
+generic_func_3<T, U> :: (x: int) -> void {}
+generic_func_4<T, U> :: () -> void {}
