@@ -29,7 +29,7 @@ void parser_context_initialize(void)
   // trie_insert(parser_ctx.toplevel_funcptrs, "union", solc_parser_parse_union);
   trie_insert(parser_ctx.toplevel_funcptrs, "import", solc_parser_parse_import);
   // trie_insert(parser_ctx.toplevel_funcptrs, "extern", solc_parser_parse_extern);
-  // trie_insert(parser_ctx.toplevel_funcptrs, "export", solc_parser_parse_export);
+  trie_insert(parser_ctx.toplevel_funcptrs, "export", solc_parser_parse_export);
 
   trie_insert(parser_ctx.stmt_funcptrs, "struct", solc_parser_parse_struct);
   // trie_insert(parser_ctx.stmt_funcptrs, "union", solc_parser_parse_union);

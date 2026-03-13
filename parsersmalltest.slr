@@ -54,3 +54,11 @@ main :: (a: int) {
     default: { "jopa"; }
   }
 }
+
+func explicit_func :: () -> uint {
+  return 1337u;
+}
+
+export exported_func :: () -> float {
+  return 3.14f;
+}

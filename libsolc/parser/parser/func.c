@@ -59,3 +59,10 @@ solc_ast_t *solc_parser_parse_def_func_generic(solc_parser_t *parser,
 {
   SOLC_TODO("Parse generic function definition.");
 }
+
+solc_ast_t *solc_parser_parse_export(solc_parser_t *parser)
+{
+  parser->pos++;
+
+  return solc_parser_parse_def_func(parser, SOLC_AST_FUNC_TYPE_EXPORTED);
+}
