@@ -11,7 +11,9 @@ solc_ast_t *solc_parser_parse_stmt_return(solc_parser_t *parser)
 
   solc_ast_t *expr = nullptr;
   if (parser->tokens[parser->pos].type != SOLC_TOKENTYPE_SEMI) {
-    expr = solc_parser_parse_expr(parser, false);
+    expr = parser->tokens[parser->pos].type == SOLC_TOKENTYPE_LCBRACK ?
+             solc_parser_parse_initlist(parser) :
+             solc_parser_parse_expr(parser, false);
     VERIFY_POS(parser, parser->pos);
   }
 
