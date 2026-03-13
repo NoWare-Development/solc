@@ -17,7 +17,7 @@
 #define VERIFY_TOKEN(_parser, _pos, _got, _expected)                         \
   {                                                                          \
     if (!solc_parser_verify_token((_parser), (_pos), (_got), (_expected))) { \
-      fprintf(stderr, "[%s:] ERROR <UNEXPECTED(token)> %d\n", __FUNCTION__,  \
+      fprintf(stderr, "[%s]: ERROR <UNEXPECTED(token)> %d\n", __FUNCTION__,  \
               __LINE__);                                                     \
       return nullptr;                                                        \
     }                                                                        \
