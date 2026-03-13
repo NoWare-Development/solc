@@ -15,8 +15,6 @@ typedef struct {
 
   sz nol;
   sz lnoffset;
-
-  sz lllen;
 } error_handler_t;
 
 error_handler_t error_handler_create(const char *filename, const char *src,

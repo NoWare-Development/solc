@@ -36,20 +36,13 @@ error_handler_t error_handler_create(const char *filename, const char *src,
     .tokens = tokens,
     .n_tokens = n,
     .nol = 0,
-    .lllen = 0,
   };
 
-  handler.lnoffset = get_ulen(handler.nol);
-
-  const char *line_start = nullptr;
   for (; *src; src++)
-    if (*src == '\n') {
+    if (*src == '\n')
       handler.nol++;
-      line_start = src + 1;
-    }
 
-  for (; *line_start; line_start++)
-    handler.lllen++;
+  handler.lnoffset = get_ulen(handler.nol);
 
   return handler;
 }
@@ -92,12 +85,17 @@ b8 error_handler_handle_parser_errors(error_handler_t *handler,
   for (; n; errors++, n--) {
     solc_parser_error_t *error = errors;
 
-    if (error->pos + error->len - 1 >= handler->n_tokens)
+    if (error->pos + error->len - 1 >= handler->n_tokens &&
+        error->type != SOLC_PARSER_ERROR_TYPE_EXPECTED)
       continue;
 
     char msg_start[1024] = { 0 };
     if (error->type == SOLC_PARSER_ERROR_TYPE_EXPECTED) {
-      SOLC_TODO("Handle 'expected' parser errors");
+      char last_line[1024] = { 0 };
+      get_line(handler->src, handler->src_len, handler->nol, last_line, 1023);
+      get_message_start(handler->filename, handler->nol, strlen(last_line),
+                        "error", ESCCOLOR_RED, ESCGRAPHICS_BOLD, msg_start,
+                        1023);
     } else {
       get_message_start(
         handler->filename, handler->tokens[error->pos].line,
@@ -113,8 +111,12 @@ b8 error_handler_handle_parser_errors(error_handler_t *handler,
       snprintf(hint, 47, "expected %s", token_display(error->expected));
     }
 
+    sz token_pos = error->type != SOLC_PARSER_ERROR_TYPE_EXPECTED ?
+                     error->pos :
+                     handler->n_tokens - 1;
+
     char highlighted_token[1024] = { 0 };
-    get_highlighted_token(handler, &handler->tokens[error->pos], ESCCOLOR_RED,
+    get_highlighted_token(handler, &handler->tokens[token_pos], ESCCOLOR_RED,
                           ESCGRAPHICS_BOLD, highlighted_token, 1023, hint);
 
     fprintf(stderr, "%s%s\n%s", msg_start, error_reason, highlighted_token);
