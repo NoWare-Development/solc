@@ -62,3 +62,11 @@ func explicit_func :: () -> uint {
 export exported_func :: () -> float {
   return 3.14f;
 }
+
+enum TestEnum {
+  ELEMENT_1,
+  ELEMENT_2 = ELEMENT_1,
+  ELEMENT_3 = 1<<4,
+  ELEMENT_4 = 10,
+  ELEMENT_5 = ELEMENT_2,
+}

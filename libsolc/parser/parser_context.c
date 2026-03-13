@@ -22,7 +22,7 @@ void parser_context_initialize(void)
 
   // TODO: uncomment these lines when all these functions are implemented.
 
-  // trie_insert(parser_ctx.toplevel_funcptrs, "enum", solc_parser_parse_enum);
+  trie_insert(parser_ctx.toplevel_funcptrs, "enum", solc_parser_parse_enum);
   trie_insert(parser_ctx.toplevel_funcptrs, "typedef",
               solc_parser_parse_typedef);
   trie_insert(parser_ctx.toplevel_funcptrs, "struct", solc_parser_parse_struct);
@@ -33,7 +33,7 @@ void parser_context_initialize(void)
 
   trie_insert(parser_ctx.stmt_funcptrs, "struct", solc_parser_parse_struct);
   // trie_insert(parser_ctx.stmt_funcptrs, "union", solc_parser_parse_union);
-  // trie_insert(parser_ctx.stmt_funcptrs, "enum", solc_parser_parse_enum);
+  trie_insert(parser_ctx.stmt_funcptrs, "enum", solc_parser_parse_enum);
   trie_insert(parser_ctx.stmt_funcptrs, "return",
               solc_parser_parse_stmt_return);
   trie_insert(parser_ctx.stmt_funcptrs, "goto", solc_parser_parse_stmt_goto);
@@ -50,11 +50,12 @@ void parser_context_initialize(void)
   trie_insert(parser_ctx.stmt_funcptrs, "typedef", solc_parser_parse_typedef);
 
   trie_insert(parser_ctx.struct_funcptrs, "typedef", solc_parser_parse_typedef);
-  // trie_insert(parser_ctx.struct_funcptrs, "enum", solc_parser_parse_enum);
+  trie_insert(parser_ctx.struct_funcptrs, "enum", solc_parser_parse_enum);
   trie_insert(parser_ctx.struct_funcptrs, "struct", solc_parser_parse_struct);
   // trie_insert(parser_ctx.struct_funcptrs, "union", solc_parser_parse_union);
 
   trie_insert(parser_ctx.union_funcptrs, "typedef", solc_parser_parse_typedef);
+  trie_insert(parser_ctx.union_funcptrs, "enum", solc_parser_parse_enum);
   trie_insert(parser_ctx.union_funcptrs, "struct", solc_parser_parse_struct);
   // trie_insert(parser_ctx.union_funcptrs, "union", solc_parser_parse_union);
 
