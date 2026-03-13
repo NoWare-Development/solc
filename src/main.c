@@ -79,7 +79,7 @@ s32 main(s32 argc, char **argv)
     solc_ast_t *root = solc_parser_parse(&parser);
 
 #ifdef _DEBUG
-    sz n = 8192;
+    sz n = 1 << 16;
     char *buf = malloc(sizeof(char) * (n + 1));
     solc_ast_to_string(buf, n, root);
     printf("%s", buf);
