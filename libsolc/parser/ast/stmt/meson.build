@@ -8,6 +8,7 @@ libsolc_src += [
   'libsolc/parser/ast/stmt/ast_stmt_dowhile.c',
   'libsolc/parser/ast/stmt/ast_stmt_else.c',
   'libsolc/parser/ast/stmt/ast_stmt_expr.c',
+  'libsolc/parser/ast/stmt/ast_stmt_fallthrough.c',
   'libsolc/parser/ast/stmt/ast_stmt_for.c',
   'libsolc/parser/ast/stmt/ast_stmt_goto.c',
   'libsolc/parser/ast/stmt/ast_stmt_if.c',

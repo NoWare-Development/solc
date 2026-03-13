@@ -54,23 +54,24 @@ typedef enum {
   __SOLC_AST_TYPE_X(INITLIST, NONE, 18, initlist)            \
   __SOLC_AST_TYPE_X(PREFIX_EXPR, NONE, 19, prefix_expr)
 
-#define __SOLC_AST_TYPES_STMT                         \
-  __SOLC_AST_TYPE_X(BLOCK, STMT, 0, stmt_block)       \
-  __SOLC_AST_TYPE_X(RETURN, STMT, 1, stmt_return)     \
-  __SOLC_AST_TYPE_X(GOTO, STMT, 2, stmt_goto)         \
-  __SOLC_AST_TYPE_X(LABEL, STMT, 3, stmt_label)       \
-  __SOLC_AST_TYPE_X(BREAK, STMT, 4, stmt_break)       \
-  __SOLC_AST_TYPE_X(CONTINUE, STMT, 5, stmt_continue) \
-  __SOLC_AST_TYPE_X(WHILE, STMT, 6, stmt_while)       \
-  __SOLC_AST_TYPE_X(FOR, STMT, 7, stmt_for)           \
-  __SOLC_AST_TYPE_X(DOWHILE, STMT, 8, stmt_dowhile)   \
-  __SOLC_AST_TYPE_X(EXPR, STMT, 9, stmt_expr)         \
-  __SOLC_AST_TYPE_X(SWITCH, STMT, 10, stmt_switch)    \
-  __SOLC_AST_TYPE_X(CASE, STMT, 11, stmt_case)        \
-  __SOLC_AST_TYPE_X(DEFAULT, STMT, 12, stmt_default)  \
-  __SOLC_AST_TYPE_X(DEFER, STMT, 13, stmt_defer)      \
-  __SOLC_AST_TYPE_X(IF, STMT, 14, stmt_if)            \
-  __SOLC_AST_TYPE_X(ELSE, STMT, 15, stmt_else)
+#define __SOLC_AST_TYPES_STMT                               \
+  __SOLC_AST_TYPE_X(BLOCK, STMT, 0, stmt_block)             \
+  __SOLC_AST_TYPE_X(RETURN, STMT, 1, stmt_return)           \
+  __SOLC_AST_TYPE_X(GOTO, STMT, 2, stmt_goto)               \
+  __SOLC_AST_TYPE_X(LABEL, STMT, 3, stmt_label)             \
+  __SOLC_AST_TYPE_X(BREAK, STMT, 4, stmt_break)             \
+  __SOLC_AST_TYPE_X(CONTINUE, STMT, 5, stmt_continue)       \
+  __SOLC_AST_TYPE_X(FALLTHROUGH, STMT, 6, stmt_fallthrough) \
+  __SOLC_AST_TYPE_X(WHILE, STMT, 7, stmt_while)             \
+  __SOLC_AST_TYPE_X(FOR, STMT, 8, stmt_for)                 \
+  __SOLC_AST_TYPE_X(DOWHILE, STMT, 9, stmt_dowhile)         \
+  __SOLC_AST_TYPE_X(EXPR, STMT, 10, stmt_expr)              \
+  __SOLC_AST_TYPE_X(SWITCH, STMT, 11, stmt_switch)          \
+  __SOLC_AST_TYPE_X(CASE, STMT, 12, stmt_case)              \
+  __SOLC_AST_TYPE_X(DEFAULT, STMT, 13, stmt_default)        \
+  __SOLC_AST_TYPE_X(DEFER, STMT, 14, stmt_defer)            \
+  __SOLC_AST_TYPE_X(IF, STMT, 15, stmt_if)                  \
+  __SOLC_AST_TYPE_X(ELSE, STMT, 16, stmt_else)
 
 #define __SOLC_AST_TYPES_TYPE                       \
   __SOLC_AST_TYPE_X(PLAIN, TYPE, 0, type_plain)     \

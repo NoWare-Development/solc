@@ -38,6 +38,8 @@ void parser_context_initialize(void)
   trie_insert(parser_ctx.stmt_funcptrs, "break", solc_parser_parse_stmt_break);
   trie_insert(parser_ctx.stmt_funcptrs, "continue",
               solc_parser_parse_stmt_continue);
+  trie_insert(parser_ctx.stmt_funcptrs, "fallthrough",
+              solc_parser_parse_stmt_fallthrough);
   trie_insert(parser_ctx.stmt_funcptrs, "while", solc_parser_parse_stmt_while);
   trie_insert(parser_ctx.stmt_funcptrs, "for", solc_parser_parse_stmt_for);
   trie_insert(parser_ctx.stmt_funcptrs, "do", solc_parser_parse_stmt_dowhile);

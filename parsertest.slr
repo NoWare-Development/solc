@@ -84,6 +84,8 @@ main :: (argc: int = 4*5, argv: char[][]) -> int {
   switch (id + 5) {
     case 1 + 2: { return 0; }
 
+    case 4: { fallthrough; }
+
     default: {
       id += 14;
       break;

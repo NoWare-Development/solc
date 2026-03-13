@@ -29,6 +29,10 @@ solc_ast_t *solc_ast_stmt_continue_create(sz pos);
 void solc_ast_stmt_continue_destroy(solc_ast_t *continue_ast);
 string_t *solc_ast_stmt_continue_build_tree(solc_ast_t *continue_ast);
 
+solc_ast_t *solc_ast_stmt_fallthrough_create(sz pos);
+void solc_ast_stmt_fallthrough_destroy(solc_ast_t *fallthrough_ast);
+string_t *solc_ast_stmt_fallthrough_build_tree(solc_ast_t *fallthrough_ast);
+
 solc_ast_t *solc_ast_stmt_while_create(sz pos, solc_ast_t *condition_expr_ast,
                                        solc_ast_t *stmt_ast);
 void solc_ast_stmt_while_destroy(solc_ast_t *while_ast);

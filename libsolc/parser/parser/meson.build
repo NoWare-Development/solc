@@ -11,6 +11,7 @@ libsolc_src += [
   'libsolc/parser/parser/enum.c',
   'libsolc/parser/parser/expr.c',
   'libsolc/parser/parser/extern.c',
+  'libsolc/parser/parser/fallthrough.c',
   'libsolc/parser/parser/for.c',
   'libsolc/parser/parser/func.c',
   'libsolc/parser/parser/generic.c',

@@ -77,6 +77,7 @@ solc_ast_t *solc_parser_parse_stmt_if(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_stmt_else(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_stmt_break(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_stmt_continue(solc_parser_t *parser);
+solc_ast_t *solc_parser_parse_stmt_fallthrough(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_struct(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_union(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_initlist(solc_parser_t *parser);
