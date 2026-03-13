@@ -75,3 +75,8 @@ union TestUnion {
   x: int;
   y: float;
 }
+
+extern extern_func_1 :: ();
+extern extern_func_2 :: () -> void;
+extern extern_func_3 :: (x: int) -> void;
+extern extern_func_4 :: (x: int = 1, ...) -> void;
