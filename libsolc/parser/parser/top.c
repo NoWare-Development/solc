@@ -32,7 +32,7 @@ solc_ast_t *solc_parser_parse_top(solc_parser_t *parser)
     break;
   }
 
-  solc_parser_add_error(parser, SOLC_PARSER_ERROR_TYPE_UNEXPECTED, parser->pos,
-                        1, SOLC_TOKENTYPE_ERR);
+  solc_parser_add_error(parser, SOLC_PARSER_ERROR_TYPE_UNEXPECTED,
+                        parser->pos++, 1, SOLC_TOKENTYPE_ERR);
   return nullptr;
 }
