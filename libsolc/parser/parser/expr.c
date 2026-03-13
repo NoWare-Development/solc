@@ -30,9 +30,8 @@ static inline void get_binding_power(expr_operator_type_t operator, s32 *l_bp,
 
 static inline ast_op_union_t *parse_expr_data(solc_parser_t *parser,
                                               b8 toplevel);
-static inline b8 validate_expr_data(sz start_pos,
-                                    ast_op_union_t *ast_op_unions_v,
-                                    sz *invalid_pos, const char **out_reason);
+static inline b8 validate_expr_data(solc_parser_t *parser, sz start_pos,
+                                    ast_op_union_t *ast_op_unions_v);
 static solc_ast_t *pratt_parse_expr(ast_op_union_t *ast_op_unions_v, sz *pos,
                                     s32 min_bp);
 static expr_operator_type_t
@@ -60,21 +59,15 @@ solc_ast_t *solc_parser_parse_expr(solc_parser_t *parser, b8 toplevel)
   sz start_pos = parser->pos;
   ast_op_union_t *ast_op_unions_v = parse_expr_data(parser, toplevel);
   solc_ast_t *out = nullptr;
-  sz invalid_pos;
-  const char *error_reason;
-  out = !validate_expr_data(start_pos, ast_op_unions_v, &invalid_pos,
-                            &error_reason) ?
-          solc_ast_err_create(invalid_pos, error_reason) :
+  out = !validate_expr_data(parser, start_pos, ast_op_unions_v) ?
+          nullptr :
           pratt_parse_expr(ast_op_unions_v, nullptr, 0);
 
-  if (out->type == SOLC_AST_TYPE_NONE_ERR) {
+  if (out == nullptr)
     for (sz i = 0, ast_op_unions_v_size = vector_get_length(ast_op_unions_v);
-         i < ast_op_unions_v_size; i++) {
-      if (!ast_op_unions_v[i].is_operator) {
+         i < ast_op_unions_v_size; i++)
+      if (!ast_op_unions_v[i].is_operator)
         solc_ast_destroy(ast_op_unions_v[i].ast);
-      }
-    }
-  }
   vector_destroy(ast_op_unions_v);
 
   return out;
@@ -846,9 +839,8 @@ expr_operand_generic_call_after_loop:
   return generic_call_operand;
 }
 
-static inline b8 validate_expr_data(sz start_pos,
-                                    ast_op_union_t *ast_op_unions_v,
-                                    sz *invalid_pos, const char **out_reason)
+static inline b8 validate_expr_data(solc_parser_t *parser, sz start_pos,
+                                    ast_op_union_t *ast_op_unions_v)
 {
   // FIXME: Need a better way of indicating that expression is invalid.
   // Previously error handler could detect expression errors by walking a
@@ -859,8 +851,8 @@ static inline b8 validate_expr_data(sz start_pos,
 
   sz ast_op_unions_v_size = vector_get_length(ast_op_unions_v);
   if SOLC_UNLIKELY (ast_op_unions_v_size == 0) {
-    *invalid_pos = start_pos;
-    *out_reason = "Expression is empty";
+    solc_parser_add_error(parser, SOLC_PARSER_ERROR_TYPE_EXPR_EMPTY, start_pos,
+                          1, SOLC_TOKENTYPE_ERR);
     return false;
   }
 
@@ -874,8 +866,9 @@ static inline b8 validate_expr_data(sz start_pos,
         (prev == nullptr || prev->is_operator ||
          prev->ast->type == SOLC_AST_TYPE_NONE_ERR)) {
       if SOLC_UNLIKELY (i + 1 >= ast_op_unions_v_size) {
-        *invalid_pos = cur_pos;
-        *out_reason = "There's no operand after prefix operator";
+        solc_parser_add_error(
+          parser, SOLC_PARSER_ERROR_TYPE_EXPR_NO_OPERAND_AFTER_PREFIX, cur_pos,
+          1, SOLC_TOKENTYPE_ERR);
         return false;
       }
 
@@ -885,24 +878,28 @@ static inline b8 validate_expr_data(sz start_pos,
                         EXPR_OPERATOR_GROUP_PREFIX)
         continue;
 
-      *invalid_pos = cur_pos;
-      *out_reason = "Prefix operator goes after operand";
+      solc_parser_add_error(parser,
+                            SOLC_PARSER_ERROR_TYPE_EXPR_PREFIX_AFTER_OPERAND,
+                            cur_pos, 1, SOLC_TOKENTYPE_ERR);
       return false;
     } else if SOLC_UNLIKELY (cur->is_operator) {
       if (prev == nullptr) {
-        *invalid_pos = cur_pos;
-        *out_reason = "Non-prefix operator at the beginning of the expression";
+        solc_parser_add_error(
+          parser,
+          SOLC_PARSER_ERROR_TYPE_EXPR_NON_PREFIX_OPERATOR_AT_THE_BEGINNING,
+          cur_pos, 1, SOLC_TOKENTYPE_ERR);
         return false;
       } else if (prev->is_operator) {
-        *invalid_pos = cur_pos;
-        *out_reason = "Two non-prefix operators";
+        solc_parser_add_error(
+          parser, SOLC_PARSER_ERROR_TYPE_EXPR_2_NON_PREFIX_OPERATORS, cur_pos,
+          1, SOLC_TOKENTYPE_ERR);
         return false;
       }
       continue;
     } else if SOLC_UNLIKELY (!cur->is_operator && prev != nullptr &&
                              !prev->is_operator) {
-      *invalid_pos = cur_pos;
-      *out_reason = "Two operands";
+      solc_parser_add_error(parser, SOLC_PARSER_ERROR_TYPE_EXPR_2_OPERANDS,
+                            cur_pos, 1, SOLC_TOKENTYPE_ERR);
       return false;
     }
   }
@@ -914,8 +911,10 @@ static inline b8 validate_expr_data(sz start_pos,
         expr_operator_type_get_group(ast_op_union->operator_type) ==
           EXPR_OPERATOR_GROUP_ASSIGN) {
       if SOLC_UNLIKELY (has_assign_operator) {
-        *invalid_pos = ast_op_union->operator_pos;
-        *out_reason = "Two assign operators";
+        solc_parser_add_error(parser,
+                              SOLC_PARSER_ERROR_TYPE_EXPR_2_ASSIGN_OPERATORS,
+                              ast_op_union->operator_pos, 1,
+                              SOLC_TOKENTYPE_ERR);
         return false;
       }
       has_assign_operator = true;
@@ -923,8 +922,10 @@ static inline b8 validate_expr_data(sz start_pos,
   }
 
   if SOLC_UNLIKELY (ast_op_unions_v[ast_op_unions_v_size - 1].is_operator) {
-    *invalid_pos = ast_op_unions_v[ast_op_unions_v_size - 1].operator_pos;
-    *out_reason = "Last node in an expression is not an operand";
+    solc_parser_add_error(
+      parser, SOLC_PARSER_ERROR_TYPE_EXPR_LAST_NODE_IS_NOT_AN_OPERAND,
+      ast_op_unions_v[ast_op_unions_v_size - 1].operator_pos, 1,
+      SOLC_TOKENTYPE_ERR);
     return false;
   }
 

@@ -229,6 +229,38 @@ static void get_parser_error_reason(const solc_parser_error_t *error,
     snprintf(out, n, "invalid special character in string or symbol");
   } break;
 
+  case SOLC_PARSER_ERROR_TYPE_EXPR_EMPTY: {
+    snprintf(out, n, "expression is empty");
+  } break;
+
+  case SOLC_PARSER_ERROR_TYPE_EXPR_NO_OPERAND_AFTER_PREFIX: {
+    snprintf(out, n, "no operand after prefix operator");
+  } break;
+
+  case SOLC_PARSER_ERROR_TYPE_EXPR_PREFIX_AFTER_OPERAND: {
+    snprintf(out, n, "prefix operator goes after an operand");
+  } break;
+
+  case SOLC_PARSER_ERROR_TYPE_EXPR_NON_PREFIX_OPERATOR_AT_THE_BEGINNING: {
+    snprintf(out, n, "non-prefix operator at the beginning of the expression");
+  } break;
+
+  case SOLC_PARSER_ERROR_TYPE_EXPR_2_NON_PREFIX_OPERATORS: {
+    snprintf(out, n, "two non-prefix operators");
+  } break;
+
+  case SOLC_PARSER_ERROR_TYPE_EXPR_2_OPERANDS: {
+    snprintf(out, n, "two operands");
+  } break;
+
+  case SOLC_PARSER_ERROR_TYPE_EXPR_2_ASSIGN_OPERATORS: {
+    snprintf(out, n, "two assign operators");
+  } break;
+
+  case SOLC_PARSER_ERROR_TYPE_EXPR_LAST_NODE_IS_NOT_AN_OPERAND: {
+    snprintf(out, n, "last node in expression is not an operand");
+  } break;
+
   default:
     SOLC_NOREACH();
   }
