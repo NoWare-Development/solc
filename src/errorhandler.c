@@ -21,6 +21,7 @@ static void get_parser_error_reason(const solc_parser_error_t *error,
                                     const solc_token_t *tokens, char *out,
                                     sz n);
 
+static const char *token_display(solc_tokentype_t type);
 static const char *token_to_value(const solc_token_t *token);
 
 static void insert_at(char *dst, const char *src, sz i);
@@ -107,9 +108,14 @@ b8 error_handler_handle_parser_errors(error_handler_t *handler,
     char error_reason[1024] = { 0 };
     get_parser_error_reason(error, handler->tokens, error_reason, 1023);
 
+    char hint[48] = { 0 };
+    if (error->expected != SOLC_TOKENTYPE_ERR) {
+      snprintf(hint, 47, "expected %s", token_display(error->expected));
+    }
+
     char highlighted_token[1024] = { 0 };
     get_highlighted_token(handler, &handler->tokens[error->pos], ESCCOLOR_RED,
-                          ESCGRAPHICS_BOLD, highlighted_token, 1023, nullptr);
+                          ESCGRAPHICS_BOLD, highlighted_token, 1023, hint);
 
     fprintf(stderr, "%s%s\n%s", msg_start, error_reason, highlighted_token);
   }
@@ -226,21 +232,27 @@ static void get_parser_error_reason(const solc_parser_error_t *error,
   }
 }
 
-static const char *token_to_value(const solc_token_t *token)
+static const char *token_display(solc_tokentype_t type)
 {
-  switch (token->type) {
+  switch (type) {
   case SOLC_TOKENTYPE_ERR:
     return "<ERROR>";
 
   case SOLC_TOKENTYPE_ID:
+    return "an identifier";
+
   case SOLC_TOKENTYPE_NUM:
   case SOLC_TOKENTYPE_NUMHEX:
   case SOLC_TOKENTYPE_NUMBIN:
   case SOLC_TOKENTYPE_NUMOCT:
   case SOLC_TOKENTYPE_NUMFLOAT:
+    return "a number";
+
   case SOLC_TOKENTYPE_STRING:
+    return "a string";
+
   case SOLC_TOKENTYPE_SYMBOL:
-    return token->value;
+    return "a character";
 
   case SOLC_TOKENTYPE_LPAREN:
     return "(";
@@ -303,6 +315,24 @@ static const char *token_to_value(const solc_token_t *token)
 
   default:
     SOLC_NOREACH();
+  }
+}
+
+static const char *token_to_value(const solc_token_t *token)
+{
+  switch (token->type) {
+  case SOLC_TOKENTYPE_ID:
+  case SOLC_TOKENTYPE_NUM:
+  case SOLC_TOKENTYPE_NUMHEX:
+  case SOLC_TOKENTYPE_NUMBIN:
+  case SOLC_TOKENTYPE_NUMOCT:
+  case SOLC_TOKENTYPE_NUMFLOAT:
+  case SOLC_TOKENTYPE_STRING:
+  case SOLC_TOKENTYPE_SYMBOL:
+    return token->value;
+
+  default:
+    return token_display(token->type);
   }
 }
 
