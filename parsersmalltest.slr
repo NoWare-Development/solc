@@ -53,6 +53,8 @@ main :: (a: int) {
     case 1: { return 0; }
     default: { "jopa"; }
   }
+
+  i := generic_namespace<int>::namespace::x;
 }
 
 func explicit_func :: () -> uint {

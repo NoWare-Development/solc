@@ -176,5 +176,34 @@ b8 solc_parser_is_generic_namespace(solc_parser_t *parser)
 
 solc_ast_t *solc_parser_parse_generic_namespace(solc_parser_t *parser)
 {
-  SOLC_TODO("Parse generic namespace.");
+  VERIFY_POS(parser, parser->pos);
+  VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,
+               SOLC_TOKENTYPE_ID);
+
+  const char *namespace_name = parser->tokens[parser->pos].value;
+  sz namespace_pos = parser->pos;
+
+  parser->pos++;
+  VERIFY_POS(parser, parser->pos);
+  VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,
+               SOLC_TOKENTYPE_LARROW);
+
+  solc_ast_t *generic_type_list = solc_parser_parse_generic_type_list(parser);
+
+  VERIFY_POS(parser, parser->pos);
+  VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,
+               SOLC_TOKENTYPE_COLON);
+  VERIFY_WHITESPACE(parser, parser->pos,
+                    parser->tokens[parser->pos].has_whitespace_after, false,
+                    SOLC_TOKENTYPE_COLON);
+
+  parser->pos++;
+  VERIFY_POS(parser, parser->pos);
+  VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,
+               SOLC_TOKENTYPE_COLON);
+
+  parser->pos++;
+
+  return solc_ast_generic_namespace_create(namespace_pos, namespace_name,
+                                           generic_type_list, nullptr);
 }
