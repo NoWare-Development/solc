@@ -99,6 +99,18 @@ typedef size_t sz;
 #define SOLC_ASSUME(expr) __solc_assume(expr)
 #endif
 
+#ifdef _DEBUG
+#define SOLC_ASSERT(expr)                                                    \
+  if SOLC_UNLIKELY (!(expr)) {                                               \
+    printf("(%s:%i) Assertion \"" #expr "\" failed.\n", __FILE__, __LINE__); \
+    __solc_trap();                                                           \
+  }
+#else
+#define SOLC_ASSERT(expr)    \
+  if SOLC_UNLIKELY (!(expr)) \
+    printf("(%s:%i) Assertion \"" #expr "\" failed.\n", __FILE__, __LINE__);
+#endif
+
 #if defined(__clang__)
 #define SOLC_LIKELY(expr) ((expr)) [[clang::likely]]
 #define SOLC_UNLIKELY(expr) ((expr)) [[clang::unlikely]]
