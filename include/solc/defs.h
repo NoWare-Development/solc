@@ -90,7 +90,7 @@ typedef size_t sz;
 
 #ifdef _DEBUG
 #define SOLC_ASSUME(expr)                                              \
-  if (!(expr)) {                                                       \
+  if SOLC_UNLIKELY (!(expr)) {                                         \
     printf("(%s:%i) Assumption \"" #expr "\" is not met.\n", __FILE__, \
            __LINE__);                                                  \
     __solc_trap();                                                     \
