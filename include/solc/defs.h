@@ -71,44 +71,47 @@ typedef size_t sz;
 #define __solc_assume(expr)
 #endif
 
-#define SOLC_TODO(msg)                                                    \
-  {                                                                       \
-    printf("(%s:%i) Not implemented yet: %s\n", __FILE__, __LINE__, msg); \
-    __solc_trap();                                                        \
+#define SOLC_TODO(msg)                                                       \
+  {                                                                          \
+    fprintf(stderr, "(%s:%i) Not implemented yet: %s\n", __FILE__, __LINE__, \
+            msg);                                                            \
+    __solc_trap();                                                           \
   }
 
 #ifdef _DEBUG
 #define SOLC_NOREACH() __solc_noreach()
 #else
-#define SOLC_NOREACH()                                                        \
-  {                                                                           \
-    printf("(%s:%i) Reached point that should never be reached.\n", __FILE__, \
-           __LINE__);                                                         \
-    __solc_trap();                                                            \
+#define SOLC_NOREACH()                                                       \
+  {                                                                          \
+    fprintf(stderr, "(%s:%i) Reached point that should never be reached.\n", \
+            __FILE__, __LINE__);                                             \
+    __solc_trap();                                                           \
   }
 #endif
 
 #ifdef _DEBUG
-#define SOLC_ASSUME(expr)                                              \
-  if SOLC_UNLIKELY (!(expr)) {                                         \
-    printf("(%s:%i) Assumption \"" #expr "\" is not met.\n", __FILE__, \
-           __LINE__);                                                  \
-    __solc_trap();                                                     \
+#define SOLC_ASSUME(expr)                                             \
+  if SOLC_UNLIKELY (!(expr)) {                                        \
+    fprintf(stderr, "(%s:%i) Assumption \"" #expr "\" is not met.\n", \
+            __FILE__, __LINE__);                                      \
+    __solc_trap();                                                    \
   }
 #else
 #define SOLC_ASSUME(expr) __solc_assume(expr)
 #endif
 
 #ifdef _DEBUG
-#define SOLC_ASSERT(expr)                                                    \
-  if SOLC_UNLIKELY (!(expr)) {                                               \
-    printf("(%s:%i) Assertion \"" #expr "\" failed.\n", __FILE__, __LINE__); \
-    __solc_trap();                                                           \
+#define SOLC_ASSERT(expr)                                                  \
+  if SOLC_UNLIKELY (!(expr)) {                                             \
+    fprintf(stderr, "(%s:%i) Assertion \"" #expr "\" failed.\n", __FILE__, \
+            __LINE__);                                                     \
+    __solc_trap();                                                         \
   }
 #else
-#define SOLC_ASSERT(expr)    \
-  if SOLC_UNLIKELY (!(expr)) \
-    printf("(%s:%i) Assertion \"" #expr "\" failed.\n", __FILE__, __LINE__);
+#define SOLC_ASSERT(expr)                                                  \
+  if SOLC_UNLIKELY (!(expr))                                               \
+    fprintf(stderr, "(%s:%i) Assertion \"" #expr "\" failed.\n", __FILE__, \
+            __LINE__);
 #endif
 
 #if defined(__clang__)
