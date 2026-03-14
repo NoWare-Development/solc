@@ -1,5 +1,6 @@
 #include "errorhandler.h"
 #include "color.h"
+#include <errno.h>
 #include <solc/defs.h>
 #include <solc/lexer/token.h>
 #include <solc/parser/parser.h>
@@ -49,12 +50,10 @@ error_handler_t error_handler_create(const char *filename, const char *src,
 
 void error_handler_report_failed_to_open(const char *filepath, s32 errno_n)
 {
-  // TODO: use 'errno_n'
   fprintf(stderr,
-          ESCGRAPHICS_BOLD
-          "solc: " ESCCOLOR_RED "fatal error: " ESC_RESET
-          "%s: No such file or directory\ncompilation terminated.\n",
-          filepath);
+          ESCGRAPHICS_BOLD "solc: " ESCCOLOR_RED "fatal error: " ESC_RESET
+                           "%s: %s\ncompilation terminated.\n",
+          filepath, strerror(errno_n));
 }
 
 b8 error_handler_handle_invalid_tokens(error_handler_t *handler)
