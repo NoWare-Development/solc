@@ -975,9 +975,6 @@ static solc_ast_t *pratt_parse_expr(ast_op_union_t *ast_op_unions_v, sz *pos,
   }
 
   while (*pos < ast_op_unions_v_size) {
-    // Just a debug assumption, must be checked before, but still
-    // TODO: maybe remove
-    SOLC_ASSUME(ast_op_unions_v[*pos].is_operator);
     expr_operator_type_t op = ast_op_unions_v[*pos].operator_type;
 
     s32 l_bp, r_bp;
