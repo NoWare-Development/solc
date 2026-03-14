@@ -1,22 +1,23 @@
-project('solc', 'cpp')
+project('solc', 'c')
 
-flags = []
+flags = [ '-std=c11' ]
 
 if get_option('buildtype') == 'debug'
   flags += '-D_DEBUG'
 endif
 
 libsolc_src = []
-libsolc_dep = [ dependency('llvm') ]
+libsolc_dep = []
 libsolc_inc = include_directories('include')
-subdir('libsolc')
+libsolc_dir = 'libsolc'
+subdir(libsolc_dir)
 
 libsolc_lib = shared_library(
   'solc',
   libsolc_src,
   dependencies: libsolc_dep,
-  include_directories: libsolc_inc,
-  cpp_args: [ flags ],
+  include_directories: [ libsolc_inc, include_directories(libsolc_dir) ],
+  c_args: [ flags ],
 )
 
 libsolc = declare_dependency(
@@ -33,6 +34,6 @@ solc_exe = executable(
   'solc',
   solc_src,
   dependencies: libsolc,
-  include_directories: solc_inc,
-  cpp_args: [ flags ],
+  include_directories: [ solc_inc, include_directories(libsolc_dir) ],
+  c_args: [ flags ],
 )

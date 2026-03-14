@@ -1,4 +1,4 @@
 libsolc_src += [
-  'libsolc/lexer/lexer.cpp',
-  'libsolc/lexer/token.cpp',
+  'libsolc/lexer/token.c',
+  'libsolc/lexer/lexer.c',
 ]

@@ -22,6 +22,11 @@ extern func_from_c :: ();
 extern func_from_c_with_default_init_values
     :: (a: int, b: int = 4, c: bool = false) -> *bool;
 
+// There can also be external variables. They can be defined in C code, or even
+// come from a link script.
+extern extern_symbol_1: int;
+extern extern_symbol_2: *int[32];
+
 typedef *uint[][][] newtype; // Type definition
 
 id1: int;                // Variable declaration
@@ -77,7 +82,9 @@ main :: (argc: int = 4*5, argv: char[][]) -> int {
   call_to_func(123 + 4, id / 2.25f);
 
   switch (id + 5) {
-    case 1 + 2: return 0;
+    case 1 + 2: { return 0; }
+
+    case 4: { fallthrough; }
 
     default: {
       id += 14;
@@ -118,14 +125,6 @@ testfunc :: () -> void {
   }
 }
 
-struct StructWithMarkers {
-public:
-  public_field: int;
-
-private:
-  private_field: int;
-}
-
 testFunc :: () -> void {
   if (array == nullptr) return 0;
 
@@ -148,7 +147,7 @@ local testFunc2 :: () {
   vector_var: Vector<int>;
   vector_var.destroy();
 
-  persist x: int = 5;
+  persist x: int = sizeof(Vector<int>);
 
   test: Vector<TestStruct<int>> = {};
 
@@ -159,4 +158,9 @@ union TestUnion {
   var1: int;
   var2: float;
   var3: double;
+}
+
+struct Test {
+  func hihi :: () {}
+  func haha<T> :: (a: T) {}
 }

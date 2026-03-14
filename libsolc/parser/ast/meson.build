@@ -1,0 +1,7 @@
+subdir('expr_operand')
+subdir('generic')
+subdir('initlist')
+subdir('none')
+subdir('stmt')
+subdir('type')
+subdir('var')

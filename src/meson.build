@@ -1,7 +1,4 @@
-subdir('error_handler')
-subdir('info')
-subdir('util')
-
 solc_src += [
-  'src/main.cpp',
+  'src/errorhandler.c',
+  'src/main.c',
 ]
