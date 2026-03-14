@@ -109,9 +109,11 @@ typedef size_t sz;
   }
 #else
 #define SOLC_ASSERT(expr)                                                  \
-  if SOLC_UNLIKELY (!(expr))                                               \
+  if SOLC_UNLIKELY (!(expr)) {                                             \
     fprintf(stderr, "(%s:%i) Assertion \"" #expr "\" failed.\n", __FILE__, \
-            __LINE__);
+            __LINE__);                                                     \
+    exit(-1);                                                              \
+  }
 #endif
 
 #if defined(__clang__)
