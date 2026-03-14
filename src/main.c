@@ -1,3 +1,4 @@
+#include <errno.h>
 #define ARGUMENTS                                                 \
   BOOLEAN_ARG(show_help, "--help", "-h", "Display this message")  \
   BOOLEAN_ARG(show_version, "--version", "-v", "Display version") \
@@ -51,7 +52,14 @@ s32 main(s32 argc, char **argv)
   }
 
   for (s32 i = 0; i < args.num_dangling; i++) {
-    FILE *f = fopen(argv[args.danlings[i]], "r");
+    const char *filepath = argv[args.danlings[i]];
+
+    FILE *f = fopen(filepath, "r");
+    if (f == nullptr) {
+      error_handler_report_failed_to_open(filepath, errno);
+      return -2;
+    }
+
     fseek(f, 0, SEEK_END);
     s32 size = ftell(f);
     fseek(f, 0, SEEK_SET);
@@ -72,7 +80,7 @@ s32 main(s32 argc, char **argv)
     error_handler_t handler =
       error_handler_create(argv[args.danlings[i]], src, tokens, tokens_num);
     if (!error_handler_handle_invalid_tokens(&handler)) {
-      return -2;
+      return -3;
     }
 
     solc_parser_t parser = solc_parser_create(tokens, tokens_num);
@@ -92,7 +100,7 @@ s32 main(s32 argc, char **argv)
 
     if (!error_handler_handle_parser_errors(&handler, parser_errors,
                                             parser_errors_num)) {
-      return -3;
+      return -4;
     }
 
     solc_ast_destroy(root);

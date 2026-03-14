@@ -47,6 +47,16 @@ error_handler_t error_handler_create(const char *filename, const char *src,
   return handler;
 }
 
+void error_handler_report_failed_to_open(const char *filepath, s32 errno_n)
+{
+  // TODO: use 'errno_n'
+  fprintf(stderr,
+          ESCGRAPHICS_BOLD
+          "solc: " ESCCOLOR_RED "fatal error: " ESC_RESET
+          "%s: No such file or directory\ncompilation terminated.\n",
+          filepath);
+}
+
 b8 error_handler_handle_invalid_tokens(error_handler_t *handler)
 {
   b8 result = true;
