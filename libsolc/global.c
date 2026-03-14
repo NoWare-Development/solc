@@ -6,7 +6,7 @@ b8 initialized = false;
 
 void global_init(void)
 {
-  SOLC_ASSUME(!initialized); // FIXME: Replace it with assert.
+  SOLC_ASSERT(!initialized);
 
   __global_arena_alloc = alloc_arena_create();
 
@@ -15,7 +15,7 @@ void global_init(void)
 
 void global_deinit(void)
 {
-  SOLC_ASSUME(initialized); // FIXME: Replace it with assert.
+  SOLC_ASSERT(initialized);
 
   alloc_arena_destroy(&__global_arena_alloc);
 
