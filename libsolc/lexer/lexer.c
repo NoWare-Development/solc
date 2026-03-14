@@ -336,19 +336,25 @@ static inline solc_token_t process_numhex(solc_lexer_t *lexer)
 {
   lexer->pos += 2;
 
-  // TODO: we probably should take into account that there may be number
-  // separators, but since it is an initial rewrite, I decided to leave it
-  // for now.
-
   sz start = lexer->pos;
-  for (; lexer->pos < lexer->src_len; lexer->pos++)
-    if (!isxdigit(lexer->src[lexer->pos]))
+  for (; lexer->pos < lexer->src_len; lexer->pos++) {
+    char c = lexer->src[lexer->pos];
+    if (c == '\'' || c == '_')
+      continue;
+    if (!isxdigit(c))
       break;
+  }
 
   sz len = lexer->pos - start;
+  char *prefmt =
+    alloc_arena_allocate(global_arena_alloc(), sizeof(char) * (len + 1));
+  memcpy(prefmt, &lexer->src[start], len);
+
   char *out_value =
     alloc_arena_allocate(global_arena_alloc(), sizeof(char) * (len + 1));
-  memcpy(out_value, &lexer->src[start], len);
+  for (char *out_value_p = out_value; *prefmt; prefmt++)
+    if (*prefmt != '\'' && *prefmt != '_')
+      *out_value_p++ = *prefmt;
 
   return gen_token(lexer, len + 2, lexer->pos - 1, SOLC_TOKENTYPE_NUMHEX,
                    out_value);
@@ -358,21 +364,25 @@ static inline solc_token_t process_numbin(solc_lexer_t *lexer)
 {
   lexer->pos += 2;
 
-  // TODO: we probably should take into account that there may be number
-  // separators, but since it is an initial rewrite, I decided to leave it
-  // for now.
-
   sz start = lexer->pos;
   for (; lexer->pos < lexer->src_len; lexer->pos++) {
     char c = lexer->src[lexer->pos];
+    if (c == '\'' || c == '_')
+      continue;
     if (c != '0' && c != '1')
       break;
   }
 
   sz len = lexer->pos - start;
+  char *prefmt =
+    alloc_arena_allocate(global_arena_alloc(), sizeof(char) * (len + 1));
+  memcpy(prefmt, &lexer->src[start], len);
+
   char *out_value =
     alloc_arena_allocate(global_arena_alloc(), sizeof(char) * (len + 1));
-  memcpy(out_value, &lexer->src[start], len);
+  for (char *out_value_p = out_value; *prefmt; prefmt++)
+    if (*prefmt != '\'' && *prefmt != '_')
+      *out_value_p++ = *prefmt;
 
   return gen_token(lexer, len + 2, lexer->pos - 1, SOLC_TOKENTYPE_NUMBIN,
                    out_value);
@@ -382,21 +392,25 @@ static inline solc_token_t process_numoct(solc_lexer_t *lexer)
 {
   lexer->pos++;
 
-  // TODO: we probably should take into account that there may be number
-  // separators, but since it is an initial rewrite, I decided to leave it
-  // for now.
-
   sz start = lexer->pos;
   for (; lexer->pos < lexer->src_len; lexer->pos++) {
     char c = lexer->src[lexer->pos];
+    if (c == '\'' || c == '_')
+      continue;
     if (c < '0' || c > '7')
       break;
   }
 
   sz len = lexer->pos - start;
+  char *prefmt =
+    alloc_arena_allocate(global_arena_alloc(), sizeof(char) * (len + 1));
+  memcpy(prefmt, &lexer->src[start], len);
+
   char *out_value =
     alloc_arena_allocate(global_arena_alloc(), sizeof(char) * (len + 1));
-  memcpy(out_value, &lexer->src[start], len);
+  for (char *out_value_p = out_value; *prefmt; prefmt++)
+    if (*prefmt != '\'' && *prefmt != '_')
+      *out_value_p++ = *prefmt;
 
   return gen_token(lexer, len + 1, lexer->pos - 1, SOLC_TOKENTYPE_NUMOCT,
                    out_value);
