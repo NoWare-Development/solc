@@ -842,13 +842,6 @@ expr_operand_generic_call_after_loop:
 static inline b8 validate_expr_data(solc_parser_t *parser, sz start_pos,
                                     ast_op_union_t *ast_op_unions_v)
 {
-  // FIXME: Need a better way of indicating that expression is invalid.
-  // Previously error handler could detect expression errors by walking a
-  // full AST tree, finding expressions and checking that they are valid.
-  // But due to changes in how ASTs are created and stored and how their
-  // interfaces work, we have to use other methods. One (and the most sane) of
-  // them is to just throw an error on the parser error stack, that's it.
-
   sz ast_op_unions_v_size = vector_get_length(ast_op_unions_v);
   if SOLC_UNLIKELY (ast_op_unions_v_size == 0) {
     solc_parser_add_error(parser, SOLC_PARSER_ERROR_TYPE_EXPR_EMPTY, start_pos,
