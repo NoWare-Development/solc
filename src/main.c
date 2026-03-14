@@ -34,7 +34,7 @@ s32 main(s32 argc, char **argv)
 {
   solc_init();
 
-  args_t args = { 0 }; // TODO: Make a way to set arguments to default values.
+  args_t args = { 0 };
   if (!args_parse(&args, argc, argv))
     return -1;
 
