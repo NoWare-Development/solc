@@ -65,3 +65,23 @@ string_t *solc_ast_struct_build_tree(solc_ast_t *struct_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+const char *solc_ast_struct_get_name(solc_ast_t *struct_ast)
+{
+  SOLC_ASSUME(struct_ast != nullptr &&
+              struct_ast->type == SOLC_AST_TYPE_NONE_STRUCT);
+  SOLC_AST_CAST(struct_data, struct_ast, ast_struct_t);
+  SOLC_ASSUME(struct_data->name != nullptr);
+  return struct_data->name;
+}
+
+solc_ast_t **solc_ast_struct_get_child_asts(solc_ast_t *struct_ast, sz *out_n)
+{
+  SOLC_ASSUME(struct_ast != nullptr &&
+              struct_ast->type == SOLC_AST_TYPE_NONE_STRUCT);
+  SOLC_AST_CAST(struct_data, struct_ast, ast_struct_t);
+  SOLC_ASSUME(struct_data->children_v != nullptr);
+  if SOLC_LIKELY (out_n != nullptr)
+    *out_n = vector_get_length(struct_data->children_v);
+  return struct_data->children_v;
+}

@@ -67,3 +67,15 @@ string_t *solc_ast_func_arglist_build_tree(solc_ast_t *arg_list_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+solc_ast_t **solc_ast_func_arglist_get_element_asts(solc_ast_t *arg_list_ast,
+                                                    sz *out_n)
+{
+  SOLC_ASSUME(arg_list_ast != nullptr &&
+              arg_list_ast->type == SOLC_AST_TYPE_NONE_FUNC_ARGLIST);
+  SOLC_AST_CAST(arg_list_data, arg_list_ast, ast_func_arglist_t);
+  SOLC_ASSUME(arg_list_data->elements_v != nullptr);
+  if SOLC_LIKELY (out_n != nullptr)
+    *out_n = vector_get_length(arg_list_data->elements_v);
+  return arg_list_data->elements_v;
+}

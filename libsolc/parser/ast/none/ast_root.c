@@ -52,3 +52,13 @@ string_t *solc_ast_root_build_tree(solc_ast_t *root_ast)
   string_t header = string_create_from("ROOT");
   return ast_build_tree(&header, children_vs_v);
 }
+
+solc_ast_t **solc_ast_root_get_top_statements(solc_ast_t *root_ast, sz *out_n)
+{
+  SOLC_ASSUME(root_ast != nullptr && root_ast->type == SOLC_AST_TYPE_NONE_ROOT);
+  SOLC_AST_CAST(root_data, root_ast, ast_root_t);
+  SOLC_ASSUME(root_data->top_stmts_v != nullptr);
+  if SOLC_LIKELY (out_n != nullptr)
+    *out_n = vector_get_length(root_data->top_stmts_v);
+  return root_data->top_stmts_v;
+}

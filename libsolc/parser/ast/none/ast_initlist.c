@@ -63,3 +63,15 @@ string_t *solc_ast_initlist_build_tree(solc_ast_t *initlist_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+solc_ast_t **solc_ast_initlist_get_element_asts(solc_ast_t *initlist_ast,
+                                                sz *out_n)
+{
+  SOLC_ASSUME(initlist_ast != nullptr &&
+              initlist_ast->type == SOLC_AST_TYPE_NONE_INITLIST);
+  SOLC_AST_CAST(initlist_data, initlist_ast, ast_initlist_t);
+  SOLC_ASSUME(initlist_data->init_elements_v != nullptr);
+  if SOLC_LIKELY (out_n != nullptr)
+    *out_n = vector_get_length(initlist_data->init_elements_v);
+  return initlist_data->init_elements_v;
+}

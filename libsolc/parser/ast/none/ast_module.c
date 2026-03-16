@@ -54,3 +54,20 @@ string_t *solc_ast_module_build_tree(solc_ast_t *module_ast)
   solc_ast_add_to_tree_if_exists(children_vs_v, module_data->submodule_ast);
   return ast_build_tree(&header, children_vs_v);
 }
+
+const char *solc_ast_module_get_name(solc_ast_t *module_ast)
+{
+  SOLC_ASSUME(module_ast != nullptr &&
+              module_ast->type == SOLC_AST_TYPE_NONE_MODULE);
+  SOLC_AST_CAST(module_data, module_ast, ast_module_t);
+  SOLC_ASSUME(module_data->name != nullptr);
+  return module_data->name;
+}
+
+solc_ast_t *solc_ast_module_get_submodule_ast(solc_ast_t *module_ast)
+{
+  SOLC_ASSUME(module_ast != nullptr &&
+              module_ast->type == SOLC_AST_TYPE_NONE_MODULE);
+  SOLC_AST_CAST(module_data, module_ast, ast_module_t);
+  return module_data->submodule_ast;
+}

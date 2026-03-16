@@ -41,3 +41,11 @@ string_t *solc_ast_import_build_tree(solc_ast_t *import_ast)
   solc_ast_add_to_tree_if_exists(children_vs_v, import_data->module_ast);
   return ast_build_tree(&header, children_vs_v);
 }
+
+solc_ast_t *solc_ast_import_get_module_ast(solc_ast_t *import_ast)
+{
+  SOLC_ASSUME(import_ast != nullptr &&
+              import_ast->type == SOLC_AST_TYPE_NONE_IMPORT);
+  SOLC_AST_CAST(import_data, import_ast, ast_import_t);
+  return import_data->module_ast;
+}

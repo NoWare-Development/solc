@@ -57,3 +57,28 @@ string_t *solc_ast_extern_func_build_tree(solc_ast_t *extern_func_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+const char *solc_ast_extern_func_get_name(solc_ast_t *extern_func_ast)
+{
+  SOLC_ASSUME(extern_func_ast != nullptr &&
+              extern_func_ast->type == SOLC_AST_TYPE_NONE_EXTERN_FUNC);
+  SOLC_AST_CAST(extern_func_data, extern_func_ast, ast_extern_func_t);
+  SOLC_ASSUME(extern_func_data->name != nullptr);
+  return extern_func_data->name;
+}
+
+solc_ast_t *solc_ast_extern_func_get_type_ast(solc_ast_t *extern_func_ast)
+{
+  SOLC_ASSUME(extern_func_ast != nullptr &&
+              extern_func_ast->type == SOLC_AST_TYPE_NONE_EXTERN_FUNC);
+  SOLC_AST_CAST(extern_func_data, extern_func_ast, ast_extern_func_t);
+  return extern_func_data->type_ast;
+}
+
+solc_ast_t *solc_ast_extern_func_get_arg_list_ast(solc_ast_t *extern_func_ast)
+{
+  SOLC_ASSUME(extern_func_ast != nullptr &&
+              extern_func_ast->type == SOLC_AST_TYPE_NONE_EXTERN_FUNC);
+  SOLC_AST_CAST(extern_func_data, extern_func_ast, ast_extern_func_t);
+  return extern_func_data->arg_list_ast;
+}

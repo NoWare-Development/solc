@@ -51,3 +51,20 @@ string_t *solc_ast_qualifier_build_tree(solc_ast_t *qualifier_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+const char *solc_ast_qualifier_get_name(solc_ast_t *qualifier_ast)
+{
+  SOLC_ASSUME(qualifier_ast != nullptr &&
+              qualifier_ast->type == SOLC_AST_TYPE_NONE_QUALIFIER);
+  SOLC_AST_CAST(qualifier_data, qualifier_ast, ast_qualifier_t);
+  SOLC_ASSUME(qualifier_data->name != nullptr);
+  return qualifier_data->name;
+}
+
+solc_ast_t *solc_ast_qualifier_get_qualified_ast(solc_ast_t *qualifier_ast)
+{
+  SOLC_ASSUME(qualifier_ast != nullptr &&
+              qualifier_ast->type == SOLC_AST_TYPE_NONE_QUALIFIER);
+  SOLC_AST_CAST(qualifier_data, qualifier_ast, ast_qualifier_t);
+  return qualifier_data->qualified_ast;
+}

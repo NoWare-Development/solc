@@ -66,3 +66,21 @@ string_t *solc_ast_enum_build_tree(solc_ast_t *enum_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+const char *solc_ast_enum_get_name(solc_ast_t *enum_ast)
+{
+  SOLC_ASSUME(enum_ast != nullptr && enum_ast->type == SOLC_AST_TYPE_NONE_ENUM);
+  SOLC_AST_CAST(enum_data, enum_ast, ast_enum_t);
+  SOLC_ASSUME(enum_data->name != nullptr);
+  return enum_data->name;
+}
+
+solc_ast_t **solc_ast_enum_get_element_asts(solc_ast_t *enum_ast, sz *out_n)
+{
+  SOLC_ASSUME(enum_ast != nullptr && enum_ast->type == SOLC_AST_TYPE_NONE_ENUM);
+  SOLC_AST_CAST(enum_data, enum_ast, ast_enum_t);
+  SOLC_ASSUME(enum_data->elements_v != nullptr);
+  if SOLC_LIKELY (out_n != nullptr)
+    *out_n = vector_get_length(enum_data->elements_v);
+  return enum_data->elements_v;
+}
