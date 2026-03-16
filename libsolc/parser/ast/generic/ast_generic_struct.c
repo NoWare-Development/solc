@@ -79,3 +79,33 @@ string_t *solc_ast_generic_struct_build_tree(solc_ast_t *generic_struct_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+const char *solc_ast_generic_struct_get_name(solc_ast_t *generic_struct_ast)
+{
+  SOLC_ASSUME(generic_struct_ast != nullptr &&
+              generic_struct_ast->type == SOLC_AST_TYPE_GENERIC_STRUCT);
+  SOLC_AST_CAST(generic_struct_data, generic_struct_ast, ast_generic_struct_t);
+  SOLC_ASSUME(generic_struct_data->name != nullptr);
+  return generic_struct_data->name;
+}
+
+solc_ast_t *solc_ast_generic_struct_get_placeholder_type_list_ast(
+  solc_ast_t *generic_struct_ast)
+{
+  SOLC_ASSUME(generic_struct_ast != nullptr &&
+              generic_struct_ast->type == SOLC_AST_TYPE_GENERIC_STRUCT);
+  SOLC_AST_CAST(generic_struct_data, generic_struct_ast, ast_generic_struct_t);
+  return generic_struct_data->generic_placeholder_type_list_ast;
+}
+
+solc_ast_t **
+solc_ast_generic_struct_get_children(solc_ast_t *generic_struct_ast, sz *out_n)
+{
+  SOLC_ASSUME(generic_struct_ast != nullptr &&
+              generic_struct_ast->type == SOLC_AST_TYPE_GENERIC_STRUCT);
+  SOLC_AST_CAST(generic_struct_data, generic_struct_ast, ast_generic_struct_t);
+  SOLC_ASSUME(generic_struct_data->children_v != nullptr);
+  if SOLC_LIKELY (out_n != nullptr)
+    *out_n = vector_get_length(generic_struct_data->children_v);
+  return generic_struct_data->children_v;
+}

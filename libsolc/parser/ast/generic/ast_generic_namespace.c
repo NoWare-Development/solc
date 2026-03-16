@@ -77,3 +77,34 @@ solc_ast_generic_namespace_build_tree(solc_ast_t *generic_namespace_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+const char *
+solc_ast_generic_namespace_get_name(solc_ast_t *generic_namespace_ast)
+{
+  SOLC_ASSUME(generic_namespace_ast != nullptr &&
+              generic_namespace_ast->type == SOLC_AST_TYPE_GENERIC_NAMESPACE);
+  SOLC_AST_CAST(generic_namespace_data, generic_namespace_ast,
+                ast_generic_namespace_t);
+  SOLC_ASSUME(generic_namespace_data->name != nullptr);
+  return generic_namespace_data->name;
+}
+
+solc_ast_t *solc_ast_generic_namespace_get_generic_type_list_ast(
+  solc_ast_t *generic_namespace_ast)
+{
+  SOLC_ASSUME(generic_namespace_ast != nullptr &&
+              generic_namespace_ast->type == SOLC_AST_TYPE_GENERIC_NAMESPACE);
+  SOLC_AST_CAST(generic_namespace_data, generic_namespace_ast,
+                ast_generic_namespace_t);
+  return generic_namespace_data->generic_type_list_ast;
+}
+
+solc_ast_t *
+solc_ast_generic_namespace_get_subobject_ast(solc_ast_t *generic_namespace_ast)
+{
+  SOLC_ASSUME(generic_namespace_ast != nullptr &&
+              generic_namespace_ast->type == SOLC_AST_TYPE_GENERIC_NAMESPACE);
+  SOLC_AST_CAST(generic_namespace_data, generic_namespace_ast,
+                ast_generic_namespace_t);
+  return generic_namespace_data->subobject_ast;
+}
