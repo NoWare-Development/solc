@@ -54,3 +54,28 @@ string_t *solc_ast_var_def_build_tree(solc_ast_t *var_def_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+const char *solc_ast_var_def_get_name(solc_ast_t *var_def_ast)
+{
+  SOLC_ASSUME(var_def_ast != nullptr &&
+              var_def_ast->type == SOLC_AST_TYPE_VAR_DEF);
+  SOLC_AST_CAST(vardef_data, var_def_ast, ast_vardef_t);
+  SOLC_ASSUME(vardef_data->name != nullptr);
+  return vardef_data->name;
+}
+
+solc_ast_t *solc_ast_var_def_get_type_ast(solc_ast_t *var_def_ast)
+{
+  SOLC_ASSUME(var_def_ast != nullptr &&
+              var_def_ast->type == SOLC_AST_TYPE_VAR_DEF);
+  SOLC_AST_CAST(vardef_data, var_def_ast, ast_vardef_t);
+  return vardef_data->type_ast;
+}
+
+solc_ast_t *solc_ast_var_def_get_expr_ast(solc_ast_t *var_def_ast)
+{
+  SOLC_ASSUME(var_def_ast != nullptr &&
+              var_def_ast->type == SOLC_AST_TYPE_VAR_DEF);
+  SOLC_AST_CAST(vardef_data, var_def_ast, ast_vardef_t);
+  return vardef_data->expr_ast;
+}

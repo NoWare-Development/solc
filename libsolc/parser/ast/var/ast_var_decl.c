@@ -50,3 +50,20 @@ string_t *solc_ast_var_decl_build_tree(solc_ast_t *var_decl_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+const char *solc_ast_var_decl_get_name(solc_ast_t *var_decl_ast)
+{
+  SOLC_ASSUME(var_decl_ast != nullptr &&
+              var_decl_ast->type == SOLC_AST_TYPE_VAR_DECL);
+  SOLC_AST_CAST(vardecl_data, var_decl_ast, ast_vardecl_t);
+  SOLC_ASSUME(vardecl_data->name != nullptr);
+  return vardecl_data->name;
+}
+
+solc_ast_t *solc_ast_var_decl_get_type_ast(solc_ast_t *var_decl_ast)
+{
+  SOLC_ASSUME(var_decl_ast != nullptr &&
+              var_decl_ast->type == SOLC_AST_TYPE_VAR_DECL);
+  SOLC_AST_CAST(vardecl_data, var_decl_ast, ast_vardecl_t);
+  return vardecl_data->type_ast;
+}
