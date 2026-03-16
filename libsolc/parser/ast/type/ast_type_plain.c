@@ -48,3 +48,12 @@ string_t *solc_ast_type_plain_build_tree(solc_ast_t *plain_type_ast)
 
   return out_v;
 }
+
+const char *solc_ast_type_plain_get_name(solc_ast_t *plain_type_ast)
+{
+  SOLC_ASSUME(plain_type_ast != nullptr &&
+              plain_type_ast->type == SOLC_AST_TYPE_TYPE_PLAIN);
+  SOLC_AST_CAST(plain_type_data, plain_type_ast, ast_plain_type_t);
+  SOLC_ASSUME(plain_type_data->name != nullptr);
+  return plain_type_data->name;
+}
