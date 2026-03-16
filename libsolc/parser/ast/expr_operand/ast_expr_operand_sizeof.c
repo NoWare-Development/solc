@@ -45,3 +45,14 @@ solc_ast_expr_operand_sizeof_build_tree(solc_ast_t *sizeof_expr_operand_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+solc_ast_t *
+solc_ast_expr_operand_sizeof_get_type_ast(solc_ast_t *sizeof_expr_operand_ast)
+{
+  SOLC_ASSUME(sizeof_expr_operand_ast != nullptr &&
+              sizeof_expr_operand_ast->type ==
+                SOLC_AST_TYPE_EXPR_OPERAND_SIZEOF);
+  SOLC_AST_CAST(sizeof_expr_operand_data, sizeof_expr_operand_ast,
+                ast_expr_operand_sizeof_t);
+  return sizeof_expr_operand_data->type_ast;
+}

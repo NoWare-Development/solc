@@ -63,3 +63,22 @@ string_t *solc_ast_expr_operand_num_build_tree(solc_ast_t *num_expr_operand_ast)
   free(buf);
   return out_v;
 }
+
+u64 solc_ast_expr_operand_num_get_value(solc_ast_t *num_expr_operand_ast)
+{
+  SOLC_ASSUME(num_expr_operand_ast != nullptr &&
+              num_expr_operand_ast->type == SOLC_AST_TYPE_EXPR_OPERAND_NUM);
+  SOLC_AST_CAST(num_expr_operand_data, num_expr_operand_ast,
+                ast_num_expr_operand_t);
+  return num_expr_operand_data->value;
+}
+
+const char *
+solc_ast_expr_operand_num_get_typespec(solc_ast_t *num_expr_operand_ast)
+{
+  SOLC_ASSUME(num_expr_operand_ast != nullptr &&
+              num_expr_operand_ast->type == SOLC_AST_TYPE_EXPR_OPERAND_NUM);
+  SOLC_AST_CAST(num_expr_operand_data, num_expr_operand_ast,
+                ast_num_expr_operand_t);
+  return num_expr_operand_data->typespec;
+}

@@ -77,3 +77,13 @@ solc_ast_expr_operand_symbol_build_tree(solc_ast_t *symbol_expr_operand_ast)
   vector_push(out_v, header);
   return out_v;
 }
+
+char solc_ast_expr_operand_symbol_get_value(solc_ast_t *symbol_expr_operand_ast)
+{
+  SOLC_ASSUME(symbol_expr_operand_ast != nullptr &&
+              symbol_expr_operand_ast->type ==
+                SOLC_AST_TYPE_EXPR_OPERAND_SYMBOL);
+  SOLC_AST_CAST(symbol_expr_operand_data, symbol_expr_operand_ast,
+                ast_expr_operand_symbol_t);
+  return symbol_expr_operand_data->value;
+}

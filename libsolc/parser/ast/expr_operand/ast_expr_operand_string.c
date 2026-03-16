@@ -32,19 +32,6 @@ void solc_ast_expr_operand_string_destroy(solc_ast_t *string_expr_operand_ast)
   free(string_expr_operand_ast);
 }
 
-sz solc_ast_expr_operand_string_to_string(char *buf, sz n,
-                                          solc_ast_t *string_expr_operand_ast)
-{
-  SOLC_ASSUME(buf != nullptr && string_expr_operand_ast != nullptr &&
-              string_expr_operand_ast->type ==
-                SOLC_AST_TYPE_EXPR_OPERAND_STRING);
-  SOLC_AST_CAST(string_expr_operand_data, string_expr_operand_ast,
-                ast_expr_operand_string_t);
-  SOLC_ASSUME(string_expr_operand_data->value != nullptr);
-  return snprintf(buf, n, "EXPR_OPERAND_STRING { value: \"%s\" }",
-                  string_expr_operand_data->value);
-}
-
 string_t *
 solc_ast_expr_operand_string_build_tree(solc_ast_t *string_expr_operand_ast)
 {
@@ -85,4 +72,16 @@ solc_ast_expr_operand_string_build_tree(solc_ast_t *string_expr_operand_ast)
   string_t *out_v = vector_reserve(string_t, 1);
   vector_push(out_v, header);
   return out_v;
+}
+
+const char *
+solc_ast_expr_operand_string_get_value(solc_ast_t *string_expr_operand_ast)
+{
+  SOLC_ASSUME(string_expr_operand_ast != nullptr &&
+              string_expr_operand_ast->type ==
+                SOLC_AST_TYPE_EXPR_OPERAND_STRING);
+  SOLC_AST_CAST(string_expr_operand_data, string_expr_operand_ast,
+                ast_expr_operand_string_t);
+  SOLC_ASSUME(string_expr_operand_data->value != nullptr);
+  return string_expr_operand_data->value;
 }
