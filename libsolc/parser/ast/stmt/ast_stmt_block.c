@@ -60,3 +60,14 @@ string_t *solc_ast_stmt_block_build_tree(solc_ast_t *block_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+solc_ast_t **solc_ast_stmt_block_get_stmt_asts(solc_ast_t *block_ast, sz *out_n)
+{
+  SOLC_ASSUME(block_ast != nullptr &&
+              block_ast->type == SOLC_AST_TYPE_STMT_BLOCK);
+  SOLC_AST_CAST(block_data, block_ast, ast_block_stmt_t);
+  SOLC_ASSUME(block_data->stmt_asts_v != nullptr);
+  if SOLC_LIKELY (out_n != nullptr)
+    *out_n = vector_get_length(block_data->stmt_asts_v);
+  return block_data->stmt_asts_v;
+}

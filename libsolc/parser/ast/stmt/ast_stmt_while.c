@@ -43,3 +43,19 @@ string_t *solc_ast_stmt_while_build_tree(solc_ast_t *while_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+solc_ast_t *solc_ast_stmt_while_get_condition_expr_ast(solc_ast_t *while_ast)
+{
+  SOLC_ASSUME(while_ast != nullptr &&
+              while_ast->type == SOLC_AST_TYPE_STMT_WHILE);
+  SOLC_AST_CAST(while_data, while_ast, ast_while_t);
+  return while_data->condition_expr_ast;
+}
+
+solc_ast_t *solc_ast_stmt_while_get_stmt_ast(solc_ast_t *while_ast)
+{
+  SOLC_ASSUME(while_ast != nullptr &&
+              while_ast->type == SOLC_AST_TYPE_STMT_WHILE);
+  SOLC_AST_CAST(while_data, while_ast, ast_while_t);
+  return while_data->stmt_ast;
+}

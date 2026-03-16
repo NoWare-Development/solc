@@ -44,3 +44,20 @@ string_t *solc_ast_stmt_dowhile_build_tree(solc_ast_t *dowhile_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+solc_ast_t *
+solc_ast_stmt_dowhile_get_condition_expr_ast(solc_ast_t *dowhile_ast)
+{
+  SOLC_ASSUME(dowhile_ast != nullptr &&
+              dowhile_ast->type == SOLC_AST_TYPE_STMT_DOWHILE);
+  SOLC_AST_CAST(dowhile_data, dowhile_ast, ast_dowhile_t);
+  return dowhile_data->condition_expr_ast;
+}
+
+solc_ast_t *solc_ast_stmt_dowhile_get_stmt_ast(solc_ast_t *dowhile_ast)
+{
+  SOLC_ASSUME(dowhile_ast != nullptr &&
+              dowhile_ast->type == SOLC_AST_TYPE_STMT_DOWHILE);
+  SOLC_AST_CAST(dowhile_data, dowhile_ast, ast_dowhile_t);
+  return dowhile_data->stmt_ast;
+}

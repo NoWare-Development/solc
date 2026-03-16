@@ -46,3 +46,24 @@ string_t *solc_ast_stmt_if_build_tree(solc_ast_t *if_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+solc_ast_t *solc_ast_stmt_if_get_condition_expr_ast(solc_ast_t *if_ast)
+{
+  SOLC_ASSUME(if_ast != nullptr && if_ast->type == SOLC_AST_TYPE_STMT_IF);
+  SOLC_AST_CAST(if_data, if_ast, ast_if_stmt_t);
+  return if_data->condition_expr_ast;
+}
+
+solc_ast_t *solc_ast_stmt_if_get_stmt_ast(solc_ast_t *if_ast)
+{
+  SOLC_ASSUME(if_ast != nullptr && if_ast->type == SOLC_AST_TYPE_STMT_IF);
+  SOLC_AST_CAST(if_data, if_ast, ast_if_stmt_t);
+  return if_data->stmt_ast;
+}
+
+solc_ast_t *solc_ast_stmt_if_get_else_ast(solc_ast_t *if_ast)
+{
+  SOLC_ASSUME(if_ast != nullptr && if_ast->type == SOLC_AST_TYPE_STMT_IF);
+  SOLC_AST_CAST(if_data, if_ast, ast_if_stmt_t);
+  return if_data->else_ast;
+}

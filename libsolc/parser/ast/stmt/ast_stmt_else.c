@@ -29,11 +29,17 @@ string_t *solc_ast_stmt_else_build_tree(solc_ast_t *else_ast)
 {
   SOLC_ASSUME(else_ast != nullptr && else_ast->type == SOLC_AST_TYPE_STMT_ELSE);
   SOLC_AST_CAST(else_data, else_ast, ast_else_t);
-  SOLC_ASSUME(else_data->stmt_ast != nullptr);
 
   string_t header = string_create_from("STMT_ELSE");
   string_t **children_vs_v = vector_reserve(string_t *, 1);
   solc_ast_add_to_tree_if_exists(children_vs_v, else_data->stmt_ast);
 
   return ast_build_tree(&header, children_vs_v);
+}
+
+solc_ast_t *solc_ast_stmt_else_get_stmt_ast(solc_ast_t *else_ast)
+{
+  SOLC_ASSUME(else_ast != nullptr && else_ast->type == SOLC_AST_TYPE_STMT_ELSE);
+  SOLC_AST_CAST(else_data, else_ast, ast_else_t);
+  return else_data->stmt_ast;
 }

@@ -37,3 +37,11 @@ string_t *solc_ast_stmt_expr_build_tree(solc_ast_t *expr_stmt_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+solc_ast_t *solc_ast_stmt_expr_get_expr_ast(solc_ast_t *expr_stmt_ast)
+{
+  SOLC_ASSUME(expr_stmt_ast != nullptr &&
+              expr_stmt_ast->type == SOLC_AST_TYPE_STMT_EXPR);
+  SOLC_AST_CAST(expr_stmt_data, expr_stmt_ast, ast_expr_stmt_t);
+  return expr_stmt_data->expr_ast;
+}
