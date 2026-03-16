@@ -38,3 +38,11 @@ string_t *solc_ast_initlist_entry_build_tree(solc_ast_t *initlist_entry_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+solc_ast_t *solc_ast_initlist_entry_get_expr_ast(solc_ast_t *initlist_entry_ast)
+{
+  SOLC_ASSUME(initlist_entry_ast != nullptr &&
+              initlist_entry_ast->type == SOLC_AST_TYPE_INITLIST_ENTRY);
+  SOLC_AST_CAST(initlist_entry_data, initlist_entry_ast, ast_initlist_entry_t);
+  return initlist_entry_data->expr_ast;
+}
