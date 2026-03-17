@@ -250,6 +250,10 @@ static void get_parser_error_reason(const solc_parser_error_t *error,
     snprintf(out, n, "prefix operator goes after an operand");
   } break;
 
+  case SOLC_PARSER_ERROR_TYPE_EXPR_ASSIGN_OPERATOR_IN_NON_TOPLEVEL: {
+    snprintf(out, n, "assign operator in not a top level expression");
+  } break;
+
   case SOLC_PARSER_ERROR_TYPE_EXPR_NON_PREFIX_OPERATOR_AT_THE_BEGINNING: {
     snprintf(out, n, "non-prefix operator at the beginning of the expression");
   } break;
