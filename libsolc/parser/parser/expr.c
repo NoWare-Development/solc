@@ -76,6 +76,7 @@ solc_ast_t *solc_parser_parse_expr(solc_parser_t *parser, b8 toplevel)
 static inline ast_op_union_t *parse_expr_data(solc_parser_t *parser,
                                               b8 toplevel)
 {
+  SOLC_UNUSED(toplevel);
   ast_op_union_t *out_ast_op_unions_v = vector_create(ast_op_union_t);
 
   typedef struct {
