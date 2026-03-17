@@ -127,6 +127,16 @@ typedef size_t sz;
 #define SOLC_UNLIKELY ((expr))
 #endif
 
+// SOLC_UNUSED is used for temporal debugging stuff that shouldn't end up in
+// master branch.
+// SOLC_UNUSED_PERMIT is used when you need magic to happen :^)
+#ifdef _DEBUG
+#define SOLC_UNUSED(_X) (void)(_X)
+#else
+#define SOLC_UNUSED(_X) SOLC_UNUSED_IS_AN_ERROR
+#endif
+#define SOLC_UNUSED_PERMIT(_X) (void)(_X)
+
 #if INTPTR_MAX == INT32_MAX
 #define IS_64BIT 0
 #elif INTPTR_MAX == INT64_MAX
