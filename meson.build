@@ -1,6 +1,6 @@
 project('solc', 'c')
 
-flags = [ '-std=c11' ]
+flags = [ '-std=c11', '-Wextra', '-Werror=all' ]
 
 if get_option('buildtype') == 'debug'
   flags += '-D_DEBUG'
