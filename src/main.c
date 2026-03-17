@@ -64,7 +64,7 @@ s32 main(s32 argc, char **argv)
     s32 size = ftell(f);
     fseek(f, 0, SEEK_SET);
 
-    char *src = calloc(sizeof(char), size + 1);
+    char *src = calloc(size + 1, sizeof(char));
     fread(src, sizeof(char), size, f);
     fclose(f);
 
