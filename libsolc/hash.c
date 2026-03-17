@@ -1,4 +1,5 @@
 #include "hash.h"
+#include "solc/defs.h"
 
 hash_t hash_function_fnv_1a_cstr(const void *key)
 {
@@ -53,5 +54,6 @@ hash_t hash_function_i64(const void *key)
 
 hash_t hash_function_UNDEFINED(const void *x)
 {
+  SOLC_UNUSED_PERMIT(x);
   SOLC_NOREACH();
 }
