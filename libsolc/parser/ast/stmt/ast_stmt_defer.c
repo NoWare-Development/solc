@@ -38,3 +38,11 @@ string_t *solc_ast_stmt_defer_build_tree(solc_ast_t *defer_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+solc_ast_t *solc_ast_stmt_defer_get_block_ast(solc_ast_t *defer_ast)
+{
+  SOLC_ASSUME(defer_ast != nullptr &&
+              defer_ast->type == SOLC_AST_TYPE_STMT_DEFER);
+  SOLC_AST_CAST(defer_data, defer_ast, ast_defer_stmt_t);
+  return defer_data->stmt_ast;
+}

@@ -58,3 +58,23 @@ string_t *solc_ast_stmt_switch_build_tree(solc_ast_t *switch_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+solc_ast_t *solc_ast_stmt_switch_get_expr_ast(solc_ast_t *switch_ast)
+{
+  SOLC_ASSUME(switch_ast != nullptr &&
+              switch_ast->type == SOLC_AST_TYPE_STMT_SWITCH);
+  SOLC_AST_CAST(switch_data, switch_ast, ast_switch_stmt_t);
+  return switch_data->expr_ast;
+}
+
+solc_ast_t **solc_ast_stmt_switch_get_case_asts(solc_ast_t *switch_ast,
+                                                sz *out_n)
+{
+  SOLC_ASSUME(switch_ast != nullptr &&
+              switch_ast->type == SOLC_AST_TYPE_STMT_SWITCH);
+  SOLC_AST_CAST(switch_data, switch_ast, ast_switch_stmt_t);
+  SOLC_ASSUME(switch_data->case_asts_v != nullptr);
+  if SOLC_LIKELY (out_n != nullptr)
+    *out_n = vector_get_length(switch_data->case_asts_v);
+  return switch_data->case_asts_v;
+}

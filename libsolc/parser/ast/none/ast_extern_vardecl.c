@@ -52,3 +52,20 @@ string_t *solc_ast_extern_vardecl_build_tree(solc_ast_t *extern_vardecl_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+const char *solc_ast_extern_vardecl_get_name(solc_ast_t *extern_vardecl_ast)
+{
+  SOLC_ASSUME(extern_vardecl_ast != nullptr &&
+              extern_vardecl_ast->type == SOLC_AST_TYPE_NONE_EXTERN_VARDECL);
+  SOLC_AST_CAST(extern_vardecl_data, extern_vardecl_ast, ast_extern_vardecl_t);
+  SOLC_ASSUME(extern_vardecl_data->name != nullptr);
+  return extern_vardecl_data->name;
+}
+
+solc_ast_t *solc_ast_extern_vardecl_get_type_ast(solc_ast_t *extern_vardecl_ast)
+{
+  SOLC_ASSUME(extern_vardecl_ast != nullptr &&
+              extern_vardecl_ast->type == SOLC_AST_TYPE_NONE_EXTERN_VARDECL);
+  SOLC_AST_CAST(extern_vardecl_data, extern_vardecl_ast, ast_extern_vardecl_t);
+  return extern_vardecl_data->type_ast;
+}

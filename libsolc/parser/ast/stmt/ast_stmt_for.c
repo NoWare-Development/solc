@@ -50,3 +50,31 @@ string_t *solc_ast_stmt_for_build_tree(solc_ast_t *for_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+solc_ast_t *solc_ast_stmt_for_init_stmt_ast(solc_ast_t *for_ast)
+{
+  SOLC_ASSUME(for_ast != nullptr && for_ast->type == SOLC_AST_TYPE_STMT_FOR);
+  SOLC_AST_CAST(for_data, for_ast, ast_for_stmt_t);
+  return for_data->init_stmt_ast;
+}
+
+solc_ast_t *solc_ast_stmt_for_condition_expr_ast(solc_ast_t *for_ast)
+{
+  SOLC_ASSUME(for_ast != nullptr && for_ast->type == SOLC_AST_TYPE_STMT_FOR);
+  SOLC_AST_CAST(for_data, for_ast, ast_for_stmt_t);
+  return for_data->condition_expr_ast;
+}
+
+solc_ast_t *solc_ast_stmt_for_expr_ast(solc_ast_t *for_ast)
+{
+  SOLC_ASSUME(for_ast != nullptr && for_ast->type == SOLC_AST_TYPE_STMT_FOR);
+  SOLC_AST_CAST(for_data, for_ast, ast_for_stmt_t);
+  return for_data->expr_ast;
+}
+
+solc_ast_t *solc_ast_stmt_for_stmt_ast(solc_ast_t *for_ast)
+{
+  SOLC_ASSUME(for_ast != nullptr && for_ast->type == SOLC_AST_TYPE_STMT_FOR);
+  SOLC_AST_CAST(for_data, for_ast, ast_for_stmt_t);
+  return for_data->stmt_ast;
+}

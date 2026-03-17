@@ -96,3 +96,40 @@ string_t *solc_ast_expr_operand_generic_call_build_tree(
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+const char *solc_ast_expr_operand_generic_call_get_callee_name(
+  solc_ast_t *generic_call_expr_operand_ast)
+{
+  SOLC_ASSUME(generic_call_expr_operand_ast != nullptr &&
+              generic_call_expr_operand_ast->type ==
+                SOLC_AST_TYPE_EXPR_OPERAND_GENERIC_CALL);
+  SOLC_AST_CAST(generic_call_expr_operand_data, generic_call_expr_operand_ast,
+                ast_expr_operand_generic_call_t);
+  SOLC_ASSUME(generic_call_expr_operand_data->callee_name != nullptr);
+  return generic_call_expr_operand_data->callee_name;
+}
+
+solc_ast_t *solc_ast_expr_operand_generic_call_get_generic_type_list_ast(
+  solc_ast_t *generic_call_expr_operand_ast)
+{
+  SOLC_ASSUME(generic_call_expr_operand_ast != nullptr &&
+              generic_call_expr_operand_ast->type ==
+                SOLC_AST_TYPE_EXPR_OPERAND_GENERIC_CALL);
+  SOLC_AST_CAST(generic_call_expr_operand_data, generic_call_expr_operand_ast,
+                ast_expr_operand_generic_call_t);
+  return generic_call_expr_operand_data->generic_type_list_ast;
+}
+
+solc_ast_t **solc_ast_expr_operand_generic_call_get_argument_asts(
+  solc_ast_t *generic_call_expr_operand_ast, sz *out_n)
+{
+  SOLC_ASSUME(generic_call_expr_operand_ast != nullptr &&
+              generic_call_expr_operand_ast->type ==
+                SOLC_AST_TYPE_EXPR_OPERAND_GENERIC_CALL);
+  SOLC_AST_CAST(generic_call_expr_operand_data, generic_call_expr_operand_ast,
+                ast_expr_operand_generic_call_t);
+  SOLC_ASSUME(generic_call_expr_operand_data->arg_asts_v != nullptr);
+  if SOLC_LIKELY (out_n != nullptr)
+    *out_n = vector_get_length(generic_call_expr_operand_data->arg_asts_v);
+  return generic_call_expr_operand_data->arg_asts_v;
+}

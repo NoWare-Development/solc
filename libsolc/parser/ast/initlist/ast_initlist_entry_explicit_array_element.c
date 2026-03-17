@@ -72,3 +72,40 @@ string_t *solc_ast_initlist_entry_explicit_array_element_build_tree(
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+const char *solc_ast_initlist_entry_explicit_array_element_get_name(
+  solc_ast_t *initlist_entry_explicit_array_element_ast)
+{
+  SOLC_ASSUME(initlist_entry_explicit_array_element_ast != nullptr &&
+              initlist_entry_explicit_array_element_ast->type ==
+                SOLC_AST_TYPE_INITLIST_ENTRY_EXPLICIT_ARRAY_ELEMENT);
+  SOLC_AST_CAST(initlist_entry_explicit_array_element_data,
+                initlist_entry_explicit_array_element_ast,
+                ast_initlist_entry_explicit_array_element_t);
+  SOLC_ASSUME(initlist_entry_explicit_array_element_data->name != nullptr);
+  return initlist_entry_explicit_array_element_data->name;
+}
+
+solc_ast_t *solc_ast_initlist_entry_explicit_array_element_get_index_expr_ast(
+  solc_ast_t *initlist_entry_explicit_array_element_ast)
+{
+  SOLC_ASSUME(initlist_entry_explicit_array_element_ast != nullptr &&
+              initlist_entry_explicit_array_element_ast->type ==
+                SOLC_AST_TYPE_INITLIST_ENTRY_EXPLICIT_ARRAY_ELEMENT);
+  SOLC_AST_CAST(initlist_entry_explicit_array_element_data,
+                initlist_entry_explicit_array_element_ast,
+                ast_initlist_entry_explicit_array_element_t);
+  return initlist_entry_explicit_array_element_data->index_expr_ast;
+}
+
+solc_ast_t *solc_ast_initlist_entry_explicit_array_element_get_expr_ast(
+  solc_ast_t *initlist_entry_explicit_array_element_ast)
+{
+  SOLC_ASSUME(initlist_entry_explicit_array_element_ast != nullptr &&
+              initlist_entry_explicit_array_element_ast->type ==
+                SOLC_AST_TYPE_INITLIST_ENTRY_EXPLICIT_ARRAY_ELEMENT);
+  SOLC_AST_CAST(initlist_entry_explicit_array_element_data,
+                initlist_entry_explicit_array_element_ast,
+                ast_initlist_entry_explicit_array_element_t);
+  return initlist_entry_explicit_array_element_data->expr_ast;
+}

@@ -49,3 +49,20 @@ string_t *solc_ast_typedef_build_tree(solc_ast_t *typedef_ast)
   solc_ast_add_to_tree_if_exists(children_vs_v, typedef_data->type_ast);
   return ast_build_tree(&header, children_vs_v);
 }
+
+solc_ast_t *solc_ast_typedef_get_type_ast(solc_ast_t *typedef_ast)
+{
+  SOLC_ASSUME(typedef_ast != nullptr &&
+              typedef_ast->type == SOLC_AST_TYPE_NONE_TYPEDEF);
+  SOLC_AST_CAST(typedef_data, typedef_ast, ast_typedef_t);
+  return typedef_data->type_ast;
+}
+
+const char *solc_ast_typedef_get_name(solc_ast_t *typedef_ast)
+{
+  SOLC_ASSUME(typedef_ast != nullptr &&
+              typedef_ast->type == SOLC_AST_TYPE_NONE_TYPEDEF);
+  SOLC_AST_CAST(typedef_data, typedef_ast, ast_typedef_t);
+  SOLC_ASSUME(typedef_data->name != nullptr);
+  return typedef_data->name;
+}

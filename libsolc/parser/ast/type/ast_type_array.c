@@ -41,3 +41,19 @@ string_t *solc_ast_type_array_build_tree(solc_ast_t *array_type_ast)
   string_t header = string_create_from("TYPE_ARRAY");
   return ast_build_tree(&header, children_vs_v);
 }
+
+solc_ast_t *solc_ast_type_array_get_size_expr_ast(solc_ast_t *array_type_ast)
+{
+  SOLC_ASSUME(array_type_ast != nullptr &&
+              array_type_ast->type == SOLC_AST_TYPE_TYPE_ARRAY);
+  SOLC_AST_CAST(array_type_data, array_type_ast, ast_type_array_t);
+  return array_type_data->size_expr_ast;
+}
+
+solc_ast_t *solc_ast_type_array_get_type_ast(solc_ast_t *array_type_ast)
+{
+  SOLC_ASSUME(array_type_ast != nullptr &&
+              array_type_ast->type == SOLC_AST_TYPE_TYPE_ARRAY);
+  SOLC_AST_CAST(array_type_data, array_type_ast, ast_type_array_t);
+  return array_type_data->type_ast;
+}

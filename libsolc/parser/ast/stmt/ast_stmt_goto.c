@@ -42,3 +42,11 @@ string_t *solc_ast_stmt_goto_build_tree(solc_ast_t *goto_ast)
   vector_push(out_v, header);
   return out_v;
 }
+
+const char *solc_ast_stmt_goto_get_label_name(solc_ast_t *goto_ast)
+{
+  SOLC_ASSUME(goto_ast != nullptr && goto_ast->type == SOLC_AST_TYPE_STMT_GOTO);
+  SOLC_AST_CAST(goto_data, goto_ast, ast_goto_stmt_t);
+  SOLC_ASSUME(goto_data->label_name != nullptr);
+  return goto_data->label_name;
+}

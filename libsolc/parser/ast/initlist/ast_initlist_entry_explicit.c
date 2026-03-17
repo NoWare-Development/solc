@@ -60,3 +60,26 @@ string_t *solc_ast_initlist_entry_explicit_build_tree(
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+const char *solc_ast_initlist_entry_explicit_get_name(
+  solc_ast_t *initlist_entry_explicit_ast)
+{
+  SOLC_ASSUME(initlist_entry_explicit_ast != nullptr &&
+              initlist_entry_explicit_ast->type ==
+                SOLC_AST_TYPE_INITLIST_ENTRY_EXPLICIT);
+  SOLC_AST_CAST(initlist_entry_explicit_data, initlist_entry_explicit_ast,
+                ast_initlist_entry_explicit_t);
+  SOLC_ASSUME(initlist_entry_explicit_data->name != nullptr);
+  return initlist_entry_explicit_data->name;
+}
+
+solc_ast_t *solc_ast_initlist_entry_explicit_get_expr_ast(
+  solc_ast_t *initlist_entry_explicit_ast)
+{
+  SOLC_ASSUME(initlist_entry_explicit_ast != nullptr &&
+              initlist_entry_explicit_ast->type ==
+                SOLC_AST_TYPE_INITLIST_ENTRY_EXPLICIT);
+  SOLC_AST_CAST(initlist_entry_explicit_data, initlist_entry_explicit_ast,
+                ast_initlist_entry_explicit_t);
+  return initlist_entry_explicit_data->expr_ast;
+}

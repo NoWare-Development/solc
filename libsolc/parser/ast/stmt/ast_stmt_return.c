@@ -45,3 +45,11 @@ string_t *solc_ast_stmt_return_build_tree(solc_ast_t *return_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+solc_ast_t *solc_ast_stmt_return_get_expr_ast(solc_ast_t *return_ast)
+{
+  SOLC_ASSUME(return_ast != nullptr &&
+              return_ast->type == SOLC_AST_TYPE_STMT_RETURN);
+  SOLC_AST_CAST(return_data, return_ast, ast_return_stmt_t);
+  return return_data->expr_ast;
+}

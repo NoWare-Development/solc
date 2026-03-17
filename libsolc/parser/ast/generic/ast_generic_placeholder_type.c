@@ -52,3 +52,15 @@ string_t *solc_ast_generic_placeholder_type_build_tree(
 
   return out_v;
 }
+
+const char *solc_ast_generic_placeholder_type_get_name(
+  solc_ast_t *generic_placeholder_type_ast)
+{
+  SOLC_ASSUME(generic_placeholder_type_ast != nullptr &&
+              generic_placeholder_type_ast->type ==
+                SOLC_AST_TYPE_GENERIC_PLACEHOLDER_TYPE);
+  SOLC_AST_CAST(generic_placeholder_type_data, generic_placeholder_type_ast,
+                ast_generic_placeholder_type_t);
+  SOLC_ASSUME(generic_placeholder_type_data->name != nullptr);
+  return generic_placeholder_type_data->name;
+}

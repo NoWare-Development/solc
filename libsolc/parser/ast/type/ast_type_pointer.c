@@ -36,3 +36,11 @@ string_t *solc_ast_type_pointer_build_tree(solc_ast_t *pointer_type_ast)
   string_t header = string_create_from("TYPE_POINTER");
   return ast_build_tree(&header, children_vs_v);
 }
+
+solc_ast_t *solc_ast_type_pointer_get_type_ast(solc_ast_t *pointer_type_ast)
+{
+  SOLC_ASSUME(pointer_type_ast != nullptr &&
+              pointer_type_ast->type == SOLC_AST_TYPE_TYPE_POINTER);
+  SOLC_AST_CAST(pointer_type_data, pointer_type_ast, ast_pointer_type_t);
+  return pointer_type_data->type_ast;
+}

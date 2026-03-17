@@ -52,3 +52,21 @@ string_t *solc_ast_generic_type_build_tree(solc_ast_t *generic_type_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+const char *solc_ast_generic_type_get_name(solc_ast_t *generic_type_ast)
+{
+  SOLC_ASSUME(generic_type_ast != nullptr &&
+              generic_type_ast->type == SOLC_AST_TYPE_GENERIC_TYPE);
+  SOLC_AST_CAST(generic_type_data, generic_type_ast, ast_generic_type_t);
+  SOLC_ASSUME(generic_type_data->name != nullptr);
+  return generic_type_data->name;
+}
+
+solc_ast_t *
+solc_ast_generic_type_get_generic_type_list_ast(solc_ast_t *generic_type_ast)
+{
+  SOLC_ASSUME(generic_type_ast != nullptr &&
+              generic_type_ast->type == SOLC_AST_TYPE_GENERIC_TYPE);
+  SOLC_AST_CAST(generic_type_data, generic_type_ast, ast_generic_type_t);
+  return generic_type_data->generic_type_list_ast;
+}

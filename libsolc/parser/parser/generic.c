@@ -100,7 +100,10 @@ b8 solc_parser_is_expr_operand_generic_call(solc_parser_t *parser)
       break;
     }
 
-    solc_parser_parse_type(parser);
+    solc_ast_t *type_ast = solc_parser_parse_type(parser);
+    if (type_ast != nullptr)
+      solc_ast_destroy(type_ast);
+
     if (vector_get_length(parser->errors_v) != old_errors_size)
       break;
 
@@ -145,10 +148,12 @@ b8 solc_parser_is_generic_namespace(solc_parser_t *parser)
       break;
     }
 
-    solc_parser_parse_type(parser);
-    if (vector_get_length(parser->errors_v) != old_errors_size) {
+    solc_ast_t *type_ast = solc_parser_parse_type(parser);
+    if (type_ast != nullptr)
+      solc_ast_destroy(type_ast);
+
+    if (vector_get_length(parser->errors_v) != old_errors_size)
       break;
-    }
 
     solc_tokentype_t next = solc_parser_peek(parser, parser->pos);
     if (next != SOLC_TOKENTYPE_RARROW) {

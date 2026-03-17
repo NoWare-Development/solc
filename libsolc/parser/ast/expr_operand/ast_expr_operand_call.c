@@ -83,3 +83,28 @@ solc_ast_expr_operand_call_build_tree(solc_ast_t *call_expr_operand_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+const char *
+solc_ast_expr_operand_call_get_callee_name(solc_ast_t *call_expr_operand_ast)
+{
+  SOLC_ASSUME(call_expr_operand_ast != nullptr &&
+              call_expr_operand_ast->type == SOLC_AST_TYPE_EXPR_OPERAND_CALL);
+  SOLC_AST_CAST(call_expr_operand_data, call_expr_operand_ast,
+                ast_expr_operand_call_t);
+  SOLC_ASSUME(call_expr_operand_data->callee_name != nullptr);
+  return call_expr_operand_data->callee_name;
+}
+
+solc_ast_t **
+solc_ast_expr_operand_call_get_argument_asts(solc_ast_t *call_expr_operand_ast,
+                                             sz *out_n)
+{
+  SOLC_ASSUME(call_expr_operand_ast != nullptr &&
+              call_expr_operand_ast->type == SOLC_AST_TYPE_EXPR_OPERAND_CALL);
+  SOLC_AST_CAST(call_expr_operand_data, call_expr_operand_ast,
+                ast_expr_operand_call_t);
+  SOLC_ASSUME(call_expr_operand_data->arg_asts_v != nullptr);
+  if SOLC_LIKELY (out_n != nullptr)
+    *out_n = vector_get_length(call_expr_operand_data->arg_asts_v);
+  return call_expr_operand_data->arg_asts_v;
+}

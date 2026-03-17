@@ -36,3 +36,11 @@ string_t *solc_ast_type_typeof_build_tree(solc_ast_t *typeof_type_ast)
   string_t header = string_create_from("TYPE_TYPEOF");
   return ast_build_tree(&header, children_vs_v);
 }
+
+solc_ast_t *solc_ast_type_typeof_get_expr_ast(solc_ast_t *typeof_type_ast)
+{
+  SOLC_ASSUME(typeof_type_ast != nullptr &&
+              typeof_type_ast->type == SOLC_AST_TYPE_TYPE_TYPEOF);
+  SOLC_AST_CAST(typeof_type_data, typeof_type_ast, ast_typeof_type_t);
+  return typeof_type_data->expr_ast;
+}

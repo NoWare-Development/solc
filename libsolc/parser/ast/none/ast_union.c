@@ -64,3 +64,23 @@ string_t *solc_ast_union_build_tree(solc_ast_t *union_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+const char *solc_ast_union_get_name(solc_ast_t *union_ast)
+{
+  SOLC_ASSUME(union_ast != nullptr &&
+              union_ast->type == SOLC_AST_TYPE_NONE_UNION);
+  SOLC_AST_CAST(union_data, union_ast, ast_union_t);
+  SOLC_ASSUME(union_data->name != nullptr);
+  return union_data->name;
+}
+
+solc_ast_t **solc_ast_union_get_child_asts(solc_ast_t *union_ast, sz *out_n)
+{
+  SOLC_ASSUME(union_ast != nullptr &&
+              union_ast->type == SOLC_AST_TYPE_NONE_UNION);
+  SOLC_AST_CAST(union_data, union_ast, ast_union_t);
+  SOLC_ASSUME(union_data->children_v != nullptr);
+  if SOLC_LIKELY (out_n != nullptr)
+    *out_n = vector_get_length(union_data->children_v);
+  return union_data->children_v;
+}

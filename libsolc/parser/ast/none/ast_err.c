@@ -46,3 +46,11 @@ string_t *solc_ast_err_build_tree(solc_ast_t *err_ast)
   free(buf);
   return out_v;
 }
+
+const char *solc_ast_err_get_reason(solc_ast_t *err_ast)
+{
+  SOLC_ASSUME(err_ast != nullptr && err_ast->type == SOLC_AST_TYPE_NONE_ERR);
+  SOLC_AST_CAST(err_data, err_ast, ast_err_t);
+  SOLC_ASSUME(err_data->reason != nullptr);
+  return err_data->reason;
+}

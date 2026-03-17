@@ -42,3 +42,19 @@ string_t *solc_ast_type_funcptr_build_tree(solc_ast_t *funcptr_type_ast)
   string_t header = string_create_from("TYPE_FUNCPTR");
   return ast_build_tree(&header, children_vs_v);
 }
+
+solc_ast_t *solc_ast_type_funcptr_get_type_ast(solc_ast_t *funcptr_type_ast)
+{
+  SOLC_ASSUME(funcptr_type_ast != nullptr &&
+              funcptr_type_ast->type == SOLC_AST_TYPE_TYPE_FUNCPTR);
+  SOLC_AST_CAST(funcptr_type_data, funcptr_type_ast, ast_type_funcptr_t);
+  return funcptr_type_data->type_ast;
+}
+
+solc_ast_t *solc_ast_type_funcptr_get_arg_list_ast(solc_ast_t *funcptr_type_ast)
+{
+  SOLC_ASSUME(funcptr_type_ast != nullptr &&
+              funcptr_type_ast->type == SOLC_AST_TYPE_TYPE_FUNCPTR);
+  SOLC_AST_CAST(funcptr_type_data, funcptr_type_ast, ast_type_funcptr_t);
+  return funcptr_type_data->arg_list_ast;
+}

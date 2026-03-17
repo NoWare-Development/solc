@@ -71,3 +71,17 @@ solc_ast_generic_type_list_build_tree(solc_ast_t *generic_type_list_ast)
 
   return ast_build_tree(&header, children_vs_v);
 }
+
+solc_ast_t **
+solc_ast_generic_type_list_get_type_asts(solc_ast_t *generic_type_list_ast,
+                                         sz *out_n)
+{
+  SOLC_ASSUME(generic_type_list_ast != nullptr &&
+              generic_type_list_ast->type == SOLC_AST_TYPE_GENERIC_TYPE_LIST);
+  SOLC_AST_CAST(generic_type_list_data, generic_type_list_ast,
+                ast_generic_type_list_t);
+  SOLC_ASSUME(generic_type_list_data->type_asts_v != nullptr);
+  if SOLC_LIKELY (out_n != nullptr)
+    *out_n = vector_get_length(generic_type_list_data->type_asts_v);
+  return generic_type_list_data->type_asts_v;
+}

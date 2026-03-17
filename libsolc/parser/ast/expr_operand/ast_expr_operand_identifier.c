@@ -51,3 +51,15 @@ solc_ast_expr_operand_identifier_build_tree(solc_ast_t *id_expr_operand_ast)
   free(buf);
   return out_v;
 }
+
+const char *
+solc_ast_expr_operand_identifier_get_name(solc_ast_t *id_expr_operand_ast)
+{
+  SOLC_ASSUME(id_expr_operand_ast != nullptr &&
+              id_expr_operand_ast->type ==
+                SOLC_AST_TYPE_EXPR_OPERAND_IDENTIFIER);
+  SOLC_AST_CAST(id_expr_operand_data, id_expr_operand_ast,
+                ast_expr_operand_identifier_t);
+  SOLC_ASSUME(id_expr_operand_data->name != nullptr);
+  return id_expr_operand_data->name;
+}
