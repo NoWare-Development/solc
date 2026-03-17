@@ -28,10 +28,10 @@ typedef struct {
 static inline void get_binding_power(expr_operator_type_t operator, s32 *l_bp,
                                      s32 *r_bp);
 
-static inline ast_op_union_t *parse_expr_data(solc_parser_t *parser,
-                                              b8 toplevel);
+static inline ast_op_union_t *parse_expr_data(solc_parser_t *parser);
 static inline b8 validate_expr_data(solc_parser_t *parser, sz start_pos,
-                                    ast_op_union_t *ast_op_unions_v);
+                                    ast_op_union_t *ast_op_unions_v,
+                                    b8 toplevel);
 static solc_ast_t *pratt_parse_expr(ast_op_union_t *ast_op_unions_v, sz *pos,
                                     s32 min_bp);
 static expr_operator_type_t
@@ -57,9 +57,9 @@ solc_ast_t *solc_parser_parse_expr(solc_parser_t *parser, b8 toplevel)
 {
   VERIFY_POS(parser, parser->pos);
   sz start_pos = parser->pos;
-  ast_op_union_t *ast_op_unions_v = parse_expr_data(parser, toplevel);
+  ast_op_union_t *ast_op_unions_v = parse_expr_data(parser);
   solc_ast_t *out = nullptr;
-  out = !validate_expr_data(parser, start_pos, ast_op_unions_v) ?
+  out = !validate_expr_data(parser, start_pos, ast_op_unions_v, toplevel) ?
           nullptr :
           pratt_parse_expr(ast_op_unions_v, nullptr, 0);
 
@@ -73,10 +73,8 @@ solc_ast_t *solc_parser_parse_expr(solc_parser_t *parser, b8 toplevel)
   return out;
 }
 
-static inline ast_op_union_t *parse_expr_data(solc_parser_t *parser,
-                                              b8 toplevel)
+static inline ast_op_union_t *parse_expr_data(solc_parser_t *parser)
 {
-  SOLC_UNUSED(toplevel);
   ast_op_union_t *out_ast_op_unions_v = vector_create(ast_op_union_t);
 
   typedef struct {
@@ -435,6 +433,9 @@ static inline ast_op_union_t *parse_expr_data(solc_parser_t *parser,
         if (!solc_parser_is_numeric_token(cur_tok.type))
           break;
         // Numeric token
+
+        /* fallthrough */
+
       case SOLC_TOKENTYPE_ID: // Identifier
       case SOLC_TOKENTYPE_LPAREN: // Nested expression
       case SOLC_TOKENTYPE_STRING: // String
@@ -841,7 +842,8 @@ expr_operand_generic_call_after_loop:
 }
 
 static inline b8 validate_expr_data(solc_parser_t *parser, sz start_pos,
-                                    ast_op_union_t *ast_op_unions_v)
+                                    ast_op_union_t *ast_op_unions_v,
+                                    b8 toplevel)
 {
   sz ast_op_unions_v_size = vector_get_length(ast_op_unions_v);
   if SOLC_UNLIKELY (ast_op_unions_v_size == 0) {
@@ -876,14 +878,23 @@ static inline b8 validate_expr_data(solc_parser_t *parser, sz start_pos,
                             SOLC_PARSER_ERROR_TYPE_EXPR_PREFIX_AFTER_OPERAND,
                             cur_pos, 1, SOLC_TOKENTYPE_ERR);
       return false;
-    } else if SOLC_UNLIKELY (cur->is_operator) {
-      if (prev == nullptr) {
+    } else if (cur->is_operator) {
+      if SOLC_UNLIKELY (expr_operator_type_get_group(cur->operator_type) ==
+                          EXPR_OPERATOR_GROUP_ASSIGN &&
+                        !toplevel) {
+        // TODO: use proper operator length, it can be 1, 2, or 3
+        // (depending on an operator).
+        solc_parser_add_error(
+          parser, SOLC_PARSER_ERROR_TYPE_EXPR_ASSIGN_OPERATOR_IN_NON_TOPLEVEL,
+          cur_pos, 1, SOLC_TOKENTYPE_ERR);
+        return false;
+      } else if SOLC_UNLIKELY (prev == nullptr) {
         solc_parser_add_error(
           parser,
           SOLC_PARSER_ERROR_TYPE_EXPR_NON_PREFIX_OPERATOR_AT_THE_BEGINNING,
           cur_pos, 1, SOLC_TOKENTYPE_ERR);
         return false;
-      } else if (prev->is_operator) {
+      } else if SOLC_UNLIKELY (prev->is_operator) {
         solc_parser_add_error(
           parser, SOLC_PARSER_ERROR_TYPE_EXPR_2_NON_PREFIX_OPERATORS, cur_pos,
           1, SOLC_TOKENTYPE_ERR);
