@@ -152,4 +152,9 @@ solc_ast_t *solc_ast_prefix_expr_get_operand_ast(solc_ast_t *prefix_expr_ast);
 expr_operator_type_t *
 solc_ast_prefix_expr_get_operators(solc_ast_t *prefix_expr_ast, sz *out_n);
 
+solc_ast_t *solc_ast_vismarker_create(sz pos, const char *name);
+void solc_ast_vismarker_destroy(solc_ast_t *vismarker_ast);
+string_t *solc_ast_vismarker_build_tree(solc_ast_t *vismarker_ast);
+const char *solc_ast_vismarker_get_name(solc_ast_t *vismarker_ast);
+
 #endif // __SOLC_AST_GROUP_NONE_H__

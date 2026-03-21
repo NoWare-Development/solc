@@ -161,6 +161,9 @@ union TestUnion {
 }
 
 struct Test {
+private:
   func hihi :: () {}
+
+public:
   func haha<T> :: (a: T) {}
 }

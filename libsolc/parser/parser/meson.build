@@ -28,5 +28,6 @@ libsolc_src += [
   'libsolc/parser/parser/type.c',
   'libsolc/parser/parser/typedef.c',
   'libsolc/parser/parser/union.c',
+  'libsolc/parser/parser/vismarker.c',
   'libsolc/parser/parser/while.c',
 ]

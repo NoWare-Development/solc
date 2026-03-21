@@ -53,6 +53,10 @@ void parser_context_initialize(void)
   trie_insert(parser_ctx.struct_funcptrs, "enum", solc_parser_parse_enum);
   trie_insert(parser_ctx.struct_funcptrs, "struct", solc_parser_parse_struct);
   trie_insert(parser_ctx.struct_funcptrs, "union", solc_parser_parse_union);
+  trie_insert(parser_ctx.struct_funcptrs, "public",
+              solc_parser_parse_vismarker);
+  trie_insert(parser_ctx.struct_funcptrs, "private",
+              solc_parser_parse_vismarker);
 
   trie_insert(parser_ctx.union_funcptrs, "typedef", solc_parser_parse_typedef);
   trie_insert(parser_ctx.union_funcptrs, "enum", solc_parser_parse_enum);
