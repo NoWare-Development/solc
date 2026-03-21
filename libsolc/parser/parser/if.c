@@ -21,10 +21,7 @@ solc_ast_t *solc_parser_parse_stmt_if(solc_parser_t *parser)
 
   parser->pos++;
 
-  solc_ast_t *attrib_list = nullptr;
-  if (parser->pos < parser->tokens_num &&
-      parser->tokens[parser->pos].type == SOLC_TOKENTYPE_LBRACK)
-    attrib_list = solc_parser_parse_attribute_list(parser);
+  solc_ast_t *attrib_list = solc_parser_parse_attribute_list_optional(parser);
 
   solc_ast_t *stmt = solc_parser_parse_stmt(parser);
   solc_ast_t *else_stmt =

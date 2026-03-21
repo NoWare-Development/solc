@@ -78,21 +78,25 @@ solc_ast_t *solc_ast_variadic_create(sz pos);
 void solc_ast_variadic_destroy(solc_ast_t *variadic_ast);
 string_t *solc_ast_variadic_build_tree(solc_ast_t *variadic_ast);
 
-solc_ast_t *solc_ast_struct_create(sz pos, const char *name);
+solc_ast_t *solc_ast_struct_create(sz pos, const char *name,
+                                   solc_ast_t *attribute_list_ast);
 void solc_ast_struct_destroy(solc_ast_t *struct_ast);
 void solc_ast_struct_add_child(solc_ast_t *struct_ast, solc_ast_t *child_ast);
 string_t *solc_ast_struct_build_tree(solc_ast_t *struct_ast);
 const char *solc_ast_struct_get_name(solc_ast_t *struct_ast);
 solc_ast_t **solc_ast_struct_get_child_asts(solc_ast_t *struct_ast, sz *out_n);
+solc_ast_t *solc_ast_struct_get_attribute_list_ast(solc_ast_t *struct_ast);
 
-solc_ast_t *solc_ast_union_create(sz pos, const char *name);
+solc_ast_t *solc_ast_union_create(sz pos, const char *name,
+                                  solc_ast_t *attribute_list_ast);
 void solc_ast_union_destroy(solc_ast_t *union_ast);
 void solc_ast_union_add_child(solc_ast_t *union_ast, solc_ast_t *child_ast);
 string_t *solc_ast_union_build_tree(solc_ast_t *union_ast);
 const char *solc_ast_union_get_name(solc_ast_t *union_ast);
 solc_ast_t **solc_ast_union_get_child_asts(solc_ast_t *union_ast, sz *out_n);
 
-solc_ast_t *solc_ast_enum_create(sz pos, const char *name);
+solc_ast_t *solc_ast_enum_create(sz pos, const char *name,
+                                 solc_ast_t *attribute_list_ast);
 void solc_ast_enum_destroy(solc_ast_t *enum_ast);
 void solc_ast_enum_add_element(solc_ast_t *enum_ast,
                                solc_ast_t *enum_element_ast);

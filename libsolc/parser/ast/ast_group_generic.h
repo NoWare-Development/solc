@@ -7,16 +7,19 @@
 
 solc_ast_t *
 solc_ast_generic_struct_create(sz pos, const char *name,
-                               solc_ast_t *generic_placeholder_type_list_ast);
+                               solc_ast_t *generic_placeholder_type_list_ast,
+                               solc_ast_t *attribute_list_ast);
 void solc_ast_generic_struct_destroy(solc_ast_t *generic_struct_ast);
-void solc_ast_generic_struct_append_child(solc_ast_t *generic_struct_ast,
-                                          solc_ast_t *child_ast);
+void solc_ast_generic_struct_add_child(solc_ast_t *generic_struct_ast,
+                                       solc_ast_t *child_ast);
 string_t *solc_ast_generic_struct_build_tree(solc_ast_t *generic_struct_ast);
 const char *solc_ast_generic_struct_get_name(solc_ast_t *generic_struct_ast);
 solc_ast_t *solc_ast_generic_struct_get_placeholder_type_list_ast(
   solc_ast_t *generic_struct_ast);
 solc_ast_t **
 solc_ast_generic_struct_get_children(solc_ast_t *generic_struct_ast, sz *out_n);
+solc_ast_t *
+solc_ast_generic_struct_get_attribute_list_ast(solc_ast_t *generic_struct_ast);
 
 solc_ast_t *
 solc_ast_generic_func_create(sz pos, const char *name, solc_ast_t *type_ast,

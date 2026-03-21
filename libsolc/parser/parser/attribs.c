@@ -91,3 +91,13 @@ solc_ast_t *solc_parser_parse_attribute_list(solc_parser_t *parser)
 
   return out_attrib_list;
 }
+
+solc_ast_t *solc_parser_parse_attribute_list_optional(solc_parser_t *parser)
+{
+  return parser->pos + 1 < parser->tokens_num &&
+             parser->tokens[parser->pos].type == SOLC_TOKENTYPE_LBRACK &&
+             !parser->tokens[parser->pos].has_whitespace_after &&
+             parser->tokens[parser->pos + 1].type == SOLC_TOKENTYPE_LBRACK ?
+           solc_parser_parse_attribute_list(parser) :
+           nullptr;
+}

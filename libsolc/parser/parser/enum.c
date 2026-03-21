@@ -12,9 +12,12 @@ solc_ast_t *solc_parser_parse_enum(solc_parser_t *parser)
   VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,
                SOLC_TOKENTYPE_ID);
 
-  solc_ast_t *enum_ast =
-    solc_ast_enum_create(parser->pos, parser->tokens[parser->pos].value);
+  const char *enum_name = parser->tokens[parser->pos].value;
+  const sz enum_pos = parser->pos;
+
   parser->pos++;
+  solc_ast_t *attrib_list = solc_parser_parse_attribute_list_optional(parser);
+  solc_ast_t *enum_ast = solc_ast_enum_create(enum_pos, enum_name, attrib_list);
 
   VERIFY_POS(parser, parser->pos);
   VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,

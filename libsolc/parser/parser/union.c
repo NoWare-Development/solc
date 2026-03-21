@@ -12,10 +12,15 @@ solc_ast_t *solc_parser_parse_union(solc_parser_t *parser)
   VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,
                SOLC_TOKENTYPE_ID);
 
-  solc_ast_t *union_ast =
-    solc_ast_union_create(parser->pos, parser->tokens[parser->pos].value);
+  const char *union_name = parser->tokens[parser->pos].value;
+  const sz union_pos = parser->pos;
 
   parser->pos++;
+  solc_ast_t *attrib_list = solc_parser_parse_attribute_list_optional(parser);
+
+  solc_ast_t *union_ast =
+    solc_ast_union_create(union_pos, union_name, attrib_list);
+
   VERIFY_POS(parser, parser->pos);
   VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,
                SOLC_TOKENTYPE_LCBRACK);
