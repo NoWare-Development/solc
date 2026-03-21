@@ -43,6 +43,7 @@ void parser_context_initialize(void)
   trie_insert(parser_ctx.stmt_funcptrs, "while", solc_parser_parse_stmt_while);
   trie_insert(parser_ctx.stmt_funcptrs, "for", solc_parser_parse_stmt_for);
   trie_insert(parser_ctx.stmt_funcptrs, "do", solc_parser_parse_stmt_dowhile);
+  trie_insert(parser_ctx.stmt_funcptrs, "loop", solc_parser_parse_stmt_loop);
   trie_insert(parser_ctx.stmt_funcptrs, "switch",
               solc_parser_parse_stmt_switch);
   trie_insert(parser_ctx.stmt_funcptrs, "defer", solc_parser_parse_stmt_defer);

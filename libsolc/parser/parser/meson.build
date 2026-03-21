@@ -21,6 +21,7 @@ libsolc_src += [
   'libsolc/parser/parser/import.c',
   'libsolc/parser/parser/initlist.c',
   'libsolc/parser/parser/label.c',
+  'libsolc/parser/parser/loop.c',
   'libsolc/parser/parser/module.c',
   'libsolc/parser/parser/return.c',
   'libsolc/parser/parser/struct.c',

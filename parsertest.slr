@@ -65,6 +65,11 @@ main :: (argc: s32 = 4*5, argv: u8[][]) -> s32 {
     break;
   }
 
+  loop { break; }
+  loop break;
+  loop [[none]] { break; }
+  loop [[none]] break;
+
   for (; 1 < 2; id = 4) break;
 
   do { } while (0);
