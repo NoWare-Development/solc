@@ -37,8 +37,8 @@ string_t *solc_ast_vismarker_build_tree(solc_ast_t *vismarker_ast)
   SOLC_AST_CAST(vismarker_data, vismarker_ast, ast_vismarker_t);
   SOLC_ASSUME(vismarker_data->name != nullptr);
 
-  const sz n = sizeof("VISMARKER { name: \"") + sizeof("\" }") +
-               strlen(vismarker_data->name);
+  const sz n =
+    sizeof("VISMARKER { name: \"\" }") + strlen(vismarker_data->name);
   char *buf = malloc(sizeof(char) * (n + 1));
   snprintf(buf, n, "VISMARKER { name: \"%s\" }", vismarker_data->name);
 
