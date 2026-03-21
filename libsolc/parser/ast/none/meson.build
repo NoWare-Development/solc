@@ -1,4 +1,5 @@
 libsolc_src += [
+  'libsolc/parser/ast/none/ast_attribute.c',
   'libsolc/parser/ast/none/ast_enum.c',
   'libsolc/parser/ast/none/ast_enum_element.c',
   'libsolc/parser/ast/none/ast_err.c',

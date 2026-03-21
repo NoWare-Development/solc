@@ -157,4 +157,13 @@ void solc_ast_vismarker_destroy(solc_ast_t *vismarker_ast);
 string_t *solc_ast_vismarker_build_tree(solc_ast_t *vismarker_ast);
 const char *solc_ast_vismarker_get_name(solc_ast_t *vismarker_ast);
 
+solc_ast_t *solc_ast_attribute_create(sz pos, const char *name);
+void solc_ast_attribute_destroy(solc_ast_t *attribute_ast);
+void solc_ast_attribute_add_argument(solc_ast_t *attribute_ast,
+                                     solc_ast_t *expr_ast);
+string_t *solc_ast_attribute_build_tree(solc_ast_t *attribute_ast);
+const char *solc_ast_attribute_get_name(solc_ast_t *attribute_ast);
+solc_ast_t **solc_ast_attribute_get_arguments(solc_ast_t *attribute_ast,
+                                              sz *out_n);
+
 #endif // __SOLC_AST_GROUP_NONE_H__

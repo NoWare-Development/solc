@@ -53,7 +53,8 @@ typedef enum {
   __SOLC_AST_TYPE_X(NAMESPACE, NONE, 17, namespace)          \
   __SOLC_AST_TYPE_X(INITLIST, NONE, 18, initlist)            \
   __SOLC_AST_TYPE_X(PREFIX_EXPR, NONE, 19, prefix_expr)      \
-  __SOLC_AST_TYPE_X(VISMARKER, NONE, 20, vismarker)
+  __SOLC_AST_TYPE_X(VISMARKER, NONE, 20, vismarker)          \
+  __SOLC_AST_TYPE_X(ATTRIBUTE, NONE, 21, attribute)
 
 #define __SOLC_AST_TYPES_STMT                               \
   __SOLC_AST_TYPE_X(BLOCK, STMT, 0, stmt_block)             \
