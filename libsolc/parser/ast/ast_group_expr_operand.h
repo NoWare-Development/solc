@@ -118,4 +118,11 @@ solc_ast_expr_operand_sizeof_build_tree(solc_ast_t *sizeof_expr_operand_ast);
 solc_ast_t *
 solc_ast_expr_operand_sizeof_get_type_ast(solc_ast_t *sizeof_expr_operand_ast);
 
+solc_ast_t *solc_ast_expr_operand_alignof_create(sz pos, solc_ast_t *expr_ast);
+void solc_ast_expr_operand_alignof_destroy(solc_ast_t *alignof_expr_operand_ast);
+string_t *
+solc_ast_expr_operand_alignof_build_tree(solc_ast_t *alignof_expr_operand_ast);
+solc_ast_t *solc_ast_expr_operand_alignof_get_expr_ast(
+  solc_ast_t *alignof_expr_operand_ast);
+
 #endif // __SOLC_AST_GROUP_EXPR_OPERAND_H__

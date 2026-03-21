@@ -101,7 +101,8 @@ typedef enum {
   __SOLC_AST_TYPE_X(ACCESS_MEMBER, EXPR_OPERAND, 9,                            \
                     expr_operand_access_member)                                \
   __SOLC_AST_TYPE_X(GENERIC_CALL, EXPR_OPERAND, 10, expr_operand_generic_call) \
-  __SOLC_AST_TYPE_X(SIZEOF, EXPR_OPERAND, 11, expr_operand_sizeof)
+  __SOLC_AST_TYPE_X(SIZEOF, EXPR_OPERAND, 11, expr_operand_sizeof)             \
+  __SOLC_AST_TYPE_X(ALIGNOF, EXPR_OPERAND, 12, expr_operand_alignof)
 
 #define __SOLC_AST_TYPES_INITLIST                                         \
   __SOLC_AST_TYPE_X(ENTRY, INITLIST, 0, initlist_entry)                   \

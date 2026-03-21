@@ -1,5 +1,6 @@
 libsolc_src += [
   'libsolc/parser/ast/expr_operand/ast_expr_operand_access_member.c',
+  'libsolc/parser/ast/expr_operand/ast_expr_operand_alignof.c',
   'libsolc/parser/ast/expr_operand/ast_expr_operand_array_element.c',
   'libsolc/parser/ast/expr_operand/ast_expr_operand_call.c',
   'libsolc/parser/ast/expr_operand/ast_expr_operand_cast.c',

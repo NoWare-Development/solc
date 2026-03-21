@@ -165,7 +165,9 @@ private:
   func hihi :: () {}
 
 public:
-  func haha<T> :: (a: T) {}
+  func haha<T> :: (a: T) -> int {
+    return alignof(a);
+  }
 }
 
 /* === Attribute tests === */
