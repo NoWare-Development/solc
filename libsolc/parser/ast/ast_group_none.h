@@ -114,13 +114,15 @@ solc_ast_t *solc_ast_enum_element_get_expr_ast(solc_ast_t *enum_element_ast);
 solc_ast_t *solc_ast_func_create(sz pos, const char *name, solc_ast_t *type_ast,
                                  solc_ast_t *arg_list_ast,
                                  solc_ast_t *block_ast,
-                                 solc_ast_func_type_t func_type);
+                                 solc_ast_func_type_t func_type,
+                                 solc_ast_t *attribute_list_ast);
 void solc_ast_func_destroy(solc_ast_t *func_ast);
 string_t *solc_ast_func_build_tree(solc_ast_t *func_ast);
 const char *solc_ast_func_get_name(solc_ast_t *func_ast);
 solc_ast_t *solc_ast_func_get_type_ast(solc_ast_t *func_ast);
 solc_ast_t *solc_ast_func_get_arg_list_ast(solc_ast_t *func_ast);
 solc_ast_t *solc_ast_func_get_block_ast(solc_ast_t *func_ast);
+solc_ast_t *solc_ast_func_get_attribute_list_ast(solc_ast_t *func_ast);
 solc_ast_func_type_t solc_ast_func_get_func_type(solc_ast_t *func_ast);
 b8 solc_ast_func_is_explicit(solc_ast_t *func_ast);
 b8 solc_ast_func_is_exported(solc_ast_t *func_ast);

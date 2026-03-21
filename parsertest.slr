@@ -168,8 +168,24 @@ public:
   func haha<T> :: (a: T) {}
 }
 
+/* === Attribute tests === */
+
+[[alignas(16)]] aligned_var_1: s32;
+[[alignas(16)]] const aligned_var_2: s32;
+[[alignas(16)]] aligned_var_3: s32 = 123;
+[[alignas(16)]] aligned_var_4 := 123;
+[[alignas(16)]] const aligned_var_5 := 123;
+[[naked]] naked_func_1 :: () {}
+[[naked]] inline naked_func_2 :: () {}
+[[naked]] func naked_func_3 :: () {}
+[[naked]] inline func naked_func_4 :: () {}
+[[naked]] naked_generic_func_1<T> :: () {}
+[[naked]] inline naked_generic_func_2<T> :: () {}
+[[naked]] func naked_generic_func_3<T> :: () {}
+[[naked]] inline func naked_generic_func_4<T> :: () {}
+
 _ :: () {
-  if (test) [[likely, unlikely, optimize(3, "test", 1 + 2)]] {}
+  if (test) [[likely, unlikely, optimize(3, "test", 1 + 2)]];
 }
 
 struct StructWithAttribs [[packed]] {

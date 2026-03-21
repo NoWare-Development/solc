@@ -51,11 +51,15 @@ solc_ast_t *solc_parser_parse_import(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_module(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_export(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_extern(solc_parser_t *parser);
-solc_ast_t *solc_parser_parse_decldef(solc_parser_t *parser);
-solc_ast_t *solc_parser_parse_decldef_var(solc_parser_t *parser);
+solc_ast_t *solc_parser_parse_decldef(solc_parser_t *parser,
+                                      solc_ast_t *attribute_list_ast);
+solc_ast_t *solc_parser_parse_decldef_var(solc_parser_t *parser,
+                                          solc_ast_t *attribute_list_ast);
 solc_ast_t *solc_parser_parse_def_func(solc_parser_t *parser,
+                                       solc_ast_t *attribute_list_ast,
                                        solc_ast_func_type_t func_type);
 solc_ast_t *solc_parser_parse_def_func_generic(solc_parser_t *parser,
+                                               solc_ast_t *attribute_list_ast,
                                                solc_ast_func_type_t func_type);
 solc_ast_t *solc_parser_parse_func_arg(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_stmt(solc_parser_t *parser);

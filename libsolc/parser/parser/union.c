@@ -42,8 +42,11 @@ solc_ast_t *solc_parser_parse_union(solc_parser_t *parser)
       }
     }
 
-    if (!parsed_child)
-      child_ast = solc_parser_parse_decldef(parser);
+    if (!parsed_child) {
+      solc_ast_t *decldef_attrib_list =
+        solc_parser_parse_attribute_list_optional(parser);
+      child_ast = solc_parser_parse_decldef(parser, decldef_attrib_list);
+    }
 
     solc_ast_union_add_child(union_ast, child_ast);
   }

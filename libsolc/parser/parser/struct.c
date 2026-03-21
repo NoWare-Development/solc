@@ -53,8 +53,11 @@ solc_ast_t *solc_parser_parse_struct(solc_parser_t *parser)
       }
     }
 
-    if (!child_parsed)
-      child_ast = solc_parser_parse_decldef(parser);
+    if (!child_parsed) {
+      solc_ast_t *decldef_attrib_list =
+        solc_parser_parse_attribute_list_optional(parser);
+      child_ast = solc_parser_parse_decldef(parser, decldef_attrib_list);
+    }
 
     if (struct_ast->type == SOLC_AST_TYPE_GENERIC_STRUCT)
       solc_ast_generic_struct_add_child(struct_ast, child_ast);

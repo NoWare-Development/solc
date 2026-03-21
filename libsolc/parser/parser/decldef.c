@@ -8,15 +8,16 @@
 #include "solc/parser/parser.h"
 #include <string.h>
 
-solc_ast_t *solc_parser_parse_decldef(solc_parser_t *parser)
+solc_ast_t *solc_parser_parse_decldef(solc_parser_t *parser,
+                                      solc_ast_t *attribute_list_ast)
 {
   VERIFY_POS(parser, parser->pos);
 
   solc_token_t cur = parser->tokens[parser->pos];
   if (solc_parser_is_qualifier(cur.value)) {
     sz pos = parser->pos++;
-    return solc_ast_qualifier_create(pos, cur.value,
-                                     solc_parser_parse_decldef(parser));
+    return solc_ast_qualifier_create(
+      pos, cur.value, solc_parser_parse_decldef(parser, attribute_list_ast));
   }
 
   if (cur.type == SOLC_TOKENTYPE_ID && strcmp(cur.value, "func") == 0) {
@@ -27,11 +28,12 @@ solc_ast_t *solc_parser_parse_decldef(solc_parser_t *parser)
 
     VERIFY_POS(parser, parser->pos + 1);
     if (parser->tokens[parser->pos + 1].type == SOLC_TOKENTYPE_LARROW) {
-      return solc_parser_parse_def_func_generic(parser,
+      return solc_parser_parse_def_func_generic(parser, attribute_list_ast,
                                                 SOLC_AST_FUNC_TYPE_EXPLICIT);
     }
 
-    return solc_parser_parse_def_func(parser, SOLC_AST_FUNC_TYPE_EXPLICIT);
+    return solc_parser_parse_def_func(parser, attribute_list_ast,
+                                      SOLC_AST_FUNC_TYPE_EXPLICIT);
   }
 
   VERIFY_POS(parser, parser->pos + 1);
@@ -39,10 +41,12 @@ solc_ast_t *solc_parser_parse_decldef(solc_parser_t *parser)
   case SOLC_TOKENTYPE_COLON: {
     if (!parser->tokens[parser->pos + 1].has_whitespace_after &&
         solc_parser_peek(parser, parser->pos + 2) == SOLC_TOKENTYPE_COLON) {
-      return solc_parser_parse_def_func(parser, SOLC_AST_FUNC_TYPE_DEFAULT);
+      return solc_parser_parse_def_func(parser, attribute_list_ast,
+                                        SOLC_AST_FUNC_TYPE_DEFAULT);
     }
 
-    solc_ast_t *var_decldef_ast = solc_parser_parse_decldef_var(parser);
+    solc_ast_t *var_decldef_ast =
+      solc_parser_parse_decldef_var(parser, attribute_list_ast);
     VERIFY_POS(parser, parser->pos);
     VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,
                  SOLC_TOKENTYPE_SEMI);
@@ -51,7 +55,7 @@ solc_ast_t *solc_parser_parse_decldef(solc_parser_t *parser)
   }
 
   case SOLC_TOKENTYPE_LARROW: {
-    return solc_parser_parse_def_func_generic(parser,
+    return solc_parser_parse_def_func_generic(parser, attribute_list_ast,
                                               SOLC_AST_FUNC_TYPE_DEFAULT);
   }
 
@@ -65,7 +69,8 @@ solc_ast_t *solc_parser_parse_decldef(solc_parser_t *parser)
   return nullptr;
 }
 
-solc_ast_t *solc_parser_parse_decldef_var(solc_parser_t *parser)
+solc_ast_t *solc_parser_parse_decldef_var(solc_parser_t *parser,
+                                          solc_ast_t *attribute_list_ast)
 {
   sz start_pos = parser->pos;
 
@@ -94,8 +99,10 @@ parse_var_def:
                            SOLC_TOKENTYPE_LCBRACK ?
                          solc_parser_parse_initlist(parser) :
                          solc_parser_parse_expr(parser, false);
-    return solc_ast_var_def_create(start_pos, id_value, type_ast, expr);
+    return solc_ast_var_def_create(start_pos, id_value, type_ast, expr,
+                                   attribute_list_ast);
   }
 
-  return solc_ast_var_decl_create(start_pos, id_value, type_ast);
+  return solc_ast_var_decl_create(start_pos, id_value, type_ast,
+                                  attribute_list_ast);
 }

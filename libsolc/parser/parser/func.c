@@ -8,6 +8,7 @@
 #include "parser/parser_private.h"
 
 solc_ast_t *solc_parser_parse_def_func(solc_parser_t *parser,
+                                       solc_ast_t *attribute_list_ast,
                                        solc_ast_func_type_t func_type)
 {
   VERIFY_POS(parser, parser->pos);
@@ -52,10 +53,11 @@ solc_ast_t *solc_parser_parse_def_func(solc_parser_t *parser,
   solc_ast_t *block = solc_parser_parse_stmt_block(parser);
 
   return solc_ast_func_create(func_pos, func_name, type_ast, arglist_ast, block,
-                              func_type);
+                              func_type, attribute_list_ast);
 }
 
 solc_ast_t *solc_parser_parse_def_func_generic(solc_parser_t *parser,
+                                               solc_ast_t *attribute_list_ast,
                                                solc_ast_func_type_t func_type)
 {
   VERIFY_POS(parser, parser->pos);
@@ -110,12 +112,13 @@ solc_ast_t *solc_parser_parse_def_func_generic(solc_parser_t *parser,
   return solc_ast_generic_func_create(generic_func_pos, generic_func_name,
                                       type_ast, arglist_ast, block,
                                       generic_placeholder_type_list_ast,
-                                      func_type);
+                                      func_type, attribute_list_ast);
 }
 
 solc_ast_t *solc_parser_parse_export(solc_parser_t *parser)
 {
   parser->pos++;
 
-  return solc_parser_parse_def_func(parser, SOLC_AST_FUNC_TYPE_EXPORTED);
+  return solc_parser_parse_def_func(parser, nullptr,
+                                    SOLC_AST_FUNC_TYPE_EXPORTED);
 }
