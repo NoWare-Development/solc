@@ -99,6 +99,8 @@ solc_ast_t *solc_parser_parse_expr_operand_identifier(solc_parser_t *parser,
 solc_ast_t *solc_parser_parse_expr_operand_array_element(solc_parser_t *parser,
                                                          solc_ast_t *array_ast);
 solc_ast_t *solc_parser_parse_vismarker(solc_parser_t *parser);
+solc_ast_t *solc_parser_parse_attribute(solc_parser_t *parser);
+solc_ast_t *solc_parser_parse_attribute_list(solc_parser_t *parser);
 
 void solc_parser_skip_until(solc_parser_t *parser, solc_tokentype_t token_type);
 void solc_parser_advance_to_terminator(solc_parser_t *parser);

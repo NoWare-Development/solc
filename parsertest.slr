@@ -167,3 +167,7 @@ private:
 public:
   func haha<T> :: (a: T) {}
 }
+
+_ :: () {
+  if (test) [[likely, unlikely, optimize(3, "test", 1 + 2)]] {}
+}
