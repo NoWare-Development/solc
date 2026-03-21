@@ -78,21 +78,25 @@ solc_ast_t *solc_ast_variadic_create(sz pos);
 void solc_ast_variadic_destroy(solc_ast_t *variadic_ast);
 string_t *solc_ast_variadic_build_tree(solc_ast_t *variadic_ast);
 
-solc_ast_t *solc_ast_struct_create(sz pos, const char *name);
+solc_ast_t *solc_ast_struct_create(sz pos, const char *name,
+                                   solc_ast_t *attribute_list_ast);
 void solc_ast_struct_destroy(solc_ast_t *struct_ast);
 void solc_ast_struct_add_child(solc_ast_t *struct_ast, solc_ast_t *child_ast);
 string_t *solc_ast_struct_build_tree(solc_ast_t *struct_ast);
 const char *solc_ast_struct_get_name(solc_ast_t *struct_ast);
 solc_ast_t **solc_ast_struct_get_child_asts(solc_ast_t *struct_ast, sz *out_n);
+solc_ast_t *solc_ast_struct_get_attribute_list_ast(solc_ast_t *struct_ast);
 
-solc_ast_t *solc_ast_union_create(sz pos, const char *name);
+solc_ast_t *solc_ast_union_create(sz pos, const char *name,
+                                  solc_ast_t *attribute_list_ast);
 void solc_ast_union_destroy(solc_ast_t *union_ast);
 void solc_ast_union_add_child(solc_ast_t *union_ast, solc_ast_t *child_ast);
 string_t *solc_ast_union_build_tree(solc_ast_t *union_ast);
 const char *solc_ast_union_get_name(solc_ast_t *union_ast);
 solc_ast_t **solc_ast_union_get_child_asts(solc_ast_t *union_ast, sz *out_n);
 
-solc_ast_t *solc_ast_enum_create(sz pos, const char *name);
+solc_ast_t *solc_ast_enum_create(sz pos, const char *name,
+                                 solc_ast_t *attribute_list_ast);
 void solc_ast_enum_destroy(solc_ast_t *enum_ast);
 void solc_ast_enum_add_element(solc_ast_t *enum_ast,
                                solc_ast_t *enum_element_ast);
@@ -110,13 +114,15 @@ solc_ast_t *solc_ast_enum_element_get_expr_ast(solc_ast_t *enum_element_ast);
 solc_ast_t *solc_ast_func_create(sz pos, const char *name, solc_ast_t *type_ast,
                                  solc_ast_t *arg_list_ast,
                                  solc_ast_t *block_ast,
-                                 solc_ast_func_type_t func_type);
+                                 solc_ast_func_type_t func_type,
+                                 solc_ast_t *attribute_list_ast);
 void solc_ast_func_destroy(solc_ast_t *func_ast);
 string_t *solc_ast_func_build_tree(solc_ast_t *func_ast);
 const char *solc_ast_func_get_name(solc_ast_t *func_ast);
 solc_ast_t *solc_ast_func_get_type_ast(solc_ast_t *func_ast);
 solc_ast_t *solc_ast_func_get_arg_list_ast(solc_ast_t *func_ast);
 solc_ast_t *solc_ast_func_get_block_ast(solc_ast_t *func_ast);
+solc_ast_t *solc_ast_func_get_attribute_list_ast(solc_ast_t *func_ast);
 solc_ast_func_type_t solc_ast_func_get_func_type(solc_ast_t *func_ast);
 b8 solc_ast_func_is_explicit(solc_ast_t *func_ast);
 b8 solc_ast_func_is_exported(solc_ast_t *func_ast);
@@ -151,5 +157,28 @@ string_t *solc_ast_prefix_expr_build_tree(solc_ast_t *prefix_expr_ast);
 solc_ast_t *solc_ast_prefix_expr_get_operand_ast(solc_ast_t *prefix_expr_ast);
 expr_operator_type_t *
 solc_ast_prefix_expr_get_operators(solc_ast_t *prefix_expr_ast, sz *out_n);
+
+solc_ast_t *solc_ast_vismarker_create(sz pos, const char *name);
+void solc_ast_vismarker_destroy(solc_ast_t *vismarker_ast);
+string_t *solc_ast_vismarker_build_tree(solc_ast_t *vismarker_ast);
+const char *solc_ast_vismarker_get_name(solc_ast_t *vismarker_ast);
+
+solc_ast_t *solc_ast_attribute_create(sz pos, const char *name);
+void solc_ast_attribute_destroy(solc_ast_t *attribute_ast);
+void solc_ast_attribute_add_argument(solc_ast_t *attribute_ast,
+                                     solc_ast_t *expr_ast);
+string_t *solc_ast_attribute_build_tree(solc_ast_t *attribute_ast);
+const char *solc_ast_attribute_get_name(solc_ast_t *attribute_ast);
+solc_ast_t **solc_ast_attribute_get_arguments(solc_ast_t *attribute_ast,
+                                              sz *out_n);
+
+solc_ast_t *solc_ast_attribute_list_create(sz pos);
+void solc_ast_attribute_list_destroy(solc_ast_t *attribute_list_ast);
+void solc_ast_attribute_list_add_attribute(solc_ast_t *attribute_list_ast,
+                                           solc_ast_t *attribute_ast);
+string_t *solc_ast_attribute_list_build_tree(solc_ast_t *attribute_list_ast);
+solc_ast_t **
+solc_ast_attribute_list_get_attributes(solc_ast_t *attribute_list_ast,
+                                       sz *out_n);
 
 #endif // __SOLC_AST_GROUP_NONE_H__

@@ -96,10 +96,12 @@ string_t *solc_ast_stmt_defer_build_tree(solc_ast_t *defer_ast);
 solc_ast_t *solc_ast_stmt_defer_get_block_ast(solc_ast_t *defer_ast);
 
 solc_ast_t *solc_ast_stmt_if_create(sz pos, solc_ast_t *condition_expr_ast,
+                                    solc_ast_t *attribute_list_ast,
                                     solc_ast_t *stmt_ast, solc_ast_t *else_ast);
 void solc_ast_stmt_if_destroy(solc_ast_t *if_ast);
 string_t *solc_ast_stmt_if_build_tree(solc_ast_t *if_ast);
 solc_ast_t *solc_ast_stmt_if_get_condition_expr_ast(solc_ast_t *if_ast);
+solc_ast_t *solc_ast_stmt_if_get_attribute_list_ast(solc_ast_t *if_ast);
 solc_ast_t *solc_ast_stmt_if_get_stmt_ast(solc_ast_t *if_ast);
 solc_ast_t *solc_ast_stmt_if_get_else_ast(solc_ast_t *if_ast);
 

@@ -53,7 +53,7 @@ solc_ast_t *solc_parser_parse_stmt(solc_parser_t *parser)
     if (func != nullptr) {
       return func(parser);
     } else if (parser_context_is_qualifier(parser->tokens[parser->pos].value)) {
-      return solc_parser_parse_decldef(parser);
+      return solc_parser_parse_decldef(parser, nullptr);
     }
 
     if (solc_parser_peek(parser, parser->pos + 1) == SOLC_TOKENTYPE_COLON) {
@@ -62,9 +62,14 @@ solc_ast_t *solc_parser_parse_stmt(solc_parser_t *parser)
           solc_parser_peek(parser, parser->pos + 3) != SOLC_TOKENTYPE_LPAREN) {
         break;
       }
-      return solc_parser_parse_decldef(parser);
+      return solc_parser_parse_decldef(parser, nullptr);
     }
   } break;
+
+  case SOLC_TOKENTYPE_LBRACK: {
+    solc_ast_t *attrib_list = solc_parser_parse_attribute_list(parser);
+    return solc_parser_parse_decldef(parser, attrib_list);
+  }
 
   case SOLC_TOKENTYPE_AT: {
     return solc_parser_parse_stmt_label(parser);
@@ -113,7 +118,7 @@ solc_parser_parse_stmt_expr_or_generic_func_or_namespace(solc_parser_t *parser)
             switch (solc_parser_peek(parser, pos + 3)) {
             case SOLC_TOKENTYPE_LPAREN:
               return solc_parser_parse_def_func_generic(
-                parser, SOLC_AST_FUNC_TYPE_DEFAULT);
+                parser, nullptr, SOLC_AST_FUNC_TYPE_DEFAULT);
 
             case SOLC_TOKENTYPE_ID: {
               solc_ast_t *generic_namespace =

@@ -7,17 +7,20 @@
 
 typedef struct {
   SOLC_AST_HEADER;
+  solc_ast_t *attribute_list_ast;
   solc_ast_t **children_v;
   char *name;
 } ast_union_t;
 
-solc_ast_t *solc_ast_union_create(sz pos, const char *name)
+solc_ast_t *solc_ast_union_create(sz pos, const char *name,
+                                  solc_ast_t *attribute_list_ast)
 {
   SOLC_ASSUME(name != nullptr);
 
   const sz name_len = strlen(name) + 1;
   ast_union_t *out_union = malloc(sizeof(ast_union_t) + name_len);
   SOLC_AST_INIT_HEADER(out_union, pos, SOLC_AST_TYPE_NONE_UNION);
+  out_union->attribute_list_ast = attribute_list_ast;
   out_union->children_v = vector_create(solc_ast_t *);
   out_union->name = (char *)out_union + sizeof(ast_union_t);
   memcpy(out_union->name, name, name_len);
@@ -34,6 +37,7 @@ void solc_ast_union_destroy(solc_ast_t *union_ast)
        i < children_v_size; i++)
     solc_ast_destroy_if_exists(union_data->children_v[i]);
   vector_destroy(union_data->children_v);
+  solc_ast_destroy_if_exists(union_data->attribute_list_ast);
   free(union_data);
 }
 
@@ -58,7 +62,8 @@ string_t *solc_ast_union_build_tree(solc_ast_t *union_ast)
   string_append_cstr(&header, "\" }");
 
   sz children_v_size = vector_get_length(union_data->children_v);
-  string_t **children_vs_v = vector_reserve(string_t *, children_v_size);
+  string_t **children_vs_v = vector_reserve(string_t *, children_v_size + 1);
+  solc_ast_add_to_tree_if_exists(children_vs_v, union_data->attribute_list_ast);
   for (sz i = 0; i < children_v_size; i++)
     solc_ast_add_to_tree_if_exists(children_vs_v, union_data->children_v[i]);
 
@@ -83,4 +88,12 @@ solc_ast_t **solc_ast_union_get_child_asts(solc_ast_t *union_ast, sz *out_n)
   if SOLC_LIKELY (out_n != nullptr)
     *out_n = vector_get_length(union_data->children_v);
   return union_data->children_v;
+}
+
+solc_ast_t *solc_ast_union_get_attribute_list_ast(solc_ast_t *union_ast)
+{
+  SOLC_ASSUME(union_ast != nullptr &&
+              union_ast->type == SOLC_AST_TYPE_NONE_UNION);
+  SOLC_AST_CAST(union_data, union_ast, ast_union_t);
+  return union_data->attribute_list_ast;
 }

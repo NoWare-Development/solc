@@ -20,21 +20,21 @@ extern func_from_c :: ();
 
 // You can also provide default values for those external functions.
 extern func_from_c_with_default_init_values
-    :: (a: int, b: int = 4, c: bool = false) -> *bool;
+    :: (a: s32, b: s32 = 4, c: bool = false) -> *bool;
 
 // There can also be external variables. They can be defined in C code, or even
 // come from a link script.
-extern extern_symbol_1: int;
-extern extern_symbol_2: *int[32];
+extern extern_symbol_1: s32;
+extern extern_symbol_2: *s32[32];
 
-typedef *uint[][][] newtype; // Type definition
+typedef *u32[][][] newtype; // Type definition
 
-id1: int;                // Variable declaration
-id2: int = 4;            // Variable definition
-const id_const: int = 5; // Constant variable definition
+id1: s32;                // Variable declaration
+id2: s32 = 4;            // Variable definition
+const id_const: s32 = 5; // Constant variable definition
 
 struct MyStruct {
-  a: int;
+  a: s32;
 }
 
 struct GenericStruct<T> {
@@ -46,7 +46,7 @@ generic_test<T> :: () -> T {
 }
 
 // Function definition
-main :: (argc: int = 4*5, argv: char[][]) -> int {
+main :: (argc: s32 = 4*5, argv: u8[][]) -> s32 {
   return 69; // Return statement
 
   goto @label; // Goto statement
@@ -69,14 +69,14 @@ main :: (argc: int = 4*5, argv: char[][]) -> int {
 
   do { } while (0);
 
-  variable: float = 0.53f;
+  variable: f32 = 0.53f;
 
-  nestedfunc :: (argument: int) -> int {
+  nestedfunc :: (argument: s32) -> s32 {
     return argument * 2;
   }
 
   for (i: size_t = 0; i < argc; i += 1) {
-    variable: int = nestedfunc(argc + i * cast(*int)(&argv[0].test));
+    variable: s32 = nestedfunc(argc + i * cast(*s32)(&argv[0].test));
   }
 
   call_to_func(123 + 4, id / 2.25f);
@@ -95,8 +95,8 @@ main :: (argc: int = 4*5, argv: char[][]) -> int {
   defer { println("TESTLINE", 123llu, 4.0f); }
 
   someStruct: SomeStruct;
-  someStruct.int_field = 5;
-  someStruct.struct_field.float_field = 5.0f;
+  someStruct.ifield = 5;
+  someStruct.struct_field.ffield = 5.0f;
 
   someValue = someModule::someSymbol;
   someModule1::someModule2::someSymbol = 5;
@@ -108,9 +108,9 @@ main :: (argc: int = 4*5, argv: char[][]) -> int {
 
 testfunc :: () -> void {
   struct StructInFunc {
-    val: int;
+    val: s32;
 
-    setValue :: (value: int) -> void {
+    setValue :: (value: s32) -> void {
       val = value;
     }
   }
@@ -133,7 +133,7 @@ testFunc :: () -> void {
   } else return 10;
 }
 
-const funcPtrArray: (arg: int)[];
+const funcPtrArray: (arg: s32)[];
 
 local testFunc2 :: () {
   module1::module2::symbol;
@@ -144,23 +144,61 @@ local testFunc2 :: () {
     VAL2,
   }
 
-  vector_var: Vector<int>;
+  vector_var: Vector<s32>;
   vector_var.destroy();
 
-  persist x: int = sizeof(Vector<int>);
+  persist x: s32 = sizeof(Vector<s32>);
 
-  test: Vector<TestStruct<int>> = {};
+  test: Vector<TestStruct<s32>> = {};
 
   return {};
 }
 
 union TestUnion {
-  var1: int;
-  var2: float;
-  var3: double;
+  var1: s32;
+  var2: f32;
+  var3: f64;
 }
 
 struct Test {
+private:
   func hihi :: () {}
-  func haha<T> :: (a: T) {}
+
+public:
+  func haha<T> :: (a: T) -> s32 {
+    return alignof(a);
+  }
+}
+
+/* === Attribute tests === */
+
+[[alignas(16)]] aligned_var_1: s32;
+[[alignas(16)]] const aligned_var_2: s32;
+[[alignas(16)]] aligned_var_3: s32 = 123;
+[[alignas(16)]] aligned_var_4 := 123;
+[[alignas(16)]] const aligned_var_5 := 123;
+[[naked]] naked_func_1 :: () {}
+[[naked]] inline naked_func_2 :: () {}
+[[naked]] func naked_func_3 :: () {}
+[[naked]] inline func naked_func_4 :: () {}
+[[naked]] naked_generic_func_1<T> :: () {}
+[[naked]] inline naked_generic_func_2<T> :: () {}
+[[naked]] func naked_generic_func_3<T> :: () {}
+[[naked]] inline func naked_generic_func_4<T> :: () {}
+
+_ :: () {
+  if (test) [[likely, unlikely, optimize(3, "test", 1 + 2)]];
+}
+
+struct StructWithAttribs [[packed]] {
+  a: s32;
+  b: f32;
+  c: *void;
+}
+
+struct GenericStructWithAttribs<T> [[packed]] {
+  a: s32;
+  b: f32;
+  c: *void;
+  d: T;
 }

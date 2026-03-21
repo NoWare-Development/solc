@@ -506,9 +506,8 @@ solc_ast_t *solc_parser_parse_expr_operand(solc_parser_t *parser)
       return solc_ast_expr_operand_cast_to_create(cast_pos, type_ast,
                                                   cast_expr);
     } else if (strcmp(cur_tok.value, "sizeof") == 0) {
-      sz sizeof_pos = parser->pos;
+      sz sizeof_pos = parser->pos++;
 
-      parser->pos++;
       VERIFY_POS(parser, parser->pos);
       VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,
                    SOLC_TOKENTYPE_LPAREN);
@@ -524,6 +523,24 @@ solc_ast_t *solc_parser_parse_expr_operand(solc_parser_t *parser)
       parser->pos++;
 
       return solc_ast_expr_operand_sizeof_create(sizeof_pos, type_ast);
+    } else if (strcmp(cur_tok.value, "alignof") == 0) {
+      sz alignof_pos = parser->pos++;
+
+      VERIFY_POS(parser, parser->pos);
+      VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,
+                   SOLC_TOKENTYPE_LPAREN);
+
+      parser->pos++;
+      VERIFY_POS(parser, parser->pos);
+      solc_ast_t *expr_ast = solc_parser_parse_expr(parser, false);
+
+      VERIFY_POS(parser, parser->pos);
+      VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,
+                   SOLC_TOKENTYPE_RPAREN);
+
+      parser->pos++;
+
+      return solc_ast_expr_operand_alignof_create(alignof_pos, expr_ast);
     }
 
     out_operand = solc_parser_parse_expr_operand_identifier(parser, true, true);

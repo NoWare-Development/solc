@@ -1,4 +1,6 @@
 libsolc_src += [
+  'libsolc/parser/ast/none/ast_attribute.c',
+  'libsolc/parser/ast/none/ast_attribute_list.c',
   'libsolc/parser/ast/none/ast_enum.c',
   'libsolc/parser/ast/none/ast_enum_element.c',
   'libsolc/parser/ast/none/ast_err.c',
@@ -19,4 +21,5 @@ libsolc_src += [
   'libsolc/parser/ast/none/ast_typedef.c',
   'libsolc/parser/ast/none/ast_union.c',
   'libsolc/parser/ast/none/ast_variadic.c',
+  'libsolc/parser/ast/none/ast_vismarker.c',
 ]

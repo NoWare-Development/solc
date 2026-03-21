@@ -21,6 +21,8 @@ solc_ast_t *solc_parser_parse_stmt_if(solc_parser_t *parser)
 
   parser->pos++;
 
+  solc_ast_t *attrib_list = solc_parser_parse_attribute_list_optional(parser);
+
   solc_ast_t *stmt = solc_parser_parse_stmt(parser);
   solc_ast_t *else_stmt =
     parser->pos < parser->tokens_num &&
@@ -29,5 +31,5 @@ solc_ast_t *solc_parser_parse_stmt_if(solc_parser_t *parser)
       solc_parser_parse_stmt_else(parser) :
       nullptr;
 
-  return solc_ast_stmt_if_create(pos, expr, stmt, else_stmt);
+  return solc_ast_stmt_if_create(pos, expr, attrib_list, stmt, else_stmt);
 }

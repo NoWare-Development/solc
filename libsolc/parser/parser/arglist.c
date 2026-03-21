@@ -73,5 +73,5 @@ solc_ast_t *solc_parser_parse_func_arg(solc_parser_t *parser)
     break;
   }
 
-  return solc_parser_parse_decldef_var(parser);
+  return solc_parser_parse_decldef_var(parser, nullptr);
 }

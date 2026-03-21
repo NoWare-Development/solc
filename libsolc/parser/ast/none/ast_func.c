@@ -11,17 +11,19 @@
 
 typedef struct {
   SOLC_AST_HEADER;
-  char *name;
+  solc_ast_t *attribute_list_ast;
   solc_ast_t *type_ast;
   solc_ast_t *arg_list_ast;
   solc_ast_t *block_ast;
   solc_ast_func_type_t func_type;
+  char *name;
 } ast_func_t;
 
 solc_ast_t *solc_ast_func_create(sz pos, const char *name, solc_ast_t *type_ast,
                                  solc_ast_t *arg_list_ast,
                                  solc_ast_t *block_ast,
-                                 solc_ast_func_type_t func_type)
+                                 solc_ast_func_type_t func_type,
+                                 solc_ast_t *attribute_list_ast)
 {
   SOLC_ASSUME(name != nullptr);
 
@@ -30,6 +32,7 @@ solc_ast_t *solc_ast_func_create(sz pos, const char *name, solc_ast_t *type_ast,
   SOLC_AST_INIT_HEADER(out_func, pos, SOLC_AST_TYPE_NONE_FUNC);
   out_func->name = (char *)out_func + sizeof(ast_func_t);
   memcpy(out_func->name, name, name_len);
+  out_func->attribute_list_ast = attribute_list_ast;
   out_func->type_ast = type_ast;
   out_func->arg_list_ast = arg_list_ast;
   out_func->block_ast = block_ast;
@@ -42,6 +45,7 @@ void solc_ast_func_destroy(solc_ast_t *func_ast)
   SOLC_ASSUME(func_ast != nullptr && func_ast->type == SOLC_AST_TYPE_NONE_FUNC);
   SOLC_AST_CAST(func_data, func_ast, ast_func_t);
 
+  solc_ast_destroy_if_exists(func_data->attribute_list_ast);
   solc_ast_destroy_if_exists(func_data->type_ast);
   solc_ast_destroy_if_exists(func_data->arg_list_ast);
   solc_ast_destroy_if_exists(func_data->block_ast);
@@ -60,7 +64,8 @@ string_t *solc_ast_func_build_tree(solc_ast_t *func_ast)
            func_data->name, solc_ast_func_type_to_string(func_data->func_type));
 
   string_t header = string_create_from(header_cstr);
-  string_t **children_vs_v = vector_reserve(string_t *, 3);
+  string_t **children_vs_v = vector_reserve(string_t *, 4);
+  solc_ast_add_to_tree_if_exists(children_vs_v, func_data->attribute_list_ast);
   solc_ast_add_to_tree_if_exists(children_vs_v, func_data->type_ast);
   solc_ast_add_to_tree_if_exists(children_vs_v, func_data->arg_list_ast);
   solc_ast_add_to_tree_if_exists(children_vs_v, func_data->block_ast);
@@ -95,6 +100,13 @@ solc_ast_t *solc_ast_func_get_block_ast(solc_ast_t *func_ast)
   SOLC_ASSUME(func_ast != nullptr && func_ast->type == SOLC_AST_TYPE_NONE_FUNC);
   SOLC_AST_CAST(func_data, func_ast, ast_func_t);
   return func_data->block_ast;
+}
+
+solc_ast_t *solc_ast_func_get_attribute_list_ast(solc_ast_t *func_ast)
+{
+  SOLC_ASSUME(func_ast != nullptr && func_ast->type == SOLC_AST_TYPE_NONE_FUNC);
+  SOLC_AST_CAST(func_data, func_ast, ast_func_t);
+  return func_data->attribute_list_ast;
 }
 
 solc_ast_func_type_t solc_ast_func_get_func_type(solc_ast_t *func_ast)

@@ -10,6 +10,7 @@
 typedef struct {
   SOLC_AST_HEADER;
   char *name;
+  solc_ast_t *attribute_list_ast;
   solc_ast_t *type_ast;
   solc_ast_t *arg_list_ast;
   solc_ast_t *block_ast;
@@ -17,11 +18,10 @@ typedef struct {
   solc_ast_func_type_t func_type;
 } ast_generic_func_t;
 
-solc_ast_t *
-solc_ast_generic_func_create(sz pos, const char *name, solc_ast_t *type_ast,
-                             solc_ast_t *arg_list_ast, solc_ast_t *block_ast,
-                             solc_ast_t *generic_placeholder_type_list_ast,
-                             solc_ast_func_type_t func_type)
+solc_ast_t *solc_ast_generic_func_create(
+  sz pos, const char *name, solc_ast_t *type_ast, solc_ast_t *arg_list_ast,
+  solc_ast_t *block_ast, solc_ast_t *generic_placeholder_type_list_ast,
+  solc_ast_func_type_t func_type, solc_ast_t *attribute_list_ast)
 {
   SOLC_ASSUME(name != nullptr);
   const sz name_len = strlen(name) + 1;
@@ -31,6 +31,7 @@ solc_ast_generic_func_create(sz pos, const char *name, solc_ast_t *type_ast,
   out_generic_func->name =
     (char *)out_generic_func + sizeof(ast_generic_func_t);
   memcpy(out_generic_func->name, name, name_len);
+  out_generic_func->attribute_list_ast = attribute_list_ast;
   out_generic_func->type_ast = type_ast;
   out_generic_func->arg_list_ast = arg_list_ast;
   out_generic_func->block_ast = block_ast;
@@ -45,6 +46,7 @@ void solc_ast_generic_func_destroy(solc_ast_t *generic_func_ast)
   SOLC_ASSUME(generic_func_ast != nullptr &&
               generic_func_ast->type == SOLC_AST_TYPE_GENERIC_FUNC);
   SOLC_AST_CAST(generic_func_data, generic_func_ast, ast_generic_func_t);
+  solc_ast_destroy_if_exists(generic_func_data->attribute_list_ast);
   solc_ast_destroy_if_exists(generic_func_data->type_ast);
   solc_ast_destroy_if_exists(generic_func_data->arg_list_ast);
   solc_ast_destroy_if_exists(generic_func_data->block_ast);
@@ -66,7 +68,9 @@ string_t *solc_ast_generic_func_build_tree(solc_ast_t *generic_func_ast)
            solc_ast_func_type_to_string(generic_func_data->func_type));
   string_t header = string_create_from(header_cstr);
 
-  string_t **children_vs_v = vector_reserve(string_t *, 4);
+  string_t **children_vs_v = vector_reserve(string_t *, 5);
+  solc_ast_add_to_tree_if_exists(children_vs_v,
+                                 generic_func_data->attribute_list_ast);
   solc_ast_add_to_tree_if_exists(children_vs_v, generic_func_data->type_ast);
   solc_ast_add_to_tree_if_exists(children_vs_v,
                                  generic_func_data->arg_list_ast);
@@ -116,6 +120,15 @@ solc_ast_t *solc_ast_generic_func_get_generic_placeholder_type_list_ast(
               generic_func_ast->type == SOLC_AST_TYPE_GENERIC_FUNC);
   SOLC_AST_CAST(generic_func_data, generic_func_ast, ast_generic_func_t);
   return generic_func_data->generic_placeholder_type_list_ast;
+}
+
+solc_ast_t *
+solc_ast_generic_func_get_attribute_list_ast(solc_ast_t *generic_func_ast)
+{
+  SOLC_ASSUME(generic_func_ast != nullptr &&
+              generic_func_ast->type == SOLC_AST_TYPE_GENERIC_FUNC);
+  SOLC_AST_CAST(generic_func_data, generic_func_ast, ast_generic_func_t);
+  return generic_func_data->attribute_list_ast;
 }
 
 solc_ast_func_type_t
