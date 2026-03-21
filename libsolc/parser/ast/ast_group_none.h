@@ -166,4 +166,13 @@ const char *solc_ast_attribute_get_name(solc_ast_t *attribute_ast);
 solc_ast_t **solc_ast_attribute_get_arguments(solc_ast_t *attribute_ast,
                                               sz *out_n);
 
+solc_ast_t *solc_ast_attribute_list_create(sz pos);
+void solc_ast_attribute_list_destroy(solc_ast_t *attribute_list_ast);
+void solc_ast_attribute_list_add_attribute(solc_ast_t *attribute_list_ast,
+                                           solc_ast_t *attribute_ast);
+string_t *solc_ast_attribute_list_build_tree(solc_ast_t *attribute_list_ast);
+solc_ast_t **
+solc_ast_attribute_list_get_attributes(solc_ast_t *attribute_list_ast,
+                                       sz *out_n);
+
 #endif // __SOLC_AST_GROUP_NONE_H__
