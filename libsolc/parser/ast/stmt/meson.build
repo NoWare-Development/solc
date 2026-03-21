@@ -13,6 +13,7 @@ libsolc_src += [
   'libsolc/parser/ast/stmt/ast_stmt_goto.c',
   'libsolc/parser/ast/stmt/ast_stmt_if.c',
   'libsolc/parser/ast/stmt/ast_stmt_label.c',
+  'libsolc/parser/ast/stmt/ast_stmt_loop.c',
   'libsolc/parser/ast/stmt/ast_stmt_return.c',
   'libsolc/parser/ast/stmt/ast_stmt_switch.c',
   'libsolc/parser/ast/stmt/ast_stmt_while.c',

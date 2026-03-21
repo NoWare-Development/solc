@@ -68,13 +68,14 @@ typedef enum {
   __SOLC_AST_TYPE_X(WHILE, STMT, 7, stmt_while)             \
   __SOLC_AST_TYPE_X(FOR, STMT, 8, stmt_for)                 \
   __SOLC_AST_TYPE_X(DOWHILE, STMT, 9, stmt_dowhile)         \
-  __SOLC_AST_TYPE_X(EXPR, STMT, 10, stmt_expr)              \
-  __SOLC_AST_TYPE_X(SWITCH, STMT, 11, stmt_switch)          \
-  __SOLC_AST_TYPE_X(CASE, STMT, 12, stmt_case)              \
-  __SOLC_AST_TYPE_X(DEFAULT, STMT, 13, stmt_default)        \
-  __SOLC_AST_TYPE_X(DEFER, STMT, 14, stmt_defer)            \
-  __SOLC_AST_TYPE_X(IF, STMT, 15, stmt_if)                  \
-  __SOLC_AST_TYPE_X(ELSE, STMT, 16, stmt_else)
+  __SOLC_AST_TYPE_X(LOOP, STMT, 10, stmt_loop)              \
+  __SOLC_AST_TYPE_X(EXPR, STMT, 11, stmt_expr)              \
+  __SOLC_AST_TYPE_X(SWITCH, STMT, 12, stmt_switch)          \
+  __SOLC_AST_TYPE_X(CASE, STMT, 13, stmt_case)              \
+  __SOLC_AST_TYPE_X(DEFAULT, STMT, 14, stmt_default)        \
+  __SOLC_AST_TYPE_X(DEFER, STMT, 15, stmt_defer)            \
+  __SOLC_AST_TYPE_X(IF, STMT, 16, stmt_if)                  \
+  __SOLC_AST_TYPE_X(ELSE, STMT, 17, stmt_else)
 
 #define __SOLC_AST_TYPES_TYPE                       \
   __SOLC_AST_TYPE_X(PLAIN, TYPE, 0, type_plain)     \
