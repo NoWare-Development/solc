@@ -30,25 +30,19 @@ solc_ast_destroy_func_t solc_ast_get_destroy_func(solc_ast_type_t ast_type)
 #undef __SOLC_AST_TYPE_X
 }
 
-void solc_ast_to_string(char *buf, sz n, solc_ast_t *ast)
+void solc_ast_print(solc_ast_t *ast)
 {
-  SOLC_ASSUME(buf != nullptr && ast != nullptr);
-
-  string_t out_str = string_create();
+  SOLC_ASSUME(ast != nullptr);
 
   solc_ast_build_tree_func_t build_tree_func =
     ast_get_build_tree_func(ast->type);
   string_t *strs_v = build_tree_func(ast);
   sz strs_v_size = vector_get_length(strs_v);
   for (sz i = 0; i < strs_v_size; i++) {
-    string_append(&out_str, &strs_v[i]);
-    string_append_char(&out_str, '\n');
+    printf("%s\n", strs_v[i].data);
     string_destroy(&strs_v[i]);
   }
   vector_destroy(strs_v);
-
-  snprintf(buf, n, "%s", out_str.data);
-  string_destroy(&out_str);
 }
 
 solc_ast_build_tree_func_t ast_get_build_tree_func(solc_ast_type_t ast_type)

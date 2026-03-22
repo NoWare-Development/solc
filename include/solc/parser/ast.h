@@ -141,7 +141,7 @@ solc_ast_group_t solc_ast_type_get_group(solc_ast_type_t type);
 u8 solc_ast_type_get_id_in_group(solc_ast_type_t type);
 
 solc_ast_destroy_func_t solc_ast_get_destroy_func(solc_ast_type_t ast_type);
-void solc_ast_to_string(char *buf, sz n, solc_ast_t *ast);
+void solc_ast_print(solc_ast_t *ast);
 
 #define solc_ast_destroy(ast) \
   solc_ast_get_destroy_func(((solc_ast_t *)(ast))->type)((solc_ast_t *)(ast))
