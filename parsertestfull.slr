@@ -1,0 +1,490 @@
+/* === Import === */
+import std::io;
+import std::mem;
+
+/* === Variable declarations === */
+var_decl_1: s32;                                                                // Default declaration
+const var_decl_2: s32;                                                          // Declaration with qualifiers
+[[alignas(16)]] var_decl_3: s32;                                                // Declaration with attributes
+[[alignas(16)]] const var_decl_4: s32;                                          // Declaration with qualifier and attributes
+
+/* === Variable definitions === */
+var_def_1: s32 = 123;                                                           // Default definition
+var_def_2 := 123;                                                               // Definition with implied type
+const var_def_1: s32 = 123;                                                     // Definition with qualifiers
+const var_def_2 := 123;                                                         // Definition with implied type and qualifiers
+[[alignas(16)]] var_def_1: s32 = 123;                                           // Definition with attributes
+[[alignas(16)]] var_def_2 := 123;                                               // Definition with implied type and attributes
+[[alignas(16)]] const var_def_1: s32 = 123;                                     // Definition with qualifiers and attributes
+[[alignas(16)]] const var_def_2 := 123;                                         // Definition with implied type, qualifiers and attributes
+
+/* === Function definitions === */
+func_def_1 :: () {}                                                             // Minimal definition
+func_def_2 :: (x: s32) {}                                                       // Definition with an argument
+func_def_3 :: (x: s32 = 123) {}                                                 // Definition with a pre-defined argument
+func_def_4 :: (...) {}                                                          // Definition with variadic arguments
+func_def_5 :: (x: s32, ...) {}                                                  // Definition with an argument and variadic arguments
+func_def_6 :: (x: s32 = 123, ...) {}                                            // Definition with a pre-defined argument and variadic arguments
+func_def_7 :: () -> s32 {}                                                      // Definition with a return type
+func_def_8 :: (x: s32) -> s32 {}                                                // Definition with an argument and a return type
+func_def_9 :: (x: s32 = 123) -> s32 {}                                          // Definition with a pre-defined argument and a return type
+func_def_10 :: (...) -> s32 {}                                                  // Definition with variadic arguments and a return type
+func_def_11 :: (x: s32, ...) -> s32 {}                                          // Definition with an argument, variadic arguments and a return type
+func_def_12 :: (x: s32 = 123, ...) -> s32 {}                                    // Definition with a pre-defined argument, variadic arguments and a return type
+func func_def_13 :: () {}                                                       // Explicit definition
+func func_def_14 :: (x: s32) {}                                                 // Explicit definition with an argument
+func func_def_15 :: (x: s32 = 123) {}                                           // Explicit definition with a pre-defined argument
+func func_def_16 :: (...) {}                                                    // Explicit definition with variadic arguments
+func func_def_17 :: (x: s32, ...) {}                                            // Explicit definition with an argument and variadic arguments
+func func_def_18 :: (x: s32 = 123, ...) {}                                      // Explicit definition with a pre-defined argument and variadic arguments
+func func_def_19 :: () -> s32 {}                                                // Explicit definition with a return type
+func func_def_20 :: (x: s32) -> s32 {}                                          // Explicit definition with an argument and a return type
+func func_def_21 :: (x: s32 = 123) -> s32 {}                                    // Explicit definition with a pre-defined argument and a return type
+func func_def_22 :: (...) -> s32 {}                                             // Explicit definition with variadic arguments and a return type
+func func_def_23 :: (x: s32, ...) -> s32 {}                                     // Explicit definition with an argument, variadic arguments and a return type
+func func_def_24 :: (x: s32 = 123, ...) -> s32 {}                               // Explicit definition with a pre-defined argument, variadic arguments and a return type
+export func_def_25 :: () {}                                                     // Exported definition
+export func_def_26 :: (x: s32) {}                                               // Exported definition with an argument
+export func_def_27 :: (x: s32 = 123) {}                                         // Exported definition with a pre-defined argument
+export func_def_28 :: (...) {}                                                  // Exported definition with variadic arguments
+export func_def_29 :: (x: s32, ...) {}                                          // Exported definition with an argument and variadic arguments
+export func_def_30 :: (x: s32 = 123, ...) {}                                    // Exported definition with a pre-defined argument and variadic arguments
+export func_def_31 :: () -> s32 {}                                              // Exported definition with a return type
+export func_def_32 :: (x: s32) -> s32 {}                                        // Exported definition with an argument and a return type
+export func_def_33 :: (x: s32 = 123) -> s32 {}                                  // Exported definition with a pre-defined argument and a return type
+export func_def_34 :: (...) -> s32 {}                                           // Exported definition with variadic arguments and a return type
+export func_def_35 :: (x: s32, ...) -> s32 {}                                   // Exported definition with an argument, variadic arguments and a return type
+export func_def_36 :: (x: s32 = 123, ...) -> s32 {}                             // Exported definition with a pre-defined argument, variadic arguments and a return type
+[[naked]] func_def_37 :: () {}                                                  // Definition with attributes
+[[naked]] func_def_38 :: (x: s32) {}                                            // Definition with an argument and attributes
+[[naked]] func_def_39 :: (x: s32 = 123) {}                                      // Definition with a pre-defined argument and attributes
+[[naked]] func_def_40 :: (...) {}                                               // Definition with variadic arguments and attributes
+[[naked]] func_def_41 :: (x: s32, ...) {}                                       // Definition with an argument, variadic arguments and attributes
+[[naked]] func_def_42 :: (x: s32 = 123, ...) {}                                 // Definition with a pre-defined argument, variadic arguments and attributes
+[[naked]] func_def_43 :: () -> s32 {}                                           // Definition with a return type and attributes
+[[naked]] func_def_44 :: (x: s32) -> s32 {}                                     // Definition with an argument, return type and attributes
+[[naked]] func_def_45 :: (x: s32 = 123) -> s32 {}                               // Definition with a pre-defined argument, return type and attributes
+[[naked]] func_def_46 :: (...) -> s32 {}                                        // Definition with variadic arguments, return type and attributes
+[[naked]] func_def_47 :: (x: s32, ...) -> s32 {}                                // Definition with an argument, variadic arguments, return type and attributes
+[[naked]] func_def_48 :: (x: s32 = 123, ...) -> s32 {}                          // Definition with a pre-defined argument, variadic arguments, return type and attributes
+[[naked]] func func_def_49 :: () {}                                             // Explicit definition with attributes
+[[naked]] func func_def_50 :: (x: s32) {}                                       // Explicit definition with an argument and attributes
+[[naked]] func func_def_51 :: (x: s32 = 123) {}                                 // Explicit definition with a pre-defined argument and attributes
+[[naked]] func func_def_52 :: (...) {}                                          // Explicit definition with variadic arguments and attributes
+[[naked]] func func_def_53 :: (x: s32, ...) {}                                  // Explicit definition with an argument, variadic arguments and attributes
+[[naked]] func func_def_54 :: (x: s32 = 123, ...) {}                            // Explicit definition with a pre-defined argument, variadic arguments and attributes
+[[naked]] func func_def_55 :: () -> s32 {}                                      // Explicit definition with a return type and attributes
+[[naked]] func func_def_56 :: (x: s32) -> s32 {}                                // Explicit definition with an argument, return type and attributes
+[[naked]] func func_def_57 :: (x: s32 = 123) -> s32 {}                          // Explicit definition with a pre-defined argument, return type and attributes
+[[naked]] func func_def_58 :: (...) -> s32 {}          // Explicit definition with variadic arguments, return type and attributes
+[[naked]] func func_def_59 :: (x: s32, ...) -> s32 {}                           // Explicit definition with an argument, variadic arguments, return type and attributes
+[[naked]] func func_def_60 :: (x: s32 = 123, ...) -> s32 {}                     // Explicit definition with a pre-defined argument, variadic arguments, return type and attributes
+local inline func_def_61 :: () {}                                               // Definition with qualifiers
+local inline func_def_62 :: (x: s32) {}                                         // Definition with an argument and qualifiers
+local inline func_def_63 :: (x: s32 = 123) {}                                   // Definition with a pre-defined argument and qualifiers
+local inline func_def_64 :: (...) {}                                            // Definition with variadic arguments and qualifiers
+local inline func_def_65 :: (x: s32, ...) {}                                    // Definition with an argument, variadic arguments and qualifiers
+local inline func_def_66 :: (x: s32 = 123, ...) {}                              // Definition with a pre-defined argument, variadic arguments and qualifiers
+local inline func_def_67 :: () -> s32 {}                                        // Definition with a return type and qualifiers
+local inline func_def_68 :: (x: s32) -> s32 {}                                  // Definition with an argument, return type and qualifiers
+local inline func_def_69 :: (x: s32 = 123) -> s32 {}                            // Definition with a pre-defined argument, return type and qualifiers
+local inline func_def_70 :: (...) -> s32 {}                                     // Definition with variadic arguments, return type and qualifiers
+local inline func_def_71 :: (x: s32, ...) -> s32 {}                             // Definition with an argument, variadic arguments, return type and qualifiers
+local inline func_def_72 :: (x: s32 = 123, ...) -> s32 {}                       // Definition with a pre-defined argument, variadic arguments, return type and qualifiers
+local inline func func_def_73 :: () {}                                          // Explicit definition and qualifiers
+local inline func func_def_74 :: (x: s32) {}                                    // Explicit definition with an argument and qualifiers
+local inline func func_def_75 :: (x: s32 = 123) {}                              // Explicit definition with a pre-defined argument and qualifiers
+local inline func func_def_76 :: (...) {}                                       // Explicit definition with variadic arguments and qualifiers
+local inline func func_def_77 :: (x: s32, ...) {}                               // Explicit definition with an argument, variadic arguments and qualifiers
+local inline func func_def_78 :: (x: s32 = 123, ...) {}                         // Explicit definition with a pre-defined argument, variadic arguments and qualifiers
+local inline func func_def_79 :: () -> s32 {}                                   // Explicit definition with a return type and qualifiers
+local inline func func_def_80 :: (x: s32) -> s32 {}                             // Explicit definition with an argument, return type and qualifiers
+local inline func func_def_81 :: (x: s32 = 123) -> s32 {}                       // Explicit definition with a pre-defined argument, return type and qualifiers
+local inline func func_def_82 :: (...) -> s32 {}                                // Explicit definition with variadic arguments, return type and qualifiers
+local inline func func_def_83 :: (x: s32, ...) -> s32 {}                        // Explicit definition with an argument, variadic arguments, return type and qualifiers
+local inline func func_def_84 :: (x: s32 = 123, ...) -> s32 {}                  // Explicit definition with a pre-defined argument, variadic arguments, return type and qualifiers
+[[naked]] local inline func_def_85 :: () {}                                     // Definition with attributes and qualifiers
+[[naked]] local inline func_def_86 :: (x: s32) {}                               // Definition with an argument, attributes and qualifiers
+[[naked]] local inline func_def_87 :: (x: s32 = 123) {}                         // Definition with a pre-defined argument, attributes and qualifiers
+[[naked]] local inline func_def_88 :: (...) {}                                  // Definition with variadic arguments, attributes and qualifiers
+[[naked]] local inline func_def_89 :: (x: s32, ...) {}                          // Definition with an argument, variadic arguments, attributes and qualifiers
+[[naked]] local inline func_def_90 :: (x: s32 = 123, ...) {}                    // Definition with a pre-defined argument, variadic arguments, attributes and qualifiers
+[[naked]] local inline func_def_91 :: () -> s32 {}                              // Definition with a return type and attributes, qualifiers
+[[naked]] local inline func_def_92 :: (x: s32) -> s32 {}                        // Definition with an argument, return type, attributes and qualifiers
+[[naked]] local inline func_def_93 :: (x: s32 = 123) -> s32 {}                  // Definition with a pre-defined argument, return type, attributes and qualifiers
+[[naked]] local inline func_def_94 :: (...) -> s32 {}                           // Definition with variadic arguments, return type, attributes and qualifiers
+[[naked]] local inline func_def_95 :: (x: s32, ...) -> s32 {}                   // Definition with an argument, variadic arguments, return type, attributes and qualifiers
+[[naked]] local inline func_def_96 :: (x: s32 = 123, ...) -> s32 {}             // Definition with a pre-defined argument, variadic arguments, return type, attributes and qualifiers
+[[naked]] local inline func func_def_97 :: () {}                                // Explicit definition with attributes and qualifiers
+[[naked]] local inline func func_def_98 :: (x: s32) {}                          // Explicit definition with an argument, attributes and qualifiers
+[[naked]] local inline func func_def_99 :: (x: s32 = 123) {}                    // Explicit definition with a pre-defined argument, attributes and qualifiers
+[[naked]] local inline func func_def_100 :: (...) {}                            // Explicit definition with variadic arguments, attributes and qualifiers
+[[naked]] local inline func func_def_101 :: (x: s32, ...) {}                    // Explicit definition with an argument, variadic arguments, attributes and qualifiers
+[[naked]] local inline func func_def_102 :: (x: s32 = 123, ...) {}              // Explicit definition with a pre-defined argument, variadic arguments, attributes and qualifiers
+[[naked]] local inline func func_def_103 :: () -> s32 {}                        // Explicit definition with a return type, attributes and qualifiers
+[[naked]] local inline func func_def_104 :: (x: s32) -> s32 {}                  // Explicit definition with an argument, return type, attributes and qualifiers
+[[naked]] local inline func func_def_105 :: (x: s32 = 123) -> s32 {}            // Explicit definition with a pre-defined argument, return type, attributes and qualifiers
+[[naked]] local inline func func_def_106 :: (...) -> s32 {}                     // Explicit definition with variadic arguments, return type, attributes and qualifiers
+[[naked]] local inline func func_def_107 :: (x: s32, ...) -> s32 {}             // Explicit definition with an argument, variadic arguments, return type, attributes and qualifiers
+[[naked]] local inline func func_def_108 :: (x: s32 = 123, ...) -> s32 {}  // Explicit definition with a pre-defined argument, variadic arguments, return type, attributes and qualifiers
+
+/* === Generic function definitions === */
+generic_func_def_1<T> :: () {}                                                  // Minimal definition
+generic_func_def_2<T> :: (x: s32) {}                                            // Definition with an argument
+generic_func_def_3<T> :: (x: s32 = 123) {}                                      // Definition with a pre-defined argument
+generic_func_def_4<T> :: (...) {}                                               // Definition with variadic arguments
+generic_func_def_5<T> :: (x: s32, ...) {}                                       // Definition with an argument and variadic arguments
+generic_func_def_6<T> :: (x: s32 = 123, ...) {}                                 // Definition with a pre-defined argument and variadic arguments
+generic_func_def_7<T> :: () -> s32 {}                                           // Definition with a return type
+generic_func_def_8<T> :: (x: s32) -> s32 {}                                     // Definition with an argument and a return type
+generic_func_def_9<T> :: (x: s32 = 123) -> s32 {}                               // Definition with a pre-defined argument and a return type
+generic_func_def_10<T> :: (...) -> s32 {}                                       // Definition with variadic arguments and a return type
+generic_func_def_11<T> :: (x: s32, ...) -> s32 {}                               // Definition with an argument, variadic arguments and a return type
+generic_func_def_12<T> :: (x: s32 = 123, ...) -> s32 {}                         // Definition with a pre-defined argument, variadic arguments and a return type
+func generic_func_def_13<T> :: () {}                                            // Explicit definition
+func generic_func_def_14<T> :: (x: s32) {}                                      // Explicit definition with an argument
+func generic_func_def_15<T> :: (x: s32 = 123) {}                                // Explicit definition with a pre-defined argument
+func generic_func_def_16<T> :: (...) {}                                         // Explicit definition with variadic arguments
+func generic_func_def_17<T> :: (x: s32, ...) {}                                 // Explicit definition with an argument and variadic arguments
+func generic_func_def_18<T> :: (x: s32 = 123, ...) {}                           // Explicit definition with a pre-defined argument and variadic arguments
+func generic_func_def_19<T> :: () -> s32 {}                                     // Explicit definition with a return type
+func generic_func_def_20<T> :: (x: s32) -> s32 {}                               // Explicit definition with an argument and a return type
+func generic_func_def_21<T> :: (x: s32 = 123) -> s32 {}                         // Explicit definition with a pre-defined argument and a return type
+func generic_func_def_22<T> :: (...) -> s32 {}                                  // Explicit definition with variadic arguments and a return type
+func generic_func_def_23<T> :: (x: s32, ...) -> s32 {}                          // Explicit definition with an argument, variadic arguments and a return type
+func generic_func_def_24<T> :: (x: s32 = 123, ...) -> s32 {}                    // Explicit definition with a pre-defined argument, variadic arguments and a return type
+[[naked]] generic_func_def_25<T> :: () {}                                       // Definition with attributes
+[[naked]] generic_func_def_26<T> :: (x: s32) {}                                 // Definition with an argument and attributes
+[[naked]] generic_func_def_27<T> :: (x: s32 = 123) {}                           // Definition with a pre-defined argument and attributes
+[[naked]] generic_func_def_28<T> :: (...) {}                                    // Definition with variadic arguments and attributes
+[[naked]] generic_func_def_29<T> :: (x: s32, ...) {}                            // Definition with an argument, variadic arguments and attributes
+[[naked]] generic_func_def_30<T> :: (x: s32 = 123, ...) {}                      // Definition with a pre-defined argument, variadic arguments and attributes
+[[naked]] generic_func_def_30<T> :: () -> s32 {}                                // Definition with a return type and attributes
+[[naked]] generic_func_def_31<T> :: (x: s32) -> s32 {}                          // Definition with an argument, return type and attributes
+[[naked]] generic_func_def_32<T> :: (x: s32 = 123) -> s32 {}                    // Definition with a pre-defined argument, return type and attributes
+[[naked]] generic_func_def_33<T> :: (...) -> s32 {}                             // Definition with variadic arguments, return type and attributes
+[[naked]] generic_func_def_34<T> :: (x: s32, ...) -> s32 {}                     // Definition with an argument, variadic arguments, return type and attributes
+[[naked]] generic_func_def_35<T> :: (x: s32 = 123, ...) -> s32 {}               // Definition with a pre-defined argument, variadic arguments, return type and attributes
+[[naked]] func generic_func_def_36<T> :: () {}                                  // Explicit definition with attributes
+[[naked]] func generic_func_def_37<T> :: (x: s32) {}                            // Explicit definition with an argument and attributes
+[[naked]] func generic_func_def_38<T> :: (x: s32 = 123) {}                      // Explicit definition with a pre-defined argument and attributes
+[[naked]] func generic_func_def_39<T> :: (...) {}                               // Explicit definition with variadic arguments and attributes
+[[naked]] func generic_func_def_40<T> :: (x: s32, ...) {}                       // Explicit definition with an argument, variadic arguments and attributes
+[[naked]] func generic_func_def_41<T> :: (x: s32 = 123, ...) {}                 // Explicit definition with a pre-defined argument, variadic arguments and attributes
+[[naked]] func generic_func_def_42<T> :: () -> s32 {}                           // Explicit definition with a return type and attributes
+[[naked]] func generic_func_def_43<T> :: (x: s32) -> s32 {}                     // Explicit definition with an argument, return type and attributes
+[[naked]] func generic_func_def_44<T> :: (x: s32 = 123) -> s32 {}               // Explicit definition with a pre-defined argument, return type and attributes
+[[naked]] func generic_func_def_45<T> :: (...) -> s32 {}                        // Explicit definition with variadic arguments, return type and attributes
+[[naked]] func generic_func_def_46<T> :: (x: s32, ...) -> s32 {}                // Explicit definition with an argument, variadic arguments, return type and attributes
+[[naked]] func generic_func_def_47<T> :: (x: s32 = 123, ...) -> s32 {}          // Explicit definition with a pre-defined argument, variadic arguments, return type and attributes
+local inline generic_func_def_48<T> :: () {}                                    // Definition with qualifiers
+local inline generic_func_def_49<T> :: (x: s32) {}                              // Definition with an argument and qualifiers
+local inline generic_func_def_50<T> :: (x: s32 = 123) {}                        // Definition with a pre-defined argument and qualifiers
+local inline generic_func_def_51<T> :: (...) {}                                 // Definition with variadic arguments and qualifiers
+local inline generic_func_def_52<T> :: (x: s32, ...) {}                         // Definition with an argument, variadic arguments and qualifiers
+local inline generic_func_def_53<T> :: (x: s32 = 123, ...) {}                   // Definition with a pre-defined argument, variadic arguments and qualifiers
+local inline generic_func_def_54<T> :: () -> s32 {}                             // Definition with a return type and qualifiers
+local inline generic_func_def_55<T> :: (x: s32) -> s32 {}                       // Definition with an argument, return type and qualifiers
+local inline generic_func_def_56<T> :: (x: s32 = 123) -> s32 {}                 // Definition with a pre-defined argument, return type and qualifiers
+local inline generic_func_def_57<T> :: (...) -> s32 {}                          // Definition with variadic arguments, return type and qualifiers
+local inline generic_func_def_58<T> :: (x: s32, ...) -> s32 {}                  // Definition with an argument, variadic arguments, return type and qualifiers
+local inline generic_func_def_59<T> :: (x: s32 = 123, ...) -> s32 {}            // Definition with a pre-defined argument, variadic arguments, return type and qualifiers
+local inline generic_func_def_60<T> :: () {}                                    // Explicit definition and qualifiers
+local inline generic_func_def_61<T> :: (x: s32) {}                              // Explicit definition with an argument and qualifiers
+local inline generic_func_def_62<T> :: (x: s32 = 123) {}                        // Explicit definition with a pre-defined argument and qualifiers
+local inline generic_func_def_63<T> :: (...) {}                                 // Explicit definition with variadic arguments and qualifiers
+local inline generic_func_def_64<T> :: (x: s32, ...) {}                         // Explicit definition with an argument, variadic arguments and qualifiers
+local inline generic_func_def_65<T> :: (x: s32 = 123, ...) {}                   // Explicit definition with a pre-defined argument, variadic arguments and qualifiers
+local inline generic_func_def_66<T> :: () -> s32 {}                             // Explicit definition with a return type and qualifiers
+local inline generic_func_def_67<T> :: (x: s32) -> s32 {}                       // Explicit definition with an argument, return type and qualifiers
+local inline generic_func_def_68<T> :: (x: s32 = 123) -> s32 {}                 // Explicit definition with a pre-defined argument, return type and qualifiers
+local inline generic_func_def_69<T> :: (...) -> s32 {}                          // Explicit definition with variadic arguments, return type and qualifiers
+local inline generic_func_def_70<T> :: (x: s32, ...) -> s32 {}                  // Explicit definition with an argument, variadic arguments, return type and qualifiers
+local inline generic_func_def_71<T> :: (x: s32 = 123, ...) -> s32 {}            // Explicit definition with a pre-defined argument, variadic arguments, return type and qualifiers
+[[naked]] local inline generic_func_def_72<T> :: () {}                          // Definition with attributes and qualifiers
+[[naked]] local inline generic_func_def_73<T> :: (x: s32) {}                    // Definition with an argument, attributes and qualifiers
+[[naked]] local inline generic_func_def_74<T> :: (x: s32 = 123) {}              // Definition with a pre-defined argument, attributes and qualifiers
+[[naked]] local inline generic_func_def_75<T> :: (...) {}                       // Definition with variadic arguments, attributes and qualifiers
+[[naked]] local inline generic_func_def_76<T> :: (x: s32, ...) {}               // Definition with an argument, variadic arguments, attributes and qualifiers
+[[naked]] local inline generic_func_def_77<T> :: (x: s32 = 123, ...) {}         // Definition with a pre-defined argument, variadic arguments, attributes and qualifiers
+[[naked]] local inline generic_func_def_78<T> :: () -> s32 {}                   // Definition with a return type and attributes, qualifiers
+[[naked]] local inline generic_func_def_79<T> :: (x: s32) -> s32 {}             // Definition with an argument, return type, attributes and qualifiers
+[[naked]] local inline generic_func_def_80<T> :: (x: s32 = 123) -> s32 {}       // Definition with a pre-defined argument, return type, attributes and qualifiers
+[[naked]] local inline generic_func_def_81<T> :: (...) -> s32 {}                // Definition with variadic arguments, return type, attributes and qualifiers
+[[naked]] local inline generic_func_def_82<T> :: (x: s32, ...) -> s32 {}        // Definition with an argument, variadic arguments, return type, attributes and qualifiers
+[[naked]] local inline generic_func_def_83<T> :: (x: s32 = 123, ...) -> s32 {}  // Definition with a pre-defined argument, variadic arguments, return type, attributes and qualifiers
+[[naked]] local inline func generic_func_def_84<T> :: () {}                     // Explicit definition with attributes and qualifiers
+[[naked]] local inline func generic_func_def_85<T> :: (x: s32) {}               // Explicit definition with an argument, attributes and qualifiers
+[[naked]] local inline func generic_func_def_86<T> :: (x: s32 = 123) {}         // Explicit definition with a pre-defined argument, attributes and qualifiers
+[[naked]] local inline func generic_func_def_87<T> :: (...) {}                  // Explicit definition with variadic arguments, attributes and qualifiers
+[[naked]] local inline func generic_func_def_88<T> :: (x: s32, ...) {}          // Explicit definition with an argument, variadic arguments, attributes and qualifiers
+[[naked]] local inline func generic_func_def_89<T> :: (x: s32 = 123, ...) {}    // Explicit definition with a pre-defined argument, variadic arguments, attributes and qualifiers
+[[naked]] local inline func generic_func_def_90<T> :: () -> s32 {}              // Explicit definition with a return type, attributes and qualifiers
+[[naked]] local inline func generic_func_def_91<T> :: (x: s32) -> s32 {}        // Explicit definition with an argument, return type, attributes and qualifiers
+[[naked]] local inline func generic_func_def_92<T> :: (x: s32 = 123) -> s32 {}  // Explicit definition with a pre-defined argument, return type, attributes and qualifiers
+[[naked]] local inline func generic_func_def_93<T> :: (...) -> s32 {}           // Explicit definition with variadic arguments, return type, attributes and qualifiers
+[[naked]] local inline func generic_func_def_94<T> :: (x: s32, ...) -> s32 {}   // Explicit definition with an argument, variadic arguments, return type, attributes and qualifiers
+[[naked]] local inline func generic_func_def_95<T>
+      :: (x: s32 = 123, ...) -> s32 {}  // Explicit definition with a pre-defined argument, variadic arguments, return type, attributes and qualifiers
+
+/* === External declarations === */
+extern extern_var_decl: s32;                                                    // External variable declaration
+extern extern_func_decl :: (x: s32);                                            // External function declaration
+
+/* === Typedefs === */
+typedef s32 Type1;                                                              // Minimal typedef
+typedef *s32 Type2;                                                             // Typedef with a pointer
+typedef () Type3;                                                               // Typedef with a function pointer
+typedef (x: s32) Type4;                                                         // Typedef with a function pointer with an argument
+typedef (x: s32 = 1) Type5;                                                     // Typedef with a function pointer with a pre-defined argument
+typedef (...) Type6;                                                            // Typedef with a function pointer with variadic arguments
+typedef (x: s32, ...) Type7;                                                    // Typedef with a function pointer with an argument and variadic arguments
+typedef (x: s32 = 1, ...) Type8;                                                // Typedef with a function pointer with a pre-defined argument and variadic arguments
+typedef () -> s32 Type9;                                                        // Typedef with a function pointer with a return type
+typedef (x: s32) -> s32 Type10;                                                 // Typedef with a function pointer with an argument and a return type
+typedef (x: s32 = 1) -> s32 Type11;                                             // Typedef with a function pointer with a pre-defined argument and a return type
+typedef (...) -> s32 Type12;                                                    // Typedef with a function pointer with variadic arguments and a return type
+typedef (x: s32, ...) -> s32 Type13;                                            // Typedef with a function pointer with an argument, variadic arguments and a return type
+typedef (x: s32 = 1, ...) -> s32 Type14;                                        // Typedef with a function pointer with a pre-defined argument, variadic arguments and a return type
+typedef *() Type15;                                                             // Typedef with a pointer to function pointer
+typedef *(x: s32) Type16;                                                       // Typedef with a pointer to function pointer with an argument
+typedef *(x: s32 = 1) Type17;                                                   // Typedef with a pointer to function pointer with a pre-defined argument
+typedef *(...) Type18;                                                          // Typedef with a pointer to function pointer with variadic arguments
+typedef *(x: s32, ...) Type19;                                                  // Typedef with a pointer to function pointer with an argument and variadic arguments
+typedef *(x: s32 = 1, ...) Type20;                                              // Typedef with a pointer to function pointer with a pre-defined argument and variadic arguments
+typedef *() -> s32 Type21;                                                      // Typedef with a pointer to function pointer with a return type
+typedef *(x: s32) -> s32 Type22;                                                // Typedef with a pointer to function pointer with an argument and a return type
+typedef *(x: s32 = 1) -> s32 Type23;                                            // Typedef with a pointer to function pointer with a pre-defined argument and a return type
+typedef *(...) -> s32 Type24;                                                   // Typedef with a pointer to function pointer with variadic arguments and a return type
+typedef *(x: s32, ...) -> s32 Type25;                                           // Typedef with a pointer to function pointer with an argument, variadic arguments and a return type
+typedef *(x: s32 = 1, ...) -> s32 Type26;                                 // Typedef with a pointer to function pointer with a pre-defined argument, variadic arguments and a return type
+typedef [[alignas(16)]] s32 Type27;                                             // Typedef with attributes
+typedef [[alignas(16)]] *s32 Type28;                                            // Typedef with attributes and a pointer
+typedef [[alignas(16)]] () Type29;                                              // Typedef with attributes and a function pointer
+typedef [[alignas(16)]] (x: s32) Type30;                                        // Typedef with attributes and a function pointer with an argument
+typedef [[alignas(16)]] (x: s32 = 1) Type31;                                    // Typedef with attributes and a function pointer with a pre-defined argument
+typedef [[alignas(16)]] (...) Type32;                                           // Typedef with attributes and a function pointer with variadic arguments
+typedef [[alignas(16)]] (x: s32, ...) Type33;                                   // Typedef with attributes and a function pointer with an argument and variadic arguments
+typedef [[alignas(16)]] (x: s32 = 1, ...) Type34;                               // Typedef with attributes and a function pointer with a pre-defined argument and variadic arguments
+typedef [[alignas(16)]] () -> s32 Type35;                                       // Typedef with attributes and a function pointer with a return type
+typedef [[alignas(16)]] (x: s32) -> s32 Type36;                                 // Typedef with attributes and a function pointer with an argument and a return type
+typedef [[alignas(16)]] (x: s32 = 1) -> s32 Type37;                             // Typedef with attributes and a function pointer with a pre-defined argument and a return type
+typedef [[alignas(16)]] (...) -> s32 Type38;                                    // Typedef with attributes and a function pointer with variadic arguments and a return type
+typedef [[alignas(16)]] (x: s32, ...) -> s32 Type39;                            // Typedef with attributes and a function pointer with an argument, variadic arguments and a return type
+typedef [[alignas(16)]] (x: s32 = 1, ...) -> s32 Type40;              // Typedef with attributes and a function pointer with a pre-defined argument, variadic arguments and a return type
+typedef [[alignas(16)]] *() Type41;                                             // Typedef with attributes and a pointer to function pointer
+typedef [[alignas(16)]] *(x: s32) Type42;                                       // Typedef with attributes and a pointer to function pointer with an argument
+typedef [[alignas(16)]] *(x: s32 = 1) Type43;                                   // Typedef with attributes and a pointer to function pointer with a pre-defined argument
+typedef [[alignas(16)]] *(...) Type44;                                          // Typedef with attributes and a pointer to function pointer with variadic arguments
+typedef [[alignas(16)]] *(x: s32, ...) Type45;                                  // Typedef with attributes and a pointer to function pointer with an argument and variadic arguments
+typedef [[alignas(16)]] *(x: s32 = 1, ...) Type46;                        // Typedef with attributes and a pointer to function pointer with a pre-defined argument and variadic arguments
+typedef [[alignas(16)]] *() -> s32 Type47;                                      // Typedef with attributes and a pointer to function pointer with a return type
+typedef [[alignas(16)]] *(x: s32) -> s32 Type48;                                // Typedef with attributes and a pointer to function pointer with an argument and a return type
+typedef [[alignas(16)]] *(x: s32 = 1) -> s32 Type49;                           // Typedef with attributes and a pointer to function pointer with a pre-defined argument and a return type
+typedef [[alignas(16)]] *(...) -> s32 Type50;                                   // Typedef with attributes and a pointer to function pointer with variadic arguments and a return type
+typedef [[alignas(16)]] *(x: s32, ...) -> s32 Type51;                 // Typedef with attributes and a pointer to function pointer with an argument, variadic arguments and a return type
+typedef [[alignas(16)]] *(x: s32 = 1, ...) -> s32 Type52;  // Typedef with attributes and a pointer to function pointer with a pre-defined argument, variadic arguments and a return type
+
+/* === Struct === */
+struct Struct1 {
+  x: s32;
+  method :: () {}
+  func function :: () {}
+  generic_method<T, U, V> :: () {}
+  func generic_function<T, U, V> :: () {}
+  enum InnerEnum { ELEMENT }
+  struct InnerStruct {}
+  union InnerUnion {}
+  struct InnerGenericStruct<T, U, V> {}
+private:
+public:
+}
+
+/* === Generic Struct === */
+struct GenericStruct1<T, U, V> {
+  x: s32;
+  method :: () {}
+  func function :: () {}
+  generic_method<T, U, V> :: () {}
+  func generic_function<T, U, V> :: () {}
+  enum InnerEnum { ELEMENT }
+  struct InnerStruct {}
+  union InnerUnion {}
+  struct InnerGenericStruct<T, U, V> {}
+private:
+public:
+}
+
+/* === Union === */
+union Union1 {
+  x: s32;
+  method :: () {}
+  func function :: () {}
+  generic_method<T, U, V> :: () {}
+  func generic_function<T, U, V> :: () {}
+  enum InnerEnum { ELEMENT }
+  struct InnerStruct {}
+  union InnerUnion {}
+  struct InnerGenericStruct<T, U, V> {}
+}
+
+/* === Enum === */
+enum Enum1 {
+  ENUM_ELEMENT1,
+  ENUM_ELEMENT2 = 4,
+  ENUM_ELEMENT3 = ENUM_ELEMENT1,
+  ENUM_ELEMENT4 = 0,
+  ENUM_ELEMENT5 = ENUM_ELEMENT4 + 10,
+}
+
+/* === Statements === */
+_ :: () {
+  // Statement block
+  {{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{
+  }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+
+  return;                                                                       // Return statement
+  return 69;                                                                    // Return statement with an expression
+  return {};                                                                    // Return statement with an initializer list
+
+  goto @label;                                                                  // Goto statement
+@label:                                                                         // Label
+  break;                                                                        // Break statement
+  continue;                                                                     // Continue statement
+  fallthrough;                                                                  // Fallthrough statement
+
+  while (true) {}                                                               // While loop
+  while [[unwrap]] (true) {}                                                    // While loop with attributes
+  for (;;) {}                                                                   // For loop
+  for (x: s32 = 0;;) {}                                                         // For loop with an init statement
+  for (x: s32 = 0; x < 10;) {}                                                  // For loop with an init statement and a condition expression
+  for (x: s32 = 0; x < 10; x += 1) {}                                           // For loop with an init statement, condition expression and an expression
+  for [[unwrap]] (;;) {}                                                        // For loop with attributes
+  for [[unwrap]] (x: s32 = 0;;) {}                                              // For loop with an init statement and attributes
+  for [[unwrap]] (x: s32 = 0; x < 10;) {}                                       // For loop with an init statement, condition expression and attributes
+  for [[unwrap]] (x: s32 = 0; x < 10; x += 1) {}                                // For loop with an init statement, condition expression, an expression and attributes
+  do {} while (true);                                                           // Do-while loop
+  do [[unwrap]] {} while (true);                                                // Do-while loop with attributes
+  loop {}                                                                       // "Infinite" loop
+  loop [[unwrap]] {}                                                            // "Infinite" loop with attributes
+
+  // Expression statements
+  123;
+  x;
+  123 * x;
+  call(123 * x);
+  generic_call<s32>(call(123 * x), 123 * x, 123, x);
+  (123 + x * (123 * x) << call(123 * x) / generic_call<s32>(call(123 * x), 123 * x, 123, x));
+
+  // Switch statement
+  switch (x) {
+  case 123: { fallthrough; } // Case statements
+  case 456 * 123: { fallthrough; }
+  case Enum1::ELEMENT1: { fallthrough; }
+  default: { break; } // Default statement
+  }
+
+  // Defer statements
+  defer;
+  defer {};
+  defer std::mem::free(x);
+  defer { std::mem::free(x); y = 123; }
+
+  // If (+else) statements
+  if (true) {}
+  if (true) {} else {}
+  if (true) {} else if (true) {}
+  if [[likely]] (true) {}
+  if [[likely]] (true) {} else {}
+  if [[likely]] (true) {} else if (true) {}
+  if [[likely]] (true) {} else if [[unlikely]] (true) {}
+
+  // Types
+  _: s32;
+  _: s32[];
+  _: s32[32];
+  _: s32[32][];
+  _: *s32;
+  _: *s32[];
+  _: *s32[32];
+  _: *s32[32][];
+  _: ();
+  _: (x: s32);
+  _: (x: s32 = 123);
+  _: (...);
+  _: () -> s32[];
+  _: (x: s32) -> s32[];
+  _: (x: s32 = 123) -> s32[];
+  _: (...) -> s32[];
+  _: ()[32];
+  _: (x: s32)[32];
+  _: (x: s32 = 123)[32];
+  _: (...)[32];
+  _: () -> s32[32];
+  _: (x: s32) -> s32[32];
+  _: (x: s32 = 123) -> s32[32];
+  _: (...) -> s32[32];
+  _: ()[32][];
+  _: (x: s32)[32][];
+  _: (x: s32 = 123)[32][];
+  _: (...)[32][];
+  _: () -> s32[32][];
+  _: (x: s32) -> s32[32][];
+  _: (x: s32 = 123) -> s32[32][];
+  _: (...) -> s32[32][];
+  _: *();
+  _: *(x: s32);
+  _: *(x: s32 = 123);
+  _: *(...);
+  _: *() -> s32[];
+  _: *(x: s32) -> s32[];
+  _: *(x: s32 = 123) -> s32[];
+  _: *(...) -> s32[];
+  _: *()[32];
+  _: *(x: s32)[32];
+  _: *(x: s32 = 123)[32];
+  _: *(...)[32];
+  _: *() -> s32[32];
+  _: *(x: s32) -> s32[32];
+  _: *(x: s32 = 123) -> s32[32];
+  _: *(...) -> s32[32];
+  _: *()[32][];
+  _: *(x: s32)[32][];
+  _: *(x: s32 = 123)[32][];
+  _: *(...)[32][];
+  _: *() -> s32[32][];
+  _: *(x: s32) -> s32[32][];
+  _: *(x: s32 = 123) -> s32[32][];
+  _: *(...) -> s32[32][];
+  _: std::String;
+  _: std::String[];
+  _: std::String[32];
+  _: std::String[32][];
+  _: *std::String;
+  _: *std::String[];
+  _: *std::String[32];
+  _: *std::String[32][];
+  _: std::Vector<s32>::SizeType;
+  _: std::Vector<s32>::SizeType[];
+  _: std::Vector<s32>::SizeType[32];
+  _: std::Vector<s32>::SizeType[32][];
+  _: *std::Vector<s32>::SizeType;
+  _: *std::Vector<s32>::SizeType[];
+  _: *std::Vector<s32>::SizeType[32];
+  _: *std::Vector<s32>::SizeType[32][];
+
+  // Initlist
+  _: T = {};
+  _: T = { 0 };
+  _: T = { 1 - 2 };
+  _: T = { .x = 1 };
+  _: T = { .x = 1 - 2 };
+  _: T = { .x = 1 << 1, .y = 1 };
+  _: T = { .x[0] = 1, .x[1] = 2, .x[2] = 3, .y = 4 };
+
+  // Expressions
+  x = 123;
+  x *= 123llu * 1.0f / arr[52] * (cast(s32)0u << call(123, 456))
+     + "string"[0] * 'A' - object.x * generic_call<s32>(5)
+     / sizeof(x) * alignof(object);
+}
