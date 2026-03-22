@@ -44,8 +44,8 @@ string_t *solc_ast_stmt_if_build_tree(solc_ast_t *if_ast)
 
   string_t header = string_create_from("STMT_IF");
   string_t **children_vs_v = vector_reserve(string_t *, 4);
-  solc_ast_add_to_tree_if_exists(children_vs_v, if_data->condition_expr_ast);
   solc_ast_add_to_tree_if_exists(children_vs_v, if_data->attrib_list_ast);
+  solc_ast_add_to_tree_if_exists(children_vs_v, if_data->condition_expr_ast);
   solc_ast_add_to_tree_if_exists(children_vs_v, if_data->stmt_ast);
   solc_ast_add_to_tree_if_exists(children_vs_v, if_data->else_ast);
 
