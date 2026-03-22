@@ -73,6 +73,7 @@ solc_ast_t *solc_parser_parse_stmt_label(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_stmt_while(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_stmt_for(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_stmt_dowhile(solc_parser_t *parser);
+solc_ast_t *solc_parser_parse_stmt_loop(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_stmt_switch(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_stmt_case(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_stmt_default(solc_parser_t *parser);

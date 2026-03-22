@@ -64,6 +64,13 @@ solc_ast_t *
 solc_ast_stmt_dowhile_get_condition_expr_ast(solc_ast_t *dowhile_ast);
 solc_ast_t *solc_ast_stmt_dowhile_get_stmt_ast(solc_ast_t *dowhile_ast);
 
+solc_ast_t *solc_ast_stmt_loop_create(sz pos, solc_ast_t *stmt_ast,
+                                      solc_ast_t *attribute_list_ast);
+void solc_ast_stmt_loop_destroy(solc_ast_t *loop_ast);
+string_t *solc_ast_stmt_loop_build_tree(solc_ast_t *loop_ast);
+solc_ast_t *solc_ast_stmt_loop_get_attribute_list_ast(solc_ast_t *loop_ast);
+solc_ast_t *solc_ast_stmt_loop_get_stmt_ast(solc_ast_t *loop_ast);
+
 solc_ast_t *solc_ast_stmt_expr_create(sz pos, solc_ast_t *expr_ast);
 void solc_ast_stmt_expr_destroy(solc_ast_t *expr_stmt_ast);
 string_t *solc_ast_stmt_expr_build_tree(solc_ast_t *expr_stmt_ast);
