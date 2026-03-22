@@ -192,7 +192,10 @@ public:
 [[naked]] inline func naked_generic_func_4<T> :: () {}
 
 _ :: () {
-  if (test) [[likely, unlikely, optimize(3, "test", 1 + 2)]];
+  if [[likely, unlikely, optimize(3, "test", 1 + 2)]] (test);
+  while [[unwrap]] (true) {}
+  for [[unwrap]] (;;) {}
+  do [[unwrap]] ; while(true);
 }
 
 struct StructWithAttribs [[packed]] {

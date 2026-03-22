@@ -12,6 +12,8 @@ solc_ast_t *solc_parser_parse_decldef(solc_parser_t *parser,
                                       solc_ast_t *attribute_list_ast)
 {
   VERIFY_POS(parser, parser->pos);
+  VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,
+               SOLC_TOKENTYPE_ID);
 
   solc_token_t cur = parser->tokens[parser->pos];
   if (solc_parser_is_qualifier(cur.value)) {
@@ -20,7 +22,7 @@ solc_ast_t *solc_parser_parse_decldef(solc_parser_t *parser,
       pos, cur.value, solc_parser_parse_decldef(parser, attribute_list_ast));
   }
 
-  if (cur.type == SOLC_TOKENTYPE_ID && strcmp(cur.value, "func") == 0) {
+  if (strcmp(cur.value, "func") == 0) {
     parser->pos++;
     VERIFY_POS(parser, parser->pos);
     VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,
