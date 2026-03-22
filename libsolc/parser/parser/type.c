@@ -84,6 +84,11 @@ solc_ast_t *solc_parser_parse_type_raw(solc_parser_t *parser)
     solc_ast_t *member_type = solc_parser_parse_type_raw(parser);
     type = solc_ast_namespace_create(namespace_pos, cur.value, member_type);
     goto process_ptrs;
+  } else if (solc_parser_is_generic_namespace(parser)) {
+    solc_ast_t *generic_namespace = solc_parser_parse_generic_namespace(parser);
+    solc_ast_t *member_type = solc_parser_parse_type_raw(parser);
+    solc_ast_generic_namespace_set_subobject(generic_namespace, member_type);
+    return generic_namespace;
   }
 
   sz plain_type_pos = parser->pos++;
