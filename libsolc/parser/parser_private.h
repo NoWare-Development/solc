@@ -6,6 +6,7 @@
 #include "solc/parser/ast.h"
 #include "solc/parser/parser.h"
 
+#ifdef _DEBUG
 #define VERIFY_POS(_parser, _pos)                                         \
   {                                                                       \
     if (!solc_parser_verify_pos((_parser), (_pos))) {                     \
@@ -39,6 +40,29 @@
       return nullptr;                                                          \
     }                                                                          \
   }
+#else
+#define VERIFY_POS(_parser, _pos)                   \
+  {                                                 \
+    if (!solc_parser_verify_pos((_parser), (_pos))) \
+      return nullptr;                               \
+  }
+#define VERIFY_TOKEN(_parser, _pos, _got, _expected)                       \
+  {                                                                        \
+    if (!solc_parser_verify_token((_parser), (_pos), (_got), (_expected))) \
+      return nullptr;                                                      \
+  }
+#define VERIFY_VALUE(_parser, _pos, _got, _expected)                       \
+  {                                                                        \
+    if (!solc_parser_verify_value((_parser), (_pos), (_got), (_expected))) \
+      return nullptr;                                                      \
+  }
+#define VERIFY_WHITESPACE(_parser, _pos, _got, _expected, _next_tok)           \
+  {                                                                            \
+    if (!solc_parser_verify_whitespace((_parser), (_pos), (_got), (_expected), \
+                                       (_next_tok)))                           \
+      return nullptr;                                                          \
+  }
+#endif
 
 solc_ast_t *solc_parser_parse_top(solc_parser_t *parser);
 solc_ast_t *solc_parser_parse_typedef(solc_parser_t *parser);
