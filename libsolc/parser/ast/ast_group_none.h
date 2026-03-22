@@ -40,11 +40,13 @@ string_t *solc_ast_import_build_tree(solc_ast_t *import_ast);
 solc_ast_t *solc_ast_import_get_module_ast(solc_ast_t *import_ast);
 
 solc_ast_t *solc_ast_typedef_create(sz pos, solc_ast_t *type_ast,
-                                    const char *name);
+                                    const char *name,
+                                    solc_ast_t *attribute_list_ast);
 void solc_ast_typedef_destroy(solc_ast_t *typedef_ast);
 string_t *solc_ast_typedef_build_tree(solc_ast_t *typedef_ast);
 solc_ast_t *solc_ast_typedef_get_type_ast(solc_ast_t *typedef_ast);
 const char *solc_ast_typedef_get_name(solc_ast_t *typedef_ast);
+solc_ast_t *solc_ast_typedef_get_attribute_list_ast(solc_ast_t *typedef_ast);
 
 solc_ast_t *solc_ast_extern_func_create(sz pos, const char *name,
                                         solc_ast_t *type_ast,
