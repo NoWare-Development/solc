@@ -39,30 +39,36 @@ void solc_ast_stmt_fallthrough_destroy(solc_ast_t *fallthrough_ast);
 string_t *solc_ast_stmt_fallthrough_build_tree(solc_ast_t *fallthrough_ast);
 
 solc_ast_t *solc_ast_stmt_while_create(sz pos, solc_ast_t *condition_expr_ast,
-                                       solc_ast_t *stmt_ast);
+                                       solc_ast_t *stmt_ast,
+                                       solc_ast_t *attribute_list_ast);
 void solc_ast_stmt_while_destroy(solc_ast_t *while_ast);
 string_t *solc_ast_stmt_while_build_tree(solc_ast_t *while_ast);
 solc_ast_t *solc_ast_stmt_while_get_condition_expr_ast(solc_ast_t *while_ast);
 solc_ast_t *solc_ast_stmt_while_get_stmt_ast(solc_ast_t *while_ast);
+solc_ast_t *solc_ast_stmt_while_get_attribute_list_ast(solc_ast_t *while_ast);
 
 solc_ast_t *solc_ast_stmt_for_create(sz pos, solc_ast_t *init_stmt_ast,
                                      solc_ast_t *condition_expr_ast,
-                                     solc_ast_t *expr_ast,
-                                     solc_ast_t *stmt_ast);
+                                     solc_ast_t *expr_ast, solc_ast_t *stmt_ast,
+                                     solc_ast_t *attribute_list_ast);
 void solc_ast_stmt_for_destroy(solc_ast_t *for_ast);
 string_t *solc_ast_stmt_for_build_tree(solc_ast_t *for_ast);
-solc_ast_t *solc_ast_stmt_for_init_stmt_ast(solc_ast_t *for_ast);
-solc_ast_t *solc_ast_stmt_for_condition_expr_ast(solc_ast_t *for_ast);
-solc_ast_t *solc_ast_stmt_for_expr_ast(solc_ast_t *for_ast);
-solc_ast_t *solc_ast_stmt_for_stmt_ast(solc_ast_t *for_ast);
+solc_ast_t *solc_ast_stmt_for_get_init_stmt_ast(solc_ast_t *for_ast);
+solc_ast_t *solc_ast_stmt_for_get_condition_expr_ast(solc_ast_t *for_ast);
+solc_ast_t *solc_ast_stmt_for_get_expr_ast(solc_ast_t *for_ast);
+solc_ast_t *solc_ast_stmt_for_get_stmt_ast(solc_ast_t *for_ast);
+solc_ast_t *solc_ast_stmt_for_get_attribute_list_ast(solc_ast_t *for_ast);
 
 solc_ast_t *solc_ast_stmt_dowhile_create(sz pos, solc_ast_t *condition_expr_ast,
-                                         solc_ast_t *stmt_ast);
+                                         solc_ast_t *stmt_ast,
+                                         solc_ast_t *attribute_list_ast);
 void solc_ast_stmt_dowhile_destroy(solc_ast_t *dowhile_ast);
 string_t *solc_ast_stmt_dowhile_build_tree(solc_ast_t *dowhile_ast);
 solc_ast_t *
 solc_ast_stmt_dowhile_get_condition_expr_ast(solc_ast_t *dowhile_ast);
 solc_ast_t *solc_ast_stmt_dowhile_get_stmt_ast(solc_ast_t *dowhile_ast);
+solc_ast_t *
+solc_ast_stmt_dowhile_get_attribute_list_ast(solc_ast_t *dowhile_ast);
 
 solc_ast_t *solc_ast_stmt_loop_create(sz pos, solc_ast_t *stmt_ast,
                                       solc_ast_t *attribute_list_ast);

@@ -7,6 +7,9 @@
 solc_ast_t *solc_parser_parse_stmt_for(solc_parser_t *parser)
 {
   sz for_pos = parser->pos++;
+
+  solc_ast_t *attrib_list = solc_parser_parse_attribute_list_optional(parser);
+
   VERIFY_POS(parser, parser->pos);
   VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,
                SOLC_TOKENTYPE_LPAREN);
@@ -47,5 +50,6 @@ solc_ast_t *solc_parser_parse_stmt_for(solc_parser_t *parser)
 
   solc_ast_t *stmt = solc_parser_parse_stmt(parser);
 
-  return solc_ast_stmt_for_create(for_pos, init_stmt, cond_expr, expr, stmt);
+  return solc_ast_stmt_for_create(for_pos, init_stmt, cond_expr, expr, stmt,
+                                  attrib_list);
 }

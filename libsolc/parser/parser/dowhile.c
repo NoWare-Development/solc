@@ -7,6 +7,9 @@
 solc_ast_t *solc_parser_parse_stmt_dowhile(solc_parser_t *parser)
 {
   sz dowhile_pos = parser->pos++;
+
+  solc_ast_t *attrib_list = solc_parser_parse_attribute_list_optional(parser);
+
   VERIFY_POS(parser, parser->pos);
 
   solc_ast_t *stmt = solc_parser_parse_stmt(parser);
@@ -36,5 +39,6 @@ solc_ast_t *solc_parser_parse_stmt_dowhile(solc_parser_t *parser)
 
   parser->pos++;
 
-  return solc_ast_stmt_dowhile_create(dowhile_pos, cond_expr, stmt);
+  return solc_ast_stmt_dowhile_create(dowhile_pos, cond_expr, stmt,
+                                      attrib_list);
 }
