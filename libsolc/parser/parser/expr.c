@@ -467,6 +467,8 @@ solc_ast_t *solc_parser_parse_expr_operand(solc_parser_t *parser)
 
   solc_ast_t *out_operand = nullptr;
 
+  b8 can_access_members = true;
+
   switch (cur_tok.type) {
   case SOLC_TOKENTYPE_LPAREN: {
     parser->pos++;
@@ -584,10 +586,11 @@ solc_ast_t *solc_parser_parse_expr_operand(solc_parser_t *parser)
       string_append_cstr(&out_string, parser->tokens[parser->pos].value);
       parser->pos++;
     }
-    solc_ast_t *out_string_ast =
+    out_operand =
       solc_ast_expr_operand_string_create(string_pos, out_string.data);
     string_destroy(&out_string);
-    return out_string_ast;
+    can_access_members = false;
+    break;
   }
 
   case SOLC_TOKENTYPE_SYMBOL: {
@@ -643,7 +646,8 @@ solc_ast_t *solc_parser_parse_expr_operand(solc_parser_t *parser)
   out_operand =
     solc_parser_parse_expr_operand_array_element(parser, out_operand);
 
-  if (solc_parser_peek(parser, parser->pos) == SOLC_TOKENTYPE_PERIOD) {
+  if (can_access_members &&
+      solc_parser_peek(parser, parser->pos) == SOLC_TOKENTYPE_PERIOD) {
     sz access_pos = parser->pos++;
     VERIFY_POS(parser, parser->pos);
     solc_ast_t *symbol = solc_parser_parse_expr_operand(parser);

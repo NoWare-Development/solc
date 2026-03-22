@@ -7,6 +7,9 @@
 solc_ast_t *solc_parser_parse_typedef(solc_parser_t *parser)
 {
   sz typedef_pos = parser->pos++;
+
+  solc_ast_t *attrib_list = solc_parser_parse_attribute_list_optional(parser);
+
   VERIFY_POS(parser, parser->pos);
 
   solc_ast_t *aliased_type = solc_parser_parse_type(parser);
@@ -23,5 +26,5 @@ solc_ast_t *solc_parser_parse_typedef(solc_parser_t *parser)
 
   parser->pos++;
 
-  return solc_ast_typedef_create(typedef_pos, aliased_type, alias);
+  return solc_ast_typedef_create(typedef_pos, aliased_type, alias, attrib_list);
 }

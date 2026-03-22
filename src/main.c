@@ -71,11 +71,13 @@ s32 main(s32 argc, char **argv)
     solc_lexer_t *lexer = solc_lexer_create(src);
     sz tokens_num;
     solc_token_t *tokens = solc_lexer_tokenize(lexer, &tokens_num);
+#ifdef _DEBUG
     for (sz i = 0; i < tokens_num; i++) {
       char buf[0x80] = { 0 };
       solc_token_to_string(buf, sizeof(buf) - 1, &tokens[i]);
       printf("(%zu) %s\n", i, buf);
     }
+#endif
 
     error_handler_t handler =
       error_handler_create(argv[args.danlings[i]], src, tokens, tokens_num);
@@ -87,11 +89,7 @@ s32 main(s32 argc, char **argv)
     solc_ast_t *root = solc_parser_parse(&parser);
 
 #ifdef _DEBUG
-    sz n = 1 << 16;
-    char *buf = malloc(sizeof(char) * (n + 1));
-    solc_ast_to_string(buf, n, root);
-    printf("%s", buf);
-    free(buf);
+    solc_ast_print(root);
 #endif
 
     sz parser_errors_num;
