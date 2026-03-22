@@ -76,7 +76,7 @@ export func_def_36 :: (x: s32 = 123, ...) -> s32 {}                             
 [[naked]] func func_def_55 :: () -> s32 {}                                      // Explicit definition with a return type and attributes
 [[naked]] func func_def_56 :: (x: s32) -> s32 {}                                // Explicit definition with an argument, return type and attributes
 [[naked]] func func_def_57 :: (x: s32 = 123) -> s32 {}                          // Explicit definition with a pre-defined argument, return type and attributes
-[[naked]] func func_def_58 :: (...) -> s32 {}          // Explicit definition with variadic arguments, return type and attributes
+[[naked]] func func_def_58 :: (...) -> s32 {}                                   // Explicit definition with variadic arguments, return type and attributes
 [[naked]] func func_def_59 :: (x: s32, ...) -> s32 {}                           // Explicit definition with an argument, variadic arguments, return type and attributes
 [[naked]] func func_def_60 :: (x: s32 = 123, ...) -> s32 {}                     // Explicit definition with a pre-defined argument, variadic arguments, return type and attributes
 local inline func_def_61 :: () {}                                               // Definition with qualifiers
@@ -126,7 +126,7 @@ local inline func func_def_84 :: (x: s32 = 123, ...) -> s32 {}                  
 [[naked]] local inline func func_def_105 :: (x: s32 = 123) -> s32 {}            // Explicit definition with a pre-defined argument, return type, attributes and qualifiers
 [[naked]] local inline func func_def_106 :: (...) -> s32 {}                     // Explicit definition with variadic arguments, return type, attributes and qualifiers
 [[naked]] local inline func func_def_107 :: (x: s32, ...) -> s32 {}             // Explicit definition with an argument, variadic arguments, return type, attributes and qualifiers
-[[naked]] local inline func func_def_108 :: (x: s32 = 123, ...) -> s32 {}  // Explicit definition with a pre-defined argument, variadic arguments, return type, attributes and qualifiers
+[[naked]] local inline func func_def_108 :: (x: s32 = 123, ...) -> s32 {}       // Explicit definition with a pre-defined argument, variadic arguments, return type, attributes and qualifiers
 
 /* === Generic function definitions === */
 generic_func_def_1<T> :: () {}                                                  // Minimal definition
@@ -257,7 +257,7 @@ typedef *(x: s32) -> s32 Type22;                                                
 typedef *(x: s32 = 1) -> s32 Type23;                                            // Typedef with a pointer to function pointer with a pre-defined argument and a return type
 typedef *(...) -> s32 Type24;                                                   // Typedef with a pointer to function pointer with variadic arguments and a return type
 typedef *(x: s32, ...) -> s32 Type25;                                           // Typedef with a pointer to function pointer with an argument, variadic arguments and a return type
-typedef *(x: s32 = 1, ...) -> s32 Type26;                                 // Typedef with a pointer to function pointer with a pre-defined argument, variadic arguments and a return type
+typedef *(x: s32 = 1, ...) -> s32 Type26;                                       // Typedef with a pointer to function pointer with a pre-defined argument, variadic arguments and a return type
 typedef [[alignas(16)]] s32 Type27;                                             // Typedef with attributes
 typedef [[alignas(16)]] *s32 Type28;                                            // Typedef with attributes and a pointer
 typedef [[alignas(16)]] () Type29;                                              // Typedef with attributes and a function pointer
@@ -271,19 +271,19 @@ typedef [[alignas(16)]] (x: s32) -> s32 Type36;                                 
 typedef [[alignas(16)]] (x: s32 = 1) -> s32 Type37;                             // Typedef with attributes and a function pointer with a pre-defined argument and a return type
 typedef [[alignas(16)]] (...) -> s32 Type38;                                    // Typedef with attributes and a function pointer with variadic arguments and a return type
 typedef [[alignas(16)]] (x: s32, ...) -> s32 Type39;                            // Typedef with attributes and a function pointer with an argument, variadic arguments and a return type
-typedef [[alignas(16)]] (x: s32 = 1, ...) -> s32 Type40;              // Typedef with attributes and a function pointer with a pre-defined argument, variadic arguments and a return type
+typedef [[alignas(16)]] (x: s32 = 1, ...) -> s32 Type40;                        // Typedef with attributes and a function pointer with a pre-defined argument, variadic arguments and a return type
 typedef [[alignas(16)]] *() Type41;                                             // Typedef with attributes and a pointer to function pointer
 typedef [[alignas(16)]] *(x: s32) Type42;                                       // Typedef with attributes and a pointer to function pointer with an argument
 typedef [[alignas(16)]] *(x: s32 = 1) Type43;                                   // Typedef with attributes and a pointer to function pointer with a pre-defined argument
 typedef [[alignas(16)]] *(...) Type44;                                          // Typedef with attributes and a pointer to function pointer with variadic arguments
 typedef [[alignas(16)]] *(x: s32, ...) Type45;                                  // Typedef with attributes and a pointer to function pointer with an argument and variadic arguments
-typedef [[alignas(16)]] *(x: s32 = 1, ...) Type46;                        // Typedef with attributes and a pointer to function pointer with a pre-defined argument and variadic arguments
+typedef [[alignas(16)]] *(x: s32 = 1, ...) Type46;                              // Typedef with attributes and a pointer to function pointer with a pre-defined argument and variadic arguments
 typedef [[alignas(16)]] *() -> s32 Type47;                                      // Typedef with attributes and a pointer to function pointer with a return type
 typedef [[alignas(16)]] *(x: s32) -> s32 Type48;                                // Typedef with attributes and a pointer to function pointer with an argument and a return type
-typedef [[alignas(16)]] *(x: s32 = 1) -> s32 Type49;                           // Typedef with attributes and a pointer to function pointer with a pre-defined argument and a return type
+typedef [[alignas(16)]] *(x: s32 = 1) -> s32 Type49;                            // Typedef with attributes and a pointer to function pointer with a pre-defined argument and a return type
 typedef [[alignas(16)]] *(...) -> s32 Type50;                                   // Typedef with attributes and a pointer to function pointer with variadic arguments and a return type
-typedef [[alignas(16)]] *(x: s32, ...) -> s32 Type51;                 // Typedef with attributes and a pointer to function pointer with an argument, variadic arguments and a return type
-typedef [[alignas(16)]] *(x: s32 = 1, ...) -> s32 Type52;  // Typedef with attributes and a pointer to function pointer with a pre-defined argument, variadic arguments and a return type
+typedef [[alignas(16)]] *(x: s32, ...) -> s32 Type51;                           // Typedef with attributes and a pointer to function pointer with an argument, variadic arguments and a return type
+typedef [[alignas(16)]] *(x: s32 = 1, ...) -> s32 Type52;                       // Typedef with attributes and a pointer to function pointer with a pre-defined argument, variadic arguments and a return type
 
 /* === Struct === */
 struct Struct1 {
