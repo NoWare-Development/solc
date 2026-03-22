@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #define LIBSOLC_VERSION 0.0.1
 
