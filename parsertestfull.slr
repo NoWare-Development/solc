@@ -301,7 +301,7 @@ public:
 }
 
 /* === Generic Struct === */
-struct GenericStruct1<T, U, V> {
+struct GenericStruct1<T, U, V = s32> {
   x: s32;
   method :: () {}
   func function :: () {}
