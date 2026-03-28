@@ -44,7 +44,7 @@ solc_ast_expr_operand_identifier_build_tree(solc_ast_t *id_expr_operand_ast)
   SOLC_ASSUME(id_expr_operand_data->name != nullptr);
   const sz n = strlen(id_expr_operand_data->name) + 128;
   char *buf = malloc(sizeof(char) * n);
-  snprintf(buf, n, "EXPR_OPERAND_IDENTIFIER { name \"%s\" }",
+  snprintf(buf, n, "EXPR_OPERAND_IDENTIFIER { name: \"%s\" }",
            id_expr_operand_data->name);
   string_t *out_v = vector_reserve(string_t, 1);
   vector_push(out_v, string_create_from(buf));
