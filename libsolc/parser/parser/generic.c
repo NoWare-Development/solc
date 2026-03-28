@@ -20,8 +20,23 @@ solc_parser_parse_generic_placeholder_type_list(solc_parser_t *parser)
 
     VERIFY_TOKEN(parser, parser->pos, cur.type, SOLC_TOKENTYPE_ID);
 
+    sz generic_placeholder_type_pos = parser->pos;
+    const char *generic_placeholder_type_name = cur.value;
+    solc_ast_t *generic_placeholder_type_default_type = nullptr;
+
+    parser->pos++;
+    VERIFY_POS(parser, parser->pos);
+    if (parser->tokens[parser->pos].type == SOLC_TOKENTYPE_EQ) {
+      parser->pos++;
+      VERIFY_POS(parser, parser->pos);
+
+      generic_placeholder_type_default_type = solc_parser_parse_type(parser);
+    }
+
     solc_ast_t *generic_placeholder_type_ast =
-      solc_ast_generic_placeholder_type_create(parser->pos++, cur.value);
+      solc_ast_generic_placeholder_type_create(
+        generic_placeholder_type_pos, generic_placeholder_type_name,
+        generic_placeholder_type_default_type);
     solc_ast_generic_placeholder_type_list_add_placeholder_type(
       generic_placeholder_type_list_ast, generic_placeholder_type_ast);
     solc_tokentype_t next = solc_parser_peek(parser, parser->pos);
