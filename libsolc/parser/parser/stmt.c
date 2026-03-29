@@ -80,8 +80,7 @@ solc_ast_t *solc_parser_parse_stmt(solc_parser_t *parser)
     break;
   }
 
-  solc_ast_t *out =
-    solc_parser_parse_stmt_expr_or_generic_func_or_namespace(parser);
+  solc_ast_t *out = solc_parser_parse_stmt_expr_or_generic_func(parser);
   if (parser->errored) {
     if (out != nullptr)
       solc_ast_destroy(out);
@@ -92,8 +91,7 @@ solc_ast_t *solc_parser_parse_stmt(solc_parser_t *parser)
   return out;
 }
 
-solc_ast_t *
-solc_parser_parse_stmt_expr_or_generic_func_or_namespace(solc_parser_t *parser)
+solc_ast_t *solc_parser_parse_stmt_expr_or_generic_func(solc_parser_t *parser)
 {
   if (parser->tokens[parser->pos].type == SOLC_TOKENTYPE_ID &&
       solc_parser_peek(parser, parser->pos + 1) == SOLC_TOKENTYPE_LARROW) {
