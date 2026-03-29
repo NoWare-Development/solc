@@ -1,3 +1,4 @@
+#include "containers/vector.h"
 #include "parser/ast/ast_group_generic.h"
 #include "parser/ast/ast_group_none.h"
 #include "parser/ast/ast_group_stmt.h"
@@ -94,67 +95,32 @@ solc_ast_t *solc_parser_parse_stmt(solc_parser_t *parser)
 solc_ast_t *
 solc_parser_parse_stmt_expr_or_generic_func_or_namespace(solc_parser_t *parser)
 {
-  sz pos = parser->pos;
+  if (parser->tokens[parser->pos].type == SOLC_TOKENTYPE_ID &&
+      solc_parser_peek(parser, parser->pos + 1) == SOLC_TOKENTYPE_LARROW) {
+    sz old_pos = parser->pos;
+    b8 old_errored = parser->errored;
+    sz old_errors_v_len = vector_get_length(parser->errors_v);
+    solc_parser_error_t *old_errors_v = vector_copy(parser->errors_v);
 
-  VERIFY_POS(parser, parser->pos);
-  if (parser->tokens[pos].type == SOLC_TOKENTYPE_ID) {
-    pos++;
-    if (solc_parser_peek(parser, pos++) == SOLC_TOKENTYPE_LARROW) {
-      b8 not_a_generic_func = false;
-      while (pos < parser->tokens_num && !not_a_generic_func) {
-        switch (parser->tokens[pos].type) {
-        case SOLC_TOKENTYPE_ID:
-        case SOLC_TOKENTYPE_COMMA:
-          break;
+    // Try parse generic function definition
+    solc_ast_t *out = solc_parser_parse_def_func_generic(
+      parser, nullptr, SOLC_AST_FUNC_TYPE_DEFAULT);
 
-        case SOLC_TOKENTYPE_RARROW: {
-          const solc_token_t *peeked_1 =
-            solc_parser_peek_token(parser, pos + 1);
-          solc_tokentype_t peeked_2 = solc_parser_peek(parser, pos + 2);
-
-          if (peeked_1 != nullptr && peeked_1->type == SOLC_TOKENTYPE_COLON &&
-              !peeked_1->has_whitespace_after &&
-              peeked_2 == SOLC_TOKENTYPE_COLON) {
-            switch (solc_parser_peek(parser, pos + 3)) {
-            case SOLC_TOKENTYPE_LPAREN:
-              return solc_parser_parse_def_func_generic(
-                parser, nullptr, SOLC_AST_FUNC_TYPE_DEFAULT);
-
-            case SOLC_TOKENTYPE_ID: {
-              solc_ast_t *generic_namespace =
-                solc_parser_parse_generic_namespace(parser);
-              solc_ast_t *symbol =
-                solc_parser_parse_expr_operand_identifier(parser, true, true);
-              solc_ast_generic_namespace_set_subobject(generic_namespace,
-                                                       symbol);
-              return generic_namespace;
-            }
-
-            case SOLC_TOKENTYPE_ERR: {
-              solc_parser_add_error(parser, SOLC_PARSER_ERROR_TYPE_EXPECTED,
-                                    pos + 3, 1, SOLC_TOKENTYPE_ERR);
-              return nullptr;
-            }
-
-            default: {
-              solc_parser_add_error(parser, SOLC_PARSER_ERROR_TYPE_UNEXPECTED,
-                                    pos + 3, 1, SOLC_TOKENTYPE_ERR);
-              return nullptr;
-            }
-            }
-          }
-
-          not_a_generic_func = true;
-        } break;
-
-        default:
-          not_a_generic_func = true;
-          break;
-        }
-
-        pos++;
-      }
+    if (old_errored == parser->errored ||
+        old_errors_v_len == vector_get_length(parser->errors_v)) {
+      // Success
+      vector_destroy(old_errors_v);
+      return out;
     }
+
+    // Fail
+    // Reset parser to its previous state ...
+    vector_destroy(parser->errors_v);
+    parser->pos = old_pos;
+    parser->errored = old_errored;
+    parser->errors_v = vector_copy(old_errors_v);
+
+    // ... and parse expression statement.
   }
 
   return solc_parser_parse_stmt_expr(parser);
