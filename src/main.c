@@ -38,15 +38,15 @@ s32 main(s32 argc, char **argv)
   if (!args_parse(&args, argc, argv))
     return -1;
 
-  if (args.show_help) {
+  if SOLC_UNLIKELY (args.show_help) {
     args_help("Usage: solc [options] file...");
     return 0;
-  } else if (args.show_version) {
+  } else if SOLC_UNLIKELY (args.show_version) {
     puts(_version_message);
     return 0;
   }
 
-  if (args.num_dangling == 0) {
+  if SOLC_UNLIKELY (args.num_dangling == 0) {
     fprintf(stderr, "No sources were provided.\n");
     return -1;
   }
@@ -55,7 +55,7 @@ s32 main(s32 argc, char **argv)
     const char *filepath = argv[args.danlings[i]];
 
     FILE *f = fopen(filepath, "r");
-    if (f == nullptr) {
+    if SOLC_UNLIKELY (f == nullptr) {
       error_handler_report_failed_to_open(filepath, errno);
       return -2;
     }
@@ -81,9 +81,8 @@ s32 main(s32 argc, char **argv)
 
     error_handler_t handler =
       error_handler_create(argv[args.danlings[i]], src, tokens, tokens_num);
-    if (!error_handler_handle_invalid_tokens(&handler)) {
+    if SOLC_UNLIKELY (!error_handler_handle_invalid_tokens(&handler))
       return -3;
-    }
 
     solc_parser_t parser = solc_parser_create(tokens, tokens_num);
     solc_ast_t *root = solc_parser_parse(&parser);
@@ -96,10 +95,9 @@ s32 main(s32 argc, char **argv)
     solc_parser_error_t *parser_errors =
       solc_parser_get_errors(&parser, &parser_errors_num);
 
-    if (!error_handler_handle_parser_errors(&handler, parser_errors,
-                                            parser_errors_num)) {
+    if SOLC_UNLIKELY (!error_handler_handle_parser_errors(
+                        &handler, parser_errors, parser_errors_num))
       return -4;
-    }
 
     solc_ast_destroy(root);
     solc_parser_destroy(&parser);
