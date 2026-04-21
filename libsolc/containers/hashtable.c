@@ -171,7 +171,7 @@ hashtable_t *__hashtable_put_impl(hashtable_t *table, const void *key,
   }
 }
 
-const void *__hashtable_get_impl(hashtable_t *table, const void *key)
+void *__hashtable_get_impl(hashtable_t *table, const void *key)
 {
   SOLC_ASSUME(table != nullptr && key != nullptr);
 
