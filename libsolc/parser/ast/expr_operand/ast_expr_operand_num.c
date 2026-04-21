@@ -2,6 +2,7 @@
 #include "containers/vector.h"
 #include "parser/ast_private.h"
 #include "solc/parser/ast.h"
+#include <ctype.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,7 +28,13 @@ solc_ast_t *solc_ast_expr_operand_num_create(sz pos, u64 value,
   } else {
     out_num_expr_operand->typespec =
       (char *)out_num_expr_operand + sizeof(ast_num_expr_operand_t);
-    memcpy(out_num_expr_operand->typespec, typespec, typespec_len);
+    for (char *ts = out_num_expr_operand->typespec; *typespec;
+         ts++, typespec++) {
+      if (isupper(*typespec))
+        *ts = tolower(*typespec);
+      else
+        *ts = *typespec;
+    }
   }
   return SOLC_AST(out_num_expr_operand);
 }
