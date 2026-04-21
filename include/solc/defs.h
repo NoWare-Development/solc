@@ -128,6 +128,19 @@ typedef size_t sz;
 #define SOLC_UNLIKELY ((expr))
 #endif
 
+typedef struct {
+  s32 start, end;
+} solc_range_t;
+static inline solc_range_t solc_range_create(s32 start, s32 end)
+{
+  if SOLC_UNLIKELY (start > end) {
+    s32 tmp = start;
+    start = end;
+    end = tmp;
+  }
+  return (solc_range_t){ .start = start, .end = end };
+}
+
 // SOLC_UNUSED is used for temporal debugging stuff that shouldn't end up in
 // master branch.
 // SOLC_UNUSED_PERMIT is used when you need magic to happen :^)
