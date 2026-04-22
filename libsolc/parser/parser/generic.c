@@ -59,31 +59,29 @@ solc_ast_t *solc_parser_parse_generic_type_list(solc_parser_t *parser)
 {
   VERIFY_POS(parser, parser->pos);
   VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,
+               SOLC_TOKENTYPE_EXCLMARK);
+
+  sz start_pos = parser->pos++;
+  VERIFY_POS(parser, parser->pos);
+  VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,
                SOLC_TOKENTYPE_LARROW);
 
-  solc_ast_t *generic_type_list =
-    solc_ast_generic_type_list_create(parser->pos++);
+  solc_ast_t *generic_type_list_ast =
+    solc_ast_generic_type_list_create(start_pos);
 
+  parser->pos++;
   while (parser->pos < parser->tokens_num) {
     if (parser->tokens[parser->pos].type == SOLC_TOKENTYPE_RARROW)
       break;
 
-    solc_ast_t *type = solc_parser_parse_type(parser);
-    solc_ast_generic_type_list_add_type(generic_type_list, type);
+    solc_ast_t *type_ast = solc_parser_parse_type(parser);
+    solc_ast_generic_type_list_add_type(generic_type_list_ast, type_ast);
 
     VERIFY_POS(parser, parser->pos);
     if (parser->tokens[parser->pos].type != SOLC_TOKENTYPE_RARROW) {
       VERIFY_TOKEN(parser, parser->pos, parser->tokens[parser->pos].type,
                    SOLC_TOKENTYPE_COMMA);
-
       parser->pos++;
-      VERIFY_POS(parser, parser->pos);
-      if SOLC_UNLIKELY (parser->tokens[parser->pos].type ==
-                        SOLC_TOKENTYPE_RARROW) {
-        solc_parser_add_error(parser, SOLC_PARSER_ERROR_TYPE_UNEXPECTED,
-                              parser->pos, 1, SOLC_TOKENTYPE_ERR);
-        return nullptr;
-      }
     }
   }
 
@@ -92,7 +90,8 @@ solc_ast_t *solc_parser_parse_generic_type_list(solc_parser_t *parser)
                SOLC_TOKENTYPE_RARROW);
 
   parser->pos++;
-  return generic_type_list;
+
+  return generic_type_list_ast;
 }
 
 b8 solc_parser_is_expr_operand_generic_call(solc_parser_t *parser)

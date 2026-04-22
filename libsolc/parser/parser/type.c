@@ -92,7 +92,7 @@ solc_ast_t *solc_parser_parse_type_raw(solc_parser_t *parser)
   }
 
   sz plain_type_pos = parser->pos++;
-  if (solc_parser_peek(parser, parser->pos) == SOLC_TOKENTYPE_LARROW) {
+  if (solc_parser_peek(parser, parser->pos) == SOLC_TOKENTYPE_EXCLMARK) {
     solc_ast_t *generic_type_list = solc_parser_parse_generic_type_list(parser);
     type = solc_ast_generic_type_create(plain_type_pos, cur.value,
                                         generic_type_list);
