@@ -149,12 +149,12 @@ local testFunc2 :: () {
     VAL2,
   }
 
-  vector_var: Vector<s32>;
+  vector_var: Vector!<s32>;
   vector_var.destroy();
 
-  persist x: s32 = sizeof(Vector<s32>);
+  persist x: s32 = sizeof(Vector!<s32>);
 
-  test: Vector<TestStruct<s32>> = {};
+  test: Vector!<TestStruct!<s32>> = {};
 
   return {};
 }

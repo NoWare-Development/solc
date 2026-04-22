@@ -84,18 +84,24 @@ solc_ast_t *solc_parser_parse_type_raw(solc_parser_t *parser)
     solc_ast_t *member_type = solc_parser_parse_type_raw(parser);
     type = solc_ast_namespace_create(namespace_pos, cur.value, member_type);
     goto process_ptrs;
-  } else if (solc_parser_is_generic_namespace(parser)) {
-    solc_ast_t *generic_namespace = solc_parser_parse_generic_namespace(parser);
-    solc_ast_t *member_type = solc_parser_parse_type_raw(parser);
-    solc_ast_generic_namespace_set_subobject(generic_namespace, member_type);
-    return generic_namespace;
   }
 
   sz plain_type_pos = parser->pos++;
   if (solc_parser_peek(parser, parser->pos) == SOLC_TOKENTYPE_EXCLMARK) {
     solc_ast_t *generic_type_list = solc_parser_parse_generic_type_list(parser);
-    type = solc_ast_generic_type_create(plain_type_pos, cur.value,
-                                        generic_type_list);
+
+    if (parser->pos + 1 < parser->tokens_num &&
+        parser->tokens[parser->pos].type == SOLC_TOKENTYPE_COLON &&
+        parser->tokens[parser->pos + 1].type == SOLC_TOKENTYPE_COLON &&
+        !parser->tokens[parser->pos].has_whitespace_after) {
+      parser->pos += 2;
+      solc_ast_t *member_type = solc_parser_parse_type_raw(parser);
+      type = solc_ast_generic_namespace_create(plain_type_pos, cur.value,
+                                               generic_type_list, member_type);
+    } else
+      type = solc_ast_generic_type_create(plain_type_pos, cur.value,
+                                          generic_type_list);
+
     goto process_ptrs;
   }
 
